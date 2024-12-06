@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79afd5ff-aab7-4ee3-841e-3cedb0068a75" name="Changes" comment="base" />
+    <list default="true" id="79afd5ff-aab7-4ee3-841e-3cedb0068a75" name="Changes" comment="more-hello">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/postgresql_42_5_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crs/src/DatabaseConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/postgresql-42.5.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sql/CreateTablesTry.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Brikks.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Brikks.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crs/crs.iml" beforeDir="false" afterPath="$PROJECT_DIR$/crs/crs.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crs/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/crs/src/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,7 +41,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Nyashyker/Brikks.git&quot;,
-    &quot;accountId&quot;: &quot;e890a826-e94f-4cd1-ae8e-8f098f45fb0c&quot;
+    &quot;accountId&quot;: &quot;4cd61377-8024-4432-893d-6ff265b0c220&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -45,26 +55,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.41954023",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.DatabaseConnection.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.41954023&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib" />
       <recent name="$PROJECT_DIR$/crs" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -72,8 +89,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
       </set>
     </attachedChunks>
   </component>
@@ -87,6 +104,17 @@
       <updated>1733316300284</updated>
       <workItem from="1733316301464" duration="1944000" />
       <workItem from="1733333892256" duration="574000" />
+      <workItem from="1733485752323" duration="249000" />
+      <workItem from="1733486084460" duration="38000" />
+      <workItem from="1733486127132" duration="127000" />
+      <workItem from="1733486289975" duration="46000" />
+      <workItem from="1733486343980" duration="61000" />
+      <workItem from="1733486676452" duration="1477000" />
+      <workItem from="1733488170223" duration="124000" />
+      <workItem from="1733491973009" duration="800000" />
+      <workItem from="1733494887117" duration="124000" />
+      <workItem from="1733495079349" duration="1000" />
+      <workItem from="1733497233939" duration="252000" />
     </task>
     <task id="LOCAL-00001" summary="t2">
       <option name="closed" value="true" />
@@ -104,7 +132,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733334458172</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="more-hello">
+      <option name="closed" value="true" />
+      <created>1733485847848</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1733485847848</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -113,6 +149,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="t2" />
     <MESSAGE value="base" />
-    <option name="LAST_COMMIT_MESSAGE" value="base" />
+    <MESSAGE value="more-hello" />
+    <option name="LAST_COMMIT_MESSAGE" value="more-hello" />
   </component>
 </project>
