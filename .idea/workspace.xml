@@ -5,41 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79afd5ff-aab7-4ee3-841e-3cedb0068a75" name="Changes" comment="more-hello">
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/ASCIIColor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Block.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BlocksTable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Board.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BoardPointCalculation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Bombs.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BonusEnergyBoard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BonusEnergyBoardD1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BonusEnergyBoardD2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BonusEnergyBoardD3.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BonusEnergyBoardD4.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/BonusScore.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Brikks.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Color.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/ConsoleView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/DatabasePlayerSave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/DatabaseSave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Dice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/DuelAsk.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/EmptyPlayerSave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/EmptySave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Energy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/GameText.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/LoadGame.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/MatrixDice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/PlacedBlock.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/PlayerAsk.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/PlayerLiderboard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/PlayerSave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Position.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/Save.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/SavedGame.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/UserBoard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crs/src/be/kdg/integration/brikks_project/View.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crs/src/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/crs/src/DatabaseConnection.java" afterDir="false" />
     </list>
@@ -147,7 +112,7 @@
       <workItem from="1733494887117" duration="124000" />
       <workItem from="1733495079349" duration="1000" />
       <workItem from="1733497233939" duration="252000" />
-      <workItem from="1733734312678" duration="1562000" />
+      <workItem from="1733734312678" duration="6323000" />
     </task>
     <task id="LOCAL-00001" summary="t2">
       <option name="closed" value="true" />
@@ -178,6 +143,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="t2" />

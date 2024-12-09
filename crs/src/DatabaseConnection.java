@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
 
-    /
+
     private static final String DB_NAME = "ascii5";
     private static final String DB_USERNAME = "postgres";
     private static final String DB_PASSWORD = "Student_1234";
