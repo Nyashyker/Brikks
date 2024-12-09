@@ -6,7 +6,7 @@ import java.awt.print.Printable;
 public abstract class View implements Printable {
 
     public abstract Menu menu();
-    public abstract void liderboard(PlayerLiderboard[] players);
+    public abstract void leaderboard(PlayerLeaderboard[] players);
 
     public abstract Level askDifficulty();
     public abstract Mode askMode();
