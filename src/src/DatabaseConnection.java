@@ -23,10 +23,10 @@ public class DatabaseConnection {
             System.out.println("Connecting to PostgreSQL server...");
             Connection serverConnection = DriverManager.getConnection(SERVER_URL, DB_USERNAME, DB_PASSWORD);
 
-            //  Create the database
+
             createDatabase(serverConnection);
 
-            // Connect to the created database
+
             System.out.println("Connecting to the database '" + DB_NAME + "'...");
             connection = DriverManager.getConnection(SERVER_URL + DB_NAME, DB_USERNAME, DB_PASSWORD);
 
