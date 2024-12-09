@@ -36,7 +36,6 @@ public class DatabaseConnection {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS"
                     + " players (player_name VARCHAR(10),"
                     + "          top_score INTEGER)");
-
             statement.executeUpdate("INSERT INTO"
                     + " players (player_name, top_score)"
               + " VALUES ('Rado', 3214)");
