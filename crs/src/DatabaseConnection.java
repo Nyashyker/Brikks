@@ -33,9 +33,7 @@ public class DatabaseConnection {
             System.out.println("Connection to database '" + DB_NAME + "' was successful!");
 
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS"
-                    + " players (player_name VARCHAR(10),"
-                    + "          top_score INTEGER)");
+            statement.executeUpdate("");
             statement.executeUpdate("INSERT INTO"
                     + " players (player_name, top_score)"
               + " VALUES ('Rado', 3214)");
