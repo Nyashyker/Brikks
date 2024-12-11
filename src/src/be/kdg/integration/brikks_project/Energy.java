@@ -20,7 +20,9 @@ public class Energy {
     }
 
     public boolean[] generateBonuses() {
+        for (int i = 6; i < MAXIMUM; i += 3) {
 
+        }
     }
 
     public boolean[] getBonuses() {
