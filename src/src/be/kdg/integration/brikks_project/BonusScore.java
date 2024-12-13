@@ -38,7 +38,7 @@ public class BonusScore {
 
 
     public short calculateFinal() {
-        return (short) (scale / 2);
+        return (short) SCALLING_RATE[scale];
     }
 }
 
