@@ -38,11 +38,7 @@ public class BonusScore {
 
 
     public short calculateFinal() {
-        short total = 0;
-        for (byte rate : SCALLING_RATE) {
-            total += rate * scale;
-        }
-        return total;
+        return (short) (scale / 2);
     }
 }
 
