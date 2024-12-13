@@ -5,24 +5,28 @@ public class Energy {
     private final boolean[] BONUSES;
     private byte position;
     private byte available;
+    private BonusScore bonusScore;
 
     public Energy(PlayerSave save, BonusScore bonusScore, byte playerCount) {
         this.BONUSES = new boolean[playerCount];
         generateBonuses();
         this.position = 0;
         this.available = 0;
+        this.bonusScore = bonusScore;
     }
 
     public Energy(PlayerSave save, BonusScore bonusScore, boolean[] bonuses, byte position, byte available) {
         this.BONUSES = bonuses;
         this.position = position;
         this.available = available;
+        this.bonusScore = bonusScore;
     }
 
     public boolean[] generateBonuses() {
         for (int i = 6; i < MAXIMUM; i += 3) {
-
+            BONUSES[i] = true;
         }
+        return BONUSES;
     }
 
     public boolean[] getBonuses() {
@@ -50,21 +54,30 @@ public class Energy {
     }
 
     public byte grow(byte amount) {
-        byte initialAvailable = available;
-        if (available + amount <= MAXIMUM) {
-            available += amount;
-        } else {
-            available = MAXIMUM;
+        byte bonusesEncountered = 0;
+
+        if (this.position == MAXIMUM -1) {
+            return bonusesEncountered;
         }
-        return (byte) (available - initialAvailable);
+        if (this.position + amount >= MAXIMUM) {
+            amount =(byte) (Energy.MAXIMUM - this.position);
+        }
+
+
+
+        for (int i = position; i < position + amount; i++) {
+            if (BONUSES[i] ) {
+                bonusesEncountered++;
+            }
+        }
+        position += amount;
+        available += amount;
+
+        bonusScore.grow(bonusesEncountered);
+        return bonusesEncountered;
     }
 
     public short calculateFinal() {
-        short total = 0;
-        for (boolean bonus : BONUSES) {
-            total += bonus ? 1 : 0;
-        }
-        total += available;
-        return total;
+        return (short) (available / 2);
     }
 }
