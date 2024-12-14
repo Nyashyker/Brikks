@@ -14,7 +14,7 @@ public class BonusScore {
     public BonusScore(byte[] scallingRate, byte scale) {
         this.SCALLING_RATE = scallingRate;
         if (scale > MAXIMUM_SCALE) {
-            this.scale = MAXIMUM_SCALE;
+            this.scale = MAXIMUM_SCALE - 1;
         } else {
             this.scale = scale;
         }
@@ -36,7 +36,7 @@ public class BonusScore {
         if (scale + amount <= MAXIMUM_SCALE) {
             scale += amount;
         } else {
-            scale = MAXIMUM_SCALE;
+            scale = MAXIMUM_SCALE - 1;
         }
     }
 

@@ -63,7 +63,7 @@ public class Energy {
             return bonusesEncountered;
         }
         if (position + amount >= MAXIMUM) {
-            amount =(byte) (MAXIMUM - position);
+            amount =(byte) (position + (MAXIMUM - position));
         }
 
 
