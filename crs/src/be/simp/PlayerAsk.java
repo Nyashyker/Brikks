@@ -1,10 +1,6 @@
-package be.simp.view01;
+package be.simp;
 
 import be.kdg.integration.brikks_project.BlocksTable;
-import be.simp.Block;
-import be.simp.PlaceORSpecial;
-import be.simp.Position;
-import be.simp.Special;
 
 
 public interface PlayerAsk {

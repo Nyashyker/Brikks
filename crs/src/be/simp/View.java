@@ -1,15 +1,10 @@
-package be.simp.view01;
-
+package be.simp;
 
 import be.kdg.integration.brikks_project.*;
-import be.simp.Level;
-import be.simp.Menu;
-import be.simp.Mode;
-import be.simp.PlacedBlock;
 
-import java.awt.print.Printable;
 
-public abstract class View implements Printable {
+
+public abstract class View implements PlayerAsk {
 
     public abstract Menu menu();
     public abstract void leaderboard(PlayerLiderboard[] players);
