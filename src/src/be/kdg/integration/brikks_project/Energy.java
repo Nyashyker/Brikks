@@ -7,7 +7,7 @@ public class Energy {
     private byte available;
     private BonusScore bonusScore;
 
-    public Energy(PlayerSave save, BonusScore bonusScore, byte playerCount) {
+    public Energy(BonusScore bonusScore, byte playerCount) {
         this.BONUSES = new boolean[playerCount];
         generateBonuses();
         this.position = 0;
@@ -15,9 +15,12 @@ public class Energy {
         this.bonusScore = bonusScore;
     }
 
-    public Energy(PlayerSave save, BonusScore bonusScore, boolean[] bonuses, byte position, byte available) {
+    public Energy(BonusScore bonusScore, boolean[] bonuses, byte position, byte available) {
         this.BONUSES = bonuses;
         this.position = position;
+        if (this.position >= MAXIMUM) {
+            this.position = MAXIMUM - 1;
+        }
         this.available = available;
         this.bonusScore = bonusScore;
     }
@@ -56,11 +59,11 @@ public class Energy {
     public byte grow(byte amount) {
         byte bonusesEncountered = 0;
 
-        if (this.position == MAXIMUM -1) {
+        if (position == MAXIMUM -1) {
             return bonusesEncountered;
         }
-        if (this.position + amount >= MAXIMUM) {
-            amount =(byte) (Energy.MAXIMUM - this.position);
+        if (position + amount >= MAXIMUM) {
+            amount =(byte) (MAXIMUM - position);
         }
 
 
