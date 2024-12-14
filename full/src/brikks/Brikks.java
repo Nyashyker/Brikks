@@ -1,10 +1,10 @@
 package brikks;
 
-import brikks.essentials.Block;
-import brikks.essentials.MatrixDice;
-import brikks.save.BoardPointCalculation;
-import brikks.save.Save;
-import brikks.view.View;
+import brikks.essentials.*;
+import brikks.essentials.enums.*;
+import brikks.view.enums.*;
+import brikks.save.*;
+import brikks.view.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class Brikks {
                 case NEW_GAME -> this.start();
                 case LOAD -> this.load();
                 case LIDERBOARD -> this.liderboard();
-                case EXIT, null, default -> System.exit(0);
+                case EXIT -> System.exit(0);
             };
         }
     }
@@ -45,8 +45,23 @@ public class Brikks {
     }
 
     public void start() {
-        for (String name : this.view.askNames()) {
-            this.players.add(new Player())
+        String[] name$s = this.view.askNames();
+        Level difficulty = this.view.askDifficulty();
+
+        for (String name : name$s) {
+            this.players.add(new Player(this.save.createPlayerSave(name), name, (byte) name$s.length, difficulty));
         }
+
+/*
+        switch (this.view.askMode()) {
+            case SOLO -> this.runSolo();
+            case STANDARD -> this.runStandard();
+            case DUEL -> this.runDuel();
+        }
+*/
+    }
+
+    public void load() {
+        // TODO: The load functional
     }
 }
