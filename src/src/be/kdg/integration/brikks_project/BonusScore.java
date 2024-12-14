@@ -6,14 +6,18 @@ public class BonusScore {
     private byte scale;
 
 
-    public BonusScore(PlayerSave save) {
+    public BonusScore() {
         this.SCALLING_RATE = generateScallingRate();
         this.scale = 0;
     }
 
-    public BonusScore(PlayerSave save, byte[] scallingRate, byte scale) {
+    public BonusScore(byte[] scallingRate, byte scale) {
         this.SCALLING_RATE = scallingRate;
-        this.scale = scale;
+        if (scale > MAXIMUM_SCALE) {
+            this.scale = MAXIMUM_SCALE;
+        } else {
+            this.scale = scale;
+        }
     }
 
     private byte[] generateScallingRate() {
