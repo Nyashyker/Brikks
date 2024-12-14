@@ -59,13 +59,14 @@ public class Energy {
     public byte grow(byte amount) {
         byte bonusesEncountered = 0;
 
-        if (position == MAXIMUM -1) {
+        if (position == MAXIMUM - 1) {
             return bonusesEncountered;
         }
-        if (position + amount >= MAXIMUM) {
-            amount =(byte) (position + (MAXIMUM - position));
+        if (position >= MAXIMUM) {
+            amount = 0;
+        } else if (position + amount > MAXIMUM) {
+            amount = (byte) (MAXIMUM - position);
         }
-
 
 
         for (int i = position; i < position + amount; i++) {
