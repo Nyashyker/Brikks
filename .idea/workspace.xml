@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="disconect-from-the-main-branch">
+    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="workspace-update">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/MakeDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/MakeDatabase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoard.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +14,19 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="full" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="main" />
@@ -108,7 +120,7 @@
       <workItem from="1733842339478" duration="18000" />
       <workItem from="1733955124086" duration="1533000" />
       <workItem from="1734087188664" duration="7000" />
-      <workItem from="1734202657868" duration="2494000" />
+      <workItem from="1734202657868" duration="4009000" />
     </task>
     <task id="LOCAL-00001" summary="porject-struct">
       <option name="closed" value="true" />
@@ -142,7 +154,23 @@
       <option name="project" value="LOCAL" />
       <updated>1734204502939</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="make-full-module-runnable">
+      <option name="closed" value="true" />
+      <created>1734205324479</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1734205324479</updated>
+    </task>
+    <task id="LOCAL-00006" summary="workspace-update">
+      <option name="closed" value="true" />
+      <created>1734205337846</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1734205337846</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,6 +192,8 @@
     <MESSAGE value="bombs-by-Ali" />
     <MESSAGE value="commit-to-full-version" />
     <MESSAGE value="disconect-from-the-main-branch" />
-    <option name="LAST_COMMIT_MESSAGE" value="disconect-from-the-main-branch" />
+    <MESSAGE value="make-full-module-runnable" />
+    <MESSAGE value="workspace-update" />
+    <option name="LAST_COMMIT_MESSAGE" value="workspace-update" />
   </component>
 </project>
