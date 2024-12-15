@@ -7,7 +7,6 @@ import be.kdg.integration.brikks_project.*;
 public abstract class View implements PlayerAsk {
 
     public abstract Menu menu();
-    public abstract void leaderboard(PlayerLiderboard[] players);
 
     public abstract Level askDifficulty();
     public abstract Mode askMode();

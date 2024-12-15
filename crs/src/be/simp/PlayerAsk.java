@@ -7,7 +7,7 @@ public interface PlayerAsk {
 
     public boolean askReroll();
     public PlaceORSpecial askRoll();
-    public Position askPlasingSpot(Block block, Position[] variants);
+    public Position askPlacingSpot(Block block, Position[] variants);
     public Special askSpecial();
     public Block askRotation(Block[] variants);
     public Block askChoice(BlocksTable variants);
