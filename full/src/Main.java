@@ -1,223 +1,249 @@
-import brikks.BlocksTable;
-import brikks.essentials.ASCIIColor;
-import brikks.essentials.Block;
-import brikks.essentials.Position;
+import brikks.essentials.*;
+import brikks.*;
+
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class Main {
-    public static void main(String[] args) {
+    private static final byte BLOCK_LEN = 4;
 
+    public static void main(String[] args) {
+/*
+        Block b = new Block(
+                mkShape("  x " +
+                        "  x " +
+                        "  x " +
+                        "  x "
+                ), new ConsoleColor("wt"));
+
+        System.out.println(b);
+*/
+        Block[][] table = generateBlocksTable();
+        for (byte y = 0; y < table.length; y++) {
+            for (byte x = 0; x < table[y].length; x++) {
+                System.out.println(table[y][x]);
+                System.out.println();
+            }
+            System.out.println("--------");
+        }
     }
 
-    private Block[][] generateBlocksTable() {
+    private static Block[][] generateBlocksTable() {
         Block[][] blocks = new Block[BlocksTable.height][BlocksTable.width];
+        ConsoleColor color = null;
 
 
-        // W - White
+        // White
+        color = new ConsoleColor("wh");
         blocks[0][0] = new Block(
-                new Position[] {
-                        new Position((byte) (byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -1, (byte) -1),
-                },
-                new ASCIIColor('W')
-        );
+                mkShape("    " +
+                        "    " +
+                        " x  " +
+                        "xxx "
+                ), color);
+
         blocks[0][1] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -1, (byte) -1),
-                },
-                new ASCIIColor('W')
-        );
+                mkShape("    " +
+                        " x  " +
+                        " xx " +
+                        " x  "
+                ), color);
+
         blocks[0][2] = new Block(
-                new Position[] {
-                        new Position((byte) -1, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('W')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xxx " +
+                        " x  "
+                ), color);
+
         blocks[0][3] = new Block(
-                new Position[] {
-                        new Position((byte) -1, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('W')
-        );
+                mkShape("    " +
+                        " x  " +
+                        "xx  " +
+                        " x  "
+                ), color);
 
-        // Y - Yellow
+        // Yellow
+        color = new ConsoleColor("yw");
         blocks[1][0] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('Y')
-        );
+                mkShape("    " +
+                        " x  " +
+                        " x  " +
+                        "xx  "
+                ), color);
+
         blocks[1][1] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -2, (byte) -1),
-                },
-                new ASCIIColor('Y')
-        );
+                mkShape("    " +
+                        "    " +
+                        "x   " +
+                        "xxx "
+                ), color);
+
         blocks[1][2] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('Y')
-        );
+                mkShape("    " +
+                        "xx  " +
+                        "x   " +
+                        "x   "
+                ), color);
+
         blocks[1][3] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) -1, (byte) 0),
-                        new Position((byte) -1, (byte) 0),
-                },
-                new ASCIIColor('Y')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xxx " +
+                        "  x "
+                ), color);
 
-        // G - Green
+        // Green
+        color = new ConsoleColor("gn");
         blocks[2][0] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -1, (byte) -1),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('G')
-        );
+                mkShape("    " +
+                        "x   " +
+                        "x   " +
+                        "xx  "
+                ), color);
+
         blocks[2][1] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('G')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xxx " +
+                        "x   "
+                ), color);
+
         blocks[2][2] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) -1, (byte) 0),
-                },
-                new ASCIIColor('G')
-        );
+                mkShape("    " +
+                        "xx  " +
+                        " x  " +
+                        " x  "
+                ), color);
+
         blocks[2][3] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('G')
-        );
+                mkShape("    " +
+                        "    " +
+                        "  x " +
+                        "xxx "
+                ), color);
 
-        // R - Red
+        // Red
+        color = new ConsoleColor("rd");
         blocks[3][0] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('R')
-        );
+                mkShape("    " +
+                        " x  " +
+                        "xx  " +
+                        "x   "
+                ), color);
+
         blocks[3][1] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('R')
-        );
+                mkShape("    " +
+                        " x  " +
+                        "xx  " +
+                        "x   "
+                ), color);
+
         blocks[3][2] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -2, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('R')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xx  " +
+                        " xx "
+                ), color);
+
         blocks[3][3] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -2, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('R')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xx  " +
+                        " xx "
+                ), color);
 
-        // B - Blue
+        // Blue
+        color = new ConsoleColor("bl");
         blocks[4][0] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) -1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('B')
-        );
-        blocks[4][1] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) -1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('B')
-        );
-        blocks[4][2] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('B')
-        );
-        blocks[4][3] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('B')
-        );
+                mkShape("    " +
+                        "x   " +
+                        "xx  " +
+                        " x  "
+                ), color);
 
-        // F - Black
+        blocks[4][1] = new Block(
+                mkShape("    " +
+                        "x   " +
+                        "xx  " +
+                        " x  "
+                ), color);
+
+        blocks[4][2] = new Block(
+                mkShape("    " +
+                        "    " +
+                        " xx " +
+                        "xx  "
+                ), color);
+
+        blocks[4][3] = new Block(
+                mkShape("    " +
+                        "    " +
+                        " xx " +
+                        "xx  "
+                ), color);
+
+        // Black
+        color = new ConsoleColor("bk");
         blocks[5][0] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -1, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('F')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xx  " +
+                        "xx  "
+                ), color);
+
         blocks[5][1] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) -1, (byte) -1),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('F')
-        );
+                mkShape("    " +
+                        "    " +
+                        "xx  " +
+                        "xx  "
+                ), color);
+
         blocks[5][2] = new Block(
-                new Position[] {
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 0, (byte) -1),
-                        new Position((byte) 0, (byte) -1),
-                },
-                new ASCIIColor('F')
-        );
+                mkShape("    " +
+                        "    " +
+                        "    " +
+                        "xxxx"
+                ), color);
+
         blocks[5][3] = new Block(
-                new Position[] {
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                        new Position((byte) 1, (byte) 0),
-                },
-                new ASCIIColor('F')
-        );
+                mkShape("x   " +
+                        "x   " +
+                        "x   " +
+                        "x   "
+                ), color);
 
 
         return blocks;
     }
 
+    private static Position[] mkShape(final String shape) {
+        final char color = 'x';
+        Position last = null;
+
+        for (byte x = 0; x < BLOCK_LEN; x++) {
+            if (shape.charAt((BLOCK_LEN - 1) * BLOCK_LEN + x) == color) {
+                last = new Position(x, (byte) (BLOCK_LEN - 1));
+                break;
+            }
+        }
+        // Error
+        if (last == null) {
+            throw new IllegalArgumentException("Shape " + shape + " not found\nUse " + color + " to describe the shape");
+        }
+
+        final List<Position> block = new LinkedList<Position>();
+        for (byte y = BLOCK_LEN - 1; y >= 0; y--) {
+            for (byte x = 0; x < BLOCK_LEN; x++) {
+                if (shape.charAt(y * BLOCK_LEN + x) == color) {
+                    block.add(new Position((byte) (x - last.getX()), (byte) (y - last.getY())));
+                    last = new Position(x, y);
+                }
+            }
+        }
+        block.removeFirst();
+
+        return block.toArray(Position[]::new);
+    }
 }
