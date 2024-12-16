@@ -36,6 +36,10 @@ public class Energy {
     }
 
     private static byte calculateStartingAvailable(byte playerCount) {
+        if (playerCount <= 0) {
+            throw new IllegalArgumentException("Player count must be greater than zero");
+        }
+
         return playerCount == 1 ? (byte) 5 : (byte) 4;
         /*switch (playerCount) {
             case 1 -> 5;
@@ -44,6 +48,10 @@ public class Energy {
     }
 
     private static byte calculateStartingPosition(byte playerCount) {
+        if (playerCount <= 0) {
+            throw new IllegalArgumentException("Player count must be greater than zero");
+        }
+
         return switch (playerCount) {
             case 1 -> 5;
             // case 2 -> 4;
@@ -76,6 +84,10 @@ public class Energy {
     }
 
     public byte grow(byte amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("You can not grow negatively");
+        }
+
         if (this.position == Energy.MAXIMUM - 1) {
             return 0;
         }

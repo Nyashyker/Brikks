@@ -2,7 +2,6 @@ package brikks;
 
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
-import brikks.view.enums.*;
 import brikks.save.*;
 import brikks.view.*;
 
@@ -21,7 +20,7 @@ public class Brikks {
 
     public Brikks(View view, Save save, Block[][] blocksTable) {
         this.blocksTable = new BlocksTable(blocksTable);
-        this.matrixDie = new MatrixDice(BlocksTable.width, BlocksTable.height);
+        this.matrixDie = new MatrixDice(BlocksTable.WIDTH, BlocksTable.HEIGHT);
 
         this.save = save;
         this.view = view;

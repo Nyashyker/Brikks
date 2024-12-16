@@ -9,6 +9,7 @@ public class Main {
     private static final byte BLOCK_LEN = 4;
 
     public static void main(String[] args) {
+/*
         Block[][] table = generateBlocksTable();
         for (byte y = 0; y < table.length; y++) {
             for (byte x = 0; x < table[y].length; x++) {
@@ -17,10 +18,11 @@ public class Main {
             }
             System.out.println("--------");
         }
+*/
     }
 
     private static Block[][] generateBlocksTable() {
-        Block[][] blocks = new Block[BlocksTable.height][BlocksTable.width];
+        Block[][] blocks = new Block[BlocksTable.HEIGHT][BlocksTable.WIDTH];
         ConsoleColor color = null;
 
 
