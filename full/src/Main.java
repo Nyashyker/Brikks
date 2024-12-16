@@ -9,16 +9,6 @@ public class Main {
     private static final byte BLOCK_LEN = 4;
 
     public static void main(String[] args) {
-/*
-        Block b = new Block(
-                mkShape("  x " +
-                        "  x " +
-                        "  x " +
-                        "  x "
-                ), new ConsoleColor("wt"));
-
-        System.out.println(b);
-*/
         Block[][] table = generateBlocksTable();
         for (byte y = 0; y < table.length; y++) {
             for (byte x = 0; x < table[y].length; x++) {

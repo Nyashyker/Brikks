@@ -27,4 +27,9 @@ public class Dice {
     public void cheat(final byte value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%d-sided (%d)", this.sides, this.value);
+    }
 }

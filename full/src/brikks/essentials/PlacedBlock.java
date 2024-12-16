@@ -35,4 +35,9 @@ public class PlacedBlock extends Block {
         this.position.set(position);
         this.position.set(position);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s - %s", super.toString(), this.position);
+    }
 }

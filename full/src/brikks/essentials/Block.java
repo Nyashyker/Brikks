@@ -13,8 +13,7 @@ public class Block {
     }
 
     public Block(final Block other) {
-        this.shape = other.getBlock();
-        this.color = other.getColor();
+        this(other.getBlock(), other.getColor());
     }
 
 
@@ -39,7 +38,6 @@ public class Block {
             shape.delete(shape.length() - 2, shape.length());
         }
 
-        return String.format("Shape{%s} - color=%s",
-                shape.toString(), this.color.get());
+        return String.format("Shape{%s} - color=%s", shape, this.color.get());
     }
 }

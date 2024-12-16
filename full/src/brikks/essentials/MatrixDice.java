@@ -21,4 +21,9 @@ public class MatrixDice {
         this.x.cheat(value.getX());
         this.y.cheat(value.getY());
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s, %s)", x.toString(), y.toString());
+    }
 }
