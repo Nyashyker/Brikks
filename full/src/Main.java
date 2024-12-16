@@ -1,4 +1,5 @@
 import brikks.essentials.*;
+import brikks.essentials.enums.*;
 import brikks.*;
 
 import java.util.LinkedList;
@@ -23,188 +24,181 @@ public class Main {
 
     private static Block[][] generateBlocksTable() {
         Block[][] blocks = new Block[BlocksTable.HEIGHT][BlocksTable.WIDTH];
-        ConsoleColor color = null;
 
 
         // White
-        color = new ConsoleColor("wh");
         blocks[0][0] = new Block(
                 mkShape("    " +
                         "    " +
                         " x  " +
                         "xxx "
-                ), color);
+                ), Color.WHITE);
 
         blocks[0][1] = new Block(
                 mkShape("    " +
                         " x  " +
                         " xx " +
                         " x  "
-                ), color);
+                ), Color.WHITE);
 
         blocks[0][2] = new Block(
                 mkShape("    " +
                         "    " +
                         "xxx " +
                         " x  "
-                ), color);
+                ), Color.WHITE);
 
         blocks[0][3] = new Block(
                 mkShape("    " +
                         " x  " +
                         "xx  " +
                         " x  "
-                ), color);
+                ), Color.WHITE);
 
         // Yellow
-        color = new ConsoleColor("yw");
         blocks[1][0] = new Block(
                 mkShape("    " +
                         " x  " +
                         " x  " +
                         "xx  "
-                ), color);
+                ), Color.YELLOW);
 
         blocks[1][1] = new Block(
                 mkShape("    " +
                         "    " +
                         "x   " +
                         "xxx "
-                ), color);
+                ), Color.YELLOW);
 
         blocks[1][2] = new Block(
                 mkShape("    " +
                         "xx  " +
                         "x   " +
                         "x   "
-                ), color);
+                ), Color.YELLOW);
 
         blocks[1][3] = new Block(
                 mkShape("    " +
                         "    " +
                         "xxx " +
                         "  x "
-                ), color);
+                ), Color.YELLOW);
 
         // Green
-        color = new ConsoleColor("gn");
         blocks[2][0] = new Block(
                 mkShape("    " +
                         "x   " +
                         "x   " +
                         "xx  "
-                ), color);
+                ), Color.GREEN);
 
         blocks[2][1] = new Block(
                 mkShape("    " +
                         "    " +
                         "xxx " +
                         "x   "
-                ), color);
+                ), Color.GREEN);
 
         blocks[2][2] = new Block(
                 mkShape("    " +
                         "xx  " +
                         " x  " +
                         " x  "
-                ), color);
+                ), Color.GREEN);
 
         blocks[2][3] = new Block(
                 mkShape("    " +
                         "    " +
                         "  x " +
                         "xxx "
-                ), color);
+                ), Color.GREEN);
 
         // Red
-        color = new ConsoleColor("rd");
         blocks[3][0] = new Block(
                 mkShape("    " +
                         " x  " +
                         "xx  " +
                         "x   "
-                ), color);
+                ), Color.RED);
 
         blocks[3][1] = new Block(
                 mkShape("    " +
                         " x  " +
                         "xx  " +
                         "x   "
-                ), color);
+                ), Color.RED);
 
         blocks[3][2] = new Block(
                 mkShape("    " +
                         "    " +
                         "xx  " +
                         " xx "
-                ), color);
+                ), Color.RED);
 
         blocks[3][3] = new Block(
                 mkShape("    " +
                         "    " +
                         "xx  " +
                         " xx "
-                ), color);
+                ), Color.RED);
 
         // Blue
-        color = new ConsoleColor("bl");
         blocks[4][0] = new Block(
                 mkShape("    " +
                         "x   " +
                         "xx  " +
                         " x  "
-                ), color);
+                ), Color.BLUE);
 
         blocks[4][1] = new Block(
                 mkShape("    " +
                         "x   " +
                         "xx  " +
                         " x  "
-                ), color);
+                ), Color.BLUE);
 
         blocks[4][2] = new Block(
                 mkShape("    " +
                         "    " +
                         " xx " +
                         "xx  "
-                ), color);
+                ), Color.RED);
 
         blocks[4][3] = new Block(
                 mkShape("    " +
                         "    " +
                         " xx " +
                         "xx  "
-                ), color);
+                ), Color.BLUE);
 
         // Black
-        color = new ConsoleColor("bk");
         blocks[5][0] = new Block(
                 mkShape("    " +
                         "    " +
                         "xx  " +
                         "xx  "
-                ), color);
+                ), Color.BLUE);
 
         blocks[5][1] = new Block(
                 mkShape("    " +
                         "    " +
                         "xx  " +
                         "xx  "
-                ), color);
+                ), Color.BLUE);
 
         blocks[5][2] = new Block(
                 mkShape("    " +
                         "    " +
                         "    " +
                         "xxxx"
-                ), color);
+                ), Color.BLUE);
 
         blocks[5][3] = new Block(
                 mkShape("x   " +
                         "x   " +
                         "x   " +
                         "x   "
-                ), color);
+                ), Color.BLUE);
 
 
         return blocks;

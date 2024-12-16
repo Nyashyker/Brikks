@@ -1,5 +1,7 @@
 package brikks.essentials;
 
+import brikks.essentials.enums.*;
+
 public class Block {
     public static byte LEN = 4;
 
@@ -38,6 +40,6 @@ public class Block {
             shape.delete(shape.length() - 2, shape.length());
         }
 
-        return String.format("Shape{%s} - color=%s", shape, this.color.get());
+        return String.format("Shape{%s} - color=%s", shape, this.color);
     }
 }
