@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="6cf89bad-6ecc-4b84-a01f-344cdc83672b" name="Brikks Mapping">
+      <data-sources db="b35803d0-595c-40ec-b4a6-159b05e73519" />
+      <scope>
+        <node kind="database" negative="1">
+          <node kind="schema" qname="@" />
+        </node>
+      </scope>
+    </mapping>
+  </component>
+</project>
