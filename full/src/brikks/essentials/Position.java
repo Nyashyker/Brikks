@@ -31,4 +31,9 @@ public class Position {
         this.x = other.getX();
         this.y = other.getY();
     }
+
+    @Override
+    public String toString() {
+        return String.format("Pos(%d, %d)", this.x, this.y);
+    }
 }
