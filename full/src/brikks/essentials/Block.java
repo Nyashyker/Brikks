@@ -25,4 +25,21 @@ public class Block {
     public Color getColor() {
         return this.color;
     }
+
+
+    @Override
+    public String toString() {
+        StringBuilder shape = new StringBuilder();
+
+        for (Position p : this.shape) {
+            shape.append(p.toString());
+            shape.append(", ");
+        }
+        if (!shape.isEmpty()) {
+            shape.delete(shape.length() - 2, shape.length());
+        }
+
+        return String.format("Shape{%s} - color=%s",
+                shape.toString(), this.color.get());
+    }
 }
