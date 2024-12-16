@@ -2,7 +2,9 @@ package be.simp;
 
 import be.kdg.integration.brikks_project.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -155,28 +157,47 @@ public class ConsoleView extends View {
     @Override
     public PlacedBlock[] askFirstChoice(BlocksTable variants, Player[] players) {
         Scanner scanner = new Scanner(System.in);
-        Block[] chosenBlocks = new Block[players.length];
+
+        // Список для хранения выбранных блоков
+        PlacedBlock[] chosenBlocks = new PlacedBlock[players.length];
+        List<Block> alreadyChosen = new ArrayList<>(); // Для отслеживания уже выбранных блоков
 
         for (int i = 0; i < players.length; i++) {
-            System.out.printf("Player %s, it's your turn to choose a block.%n", players[i].getName()); // add getName to Player!!!
+            System.out.printf("Player %s, it's your turn to choose a block.%n", players[i].getName()); // Предполагаем, что Player имеет метод getName()
 
-            //display available blocks from BlocksTable
-            Block[] availableBlocks = variants.getAvailableBlocks(); // add this method to Blocks!!!
-            for (int j = 0; j < availableBlocks.length; j++) {
-                System.out.printf("%d: Block of color %s with shape: %s%n",
+            // Получить доступные блоки с исключением уже выбранных
+            Block[] availableBlocks = variants.getAvailableBlocks(); // Получить полный список блоков
+            List<Block> filteredBlocks = new ArrayList<>();
+
+            for (Block block : availableBlocks) {
+                if (!alreadyChosen.contains(block)) {
+                    filteredBlocks.add(block);
+                }
+            }
+
+            // Если доступных блоков нет
+            if (filteredBlocks.isEmpty()) {
+                System.out.println("No blocks available for selection.");
+                continue;
+            }
+
+            // Показать доступные блоки с визуальной формой
+            System.out.println("Available blocks:");
+            for (int j = 0; j < filteredBlocks.size(); j++) {
+                System.out.printf("%d: Block of color %s\nShape:\n%s\n",
                         j + 1,
-                        availableBlocks[j].getColor(),
-                        formatShape(availableBlocks[j].getBlock())
+                        filteredBlocks.get(j).getColor(),
+                        formatShape(filteredBlocks.get(j).getBlock()) // Используем вашу функцию formatShape
                 );
             }
 
-            //ask the player to make a choice
+            // Запрос выбора у игрока
             int choice = -1;
-            while (choice < 1 || choice > availableBlocks.length) {
+            while (choice < 1 || choice > filteredBlocks.size()) {
                 System.out.print("Enter the number of your choice: ");
                 try {
                     choice = Integer.parseInt(scanner.nextLine());
-                    if (choice < 1 || choice > availableBlocks.length) {
+                    if (choice < 1 || choice > filteredBlocks.size()) {
                         System.out.println("Invalid choice. Please select a valid block number.");
                     }
                 } catch (NumberFormatException e) {
@@ -184,18 +205,56 @@ public class ConsoleView extends View {
                 }
             }
 
-            // Store the chosen block
-            chosenBlocks[i] = availableBlocks[choice - 1];
+            // Добавить выбранный блок в список
+            Block chosenBlock = filteredBlocks.get(choice - 1);
+            alreadyChosen.add(chosenBlock); // Добавляем в уже выбранные блоки
+            chosenBlocks[i] = new PlacedBlock(chosenBlock); // Оборачиваем в PlacedBlock
         }
 
-        return (PlacedBlock[]) chosenBlocks;
+        return chosenBlocks;
     }
 
 
-    private String formatShape(Position[] positions) {
-        StringBuilder sb = new StringBuilder();
+
+
+    private String formatShape(Position[] positions)  {
+        // Визначити межі форми
+        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+        int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+
         for (Position position : positions) {
-            sb.append(String.format("(%d, %d) ", position.getX(), position.getY()));
+            minX = Math.min(minX, position.getX());
+            maxX = Math.max(maxX, position.getX());
+            minY = Math.min(minY, position.getY());
+            maxY = Math.max(maxY, position.getY());
+        }
+
+        // Визначити розміри матриці
+        int rows = maxX - minX + 1;
+        int cols = maxY - minY + 1;
+
+        // Створити матрицю форми
+        char[][] shapeMatrix = new char[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                shapeMatrix[i][j] = ' '; // Заповнити пробілами
+            }
+        }
+
+        // Заповнити блоки 'x' на основі позицій
+        for (Position position : positions) {
+            int adjustedX = position.getX() - minX; // Нормалізувати до матриці
+            int adjustedY = position.getY() - minY;
+            shapeMatrix[adjustedX][adjustedY] = 'x';
+        }
+
+        // Побудувати візуальне представлення форми
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                sb.append(shapeMatrix[i][j]);
+            }
+            sb.append("\n");
         }
         return sb.toString().trim();
     }
@@ -204,47 +263,66 @@ public class ConsoleView extends View {
 
 
     public void draw(Board board, Energy energy, Bombs bombs, BonusScore bonusScore) {
-        //fetching board dimensions (need logic from board + getters)
-        int rows = board.getRows(); //add this method to board
-        int cols = board.getCols(); //add this method to board
+        // Fetching board dimensions
+        int rows = board.getRows(); // Ensure this method exists in Board
+        int cols = board.getCols(); // Ensure this method exists in Board
 
-        //header
+        // Header
         System.out.println("+-----------------------------------------+");
         System.out.println("|                 BRIKKS                  |");
         System.out.println("+-----------------------------------------+");
 
-        System.out.println("|      ");
+        // Column headers
+        System.out.print("|      ");
         for (int col = 1; col <= cols; col++) {
-            System.out.printf("%02d", col);
+            System.out.printf("%02d ", col);
         }
-
         System.out.println("     |");
-        System.out.println("|     +--".repeat(cols) + "+     |");
+        System.out.println("|     " + "+--".repeat(cols) + "+     |");
 
-
-        //board rows
+        // Board rows
         for (int row = 0; row < rows; row++) {
-            System.out.printf("| %02d  ", row);
+            System.out.printf("| %02d  ", row + 1); // Row numbers start at 1
             for (int col = 0; col < cols; col++) {
-                String cellContent = board.getCell(row, col); //change when board is finished with logic
+                String cellContent = board.getCell(row, col); // Adjust when board logic is implemented
                 System.out.printf("|%2s", cellContent != null ? cellContent : " ");
             }
-            System.out.println("|  x" + (4 - row) + " |");
-            System.out.println("|     +--".repeat(cols) + "+     |");
+            System.out.println(" |");
+            System.out.println("|     " + "+--".repeat(cols) + "+     |");
         }
 
-
-        //footer (need logic of energy + getters) !!!!!!!
-        System.out.println("+-----------------------------------------+");
-        System.out.println("|Victory Points: " + bonusScore.getVictoryPoints() + "               |");
-        System.out.println("+-----------------------------------------+");
-        System.out.println("|  Extra Points: " + bonusScore.getExtraPoints() + "                |");
-        System.out.println("|  Energy: " + energy.getPoints() + "                              |");
-        System.out.println("|  Bombs: " + Arrays.toString(bombs.getPoints()) + "                              |");
+        // Footer
         System.out.println("+-----------------------------------------+");
 
+        // Bonus points and scaling rate
+        int scale = bonusScore.getScale();
+        int currentScalingRate = bonusScore.getScalingRate(scale);
+        String nextScalingRate = (scale < BonusScore.MAXIMUM_SCALE)
+                ? String.valueOf(bonusScore.getScalingRate(scale + 1))
+                : "MAX"; // Ensure no overflow beyond maximum scale
 
+        System.out.printf("|  Victory Points: %d (%d / %s)%n",
+                bonusScore.getVictoryPoints() /* <--- захарджено в UsedBoard */,
+                currentScalingRate,
+                nextScalingRate);
+        System.out.println("+-----------------------------------------+");
+
+        // Extra Points, Energy, and Bombs
+        System.out.printf("|  Extra Points: %02d%s|%n",
+                bonusScore.getExtraPoints(),
+                " ".repeat(37 - String.format("%02d", bonusScore.getExtraPoints()).length()));
+
+        System.out.printf("|  Energy: %02d%s|%n",
+                energy.Available(),
+                " ".repeat(37 - String.format("%02d", energy.getAvailable()).length()));
+
+        System.out.printf("|  Bombs: %s%s|%n",
+                Arrays.toString(bombs.getPoints()),
+                " ".repeat(37 - Arrays.toString(bombs.getPoints()).length()));
+        System.out.println("+-----------------------------------------+");
     }
+
+
 
 
 
