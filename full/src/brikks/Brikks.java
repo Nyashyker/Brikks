@@ -15,7 +15,6 @@ public class Brikks {
     private final Save save;
     private final View view;
 
-    private BoardPointCalculation boardCalculator;
     private List<Player> players;
 
     public Brikks(View view, Save save, Block[][] blocksTable) {
@@ -62,5 +61,11 @@ public class Brikks {
 
     public void load() {
         // TODO: The load functional
+    }
+
+    // TODO: implement rest of the Brikks
+
+    private void runDuel() {
+        // TODO: vyrisxuvaty, koly peremoga
     }
 }

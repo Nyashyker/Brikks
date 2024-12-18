@@ -9,6 +9,5 @@ public record LoadedGame(
         Player[] players,
         MatrixDice matrixDie,
         Level difficulty,
-        Mode mode,
-        BoardPointCalculation boardCalculator
+        Mode mode
 ) {}

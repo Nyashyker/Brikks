@@ -1,13 +1,13 @@
 package brikks.essentials;
 
 public class Position {
-    private byte x;
-    private byte y;
+    protected byte x;
+    protected byte y;
 
 
     public Position(final byte x, final byte y) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
     }
 
 
@@ -28,9 +28,15 @@ public class Position {
     }
 
     public void set(final Position other) {
-        this.x = other.getX();
-        this.y = other.getY();
+        this.setX(other.getX());
+        this.setY(other.getY());
     }
+
+
+    public Position add(final Position other) {
+        return new Position((byte) (this.getX() + other.getX()), (byte) (this.getY() + other.getY()));
+    }
+
 
     @Override
     public String toString() {

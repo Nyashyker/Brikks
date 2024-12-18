@@ -1,6 +1,6 @@
 package brikks;
 
-import brikks.essentials.Block;
+import brikks.essentials.*;
 
 public class BlocksTable {
     public final static byte HEIGHT = 6;
@@ -19,8 +19,8 @@ public class BlocksTable {
         this.blocks = table;
     }
 
-    public Block getBlock(final byte column, final byte row) {
-        return this.blocks[row][column];
+    public Block getBlock(final Position choice) {
+        return this.blocks[choice.getY()][choice.getX()];
     }
 
     public Block[] getRowOfBlocks(final byte row) {

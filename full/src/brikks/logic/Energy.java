@@ -10,11 +10,11 @@ public class Energy {
     private final BonusScore bonusScore;
 
 
-    public Energy(BonusScore bonusScore, byte playerCount) {
+    public Energy(final BonusScore bonusScore, final byte playerCount) {
         this(bonusScore, Energy.generateBonuses(), Energy.calculateStartingPosition(playerCount), Energy.calculateStartingAvailable(playerCount));
     }
 
-    public Energy(BonusScore bonusScore, boolean[] bonuses, byte position, byte available) {
+    public Energy(final BonusScore bonusScore, final boolean[] bonuses, final byte position, final byte available) {
         this.bonuses = bonuses;
         this.position = position;
         this.available = available;
@@ -35,7 +35,7 @@ public class Energy {
         return bonuses;
     }
 
-    private static byte calculateStartingAvailable(byte playerCount) {
+    private static byte calculateStartingAvailable(final byte playerCount) {
         if (playerCount <= 0) {
             throw new IllegalArgumentException("Player count must be greater than zero");
         }
@@ -47,7 +47,7 @@ public class Energy {
         };*/
     }
 
-    private static byte calculateStartingPosition(byte playerCount) {
+    private static byte calculateStartingPosition(final byte playerCount) {
         if (playerCount <= 0) {
             throw new IllegalArgumentException("Player count must be greater than zero");
         }
@@ -75,17 +75,22 @@ public class Energy {
     }
 
 
-    public boolean canSpend(byte amount) {
+    public boolean canSpend(final byte amount) {
         return this.available >= amount;
     }
 
-    public void spend(byte amount) {
-        this.available -= amount;
+    public void spend(final byte amount) {
+        if (canSpend(amount)) {
+            this.available -= amount;
+        } else {
+            throw new IllegalArgumentException("Do not have enough energy to spend");
+        }
     }
 
     public byte grow(byte amount) {
         if (amount < 0) {
-            throw new IllegalArgumentException("You can not grow negatively");
+            this.shorten((byte) -amount);
+            return 0;
         }
 
         if (this.position == Energy.MAXIMUM - 1) {
@@ -105,11 +110,28 @@ public class Energy {
         }
 
         this.position += amount;
-        this.bonusScore.grow(grow);
+        this.bonusScore.growByEnergy(grow);
         return grow;
     }
 
     public short calculateFinal() {
         return (short) (this.available / 2);
+    }
+
+
+    private void shorten(final byte amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("The amount has to be greater than zero");
+        }
+
+        this.position -= amount;
+        if (this.position < 0) {
+            this.position = 0;
+        }
+
+        this.available -= amount;
+        if (this.available < 0) {
+            this.available = 0;
+        }
     }
 }

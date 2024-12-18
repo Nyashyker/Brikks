@@ -21,18 +21,17 @@ public class PlacedBlock extends Block {
 
         block[0] = this.position;
         for (int i = 1; i < Block.LEN; i++) {
-            block[i] = this.shape[i];
+            block[i] = this.shape[i - 1].add(this.position);
         }
 
         return block;
     }
 
-    public Position setPlace() {
+    public Position getPlace() {
         return this.position;
     }
 
     public void setPlace(final Position position) {
-        this.position.set(position);
         this.position.set(position);
     }
 

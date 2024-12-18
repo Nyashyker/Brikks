@@ -1,11 +1,11 @@
 package brikks.logic.board;
 
-import brikks.essentials.PlacedBlock;
-import brikks.essentials.enums.Color;
-import brikks.essentials.enums.Level;
+import brikks.essentials.*;
+import brikks.essentials.enums.*;
 
 public class BonusEnergyBoardD4 extends BonusEnergyBoard {
-    public static final Level difficulty = Level.FOUR;
+    private static final Level difficulty = Level.FOUR;
+
 
     public BonusEnergyBoardD4(final byte width, final byte height) {
         super(width, height);
@@ -15,9 +15,30 @@ public class BonusEnergyBoardD4 extends BonusEnergyBoard {
         super(bonusEnergy);
     }
 
+
+    @Override
+    public Level getDifficulty() {
+        return difficulty;
+    }
+
+
     @Override
     public byte place(PlacedBlock block) {
-        // TODO: implement
-        return 0;
+        byte bonusPoints = 0;
+
+        for (Position shapePos : block.getBlock()) {
+            this.validatePosition(shapePos);
+
+            final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getY()];
+            if (point != null) {
+                if (point == block.getColor()) {
+                    bonusPoints += 2;
+                } else {
+                    bonusPoints -= 2;
+                }
+            }
+        }
+
+        return bonusPoints;
     }
 }

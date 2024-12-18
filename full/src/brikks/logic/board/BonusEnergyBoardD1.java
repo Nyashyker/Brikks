@@ -4,7 +4,8 @@ import brikks.essentials.*;
 import brikks.essentials.enums.*;
 
 public class BonusEnergyBoardD1 extends BonusEnergyBoard {
-    public static final Level difficulty = Level.ONE;
+    private static final Level difficulty = Level.ONE;
+
 
     public BonusEnergyBoardD1(final byte width, final byte height) {
         super(width, height);
@@ -14,9 +15,30 @@ public class BonusEnergyBoardD1 extends BonusEnergyBoard {
         super(bonusEnergy);
     }
 
+
+    @Override
+    public Level getDifficulty() {
+        return difficulty;
+    }
+
+
     @Override
     public byte place(PlacedBlock block) {
-        // TODO: implement
-        return 0;
+        byte bonusPoints = 0;
+
+        for (Position shapePos : block.getBlock()) {
+            this.validatePosition(shapePos);
+
+            final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getY()];
+            if (point != null) {
+                if (point == block.getColor()) {
+                    bonusPoints += 2;
+                } else {
+                    bonusPoints += 1;
+                }
+            }
+        }
+
+        return bonusPoints;
     }
 }

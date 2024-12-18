@@ -5,10 +5,14 @@ import brikks.essentials.*;
 import brikks.view.enums.*;
 
 public interface PlayerAsk {
-    public boolean askReroll();
-    public PlaceORSpecial askPlaceORSpecial();
-    public Position askPlasingSpot(Block block, Position[] variants);
-    public Special askSpecial();
-    public Block askRotation(Block[] variants);
-    public Block askChoice(BlocksTable variants);
+    boolean askReroll();
+    boolean askUseSpecial();
+    Position askPlacingSpot(Block block, Position[] variants);
+    Special askSpecial();
+    byte askRotation(Block[] variants);
+    Position askChoice(BlocksTable variants);
+
+    void failBomb();
+    void failRotation();
+    void failChoice();
 }

@@ -1,7 +1,9 @@
 package brikks.logic.board;
 
 import brikks.essentials.*;
-import brikks.essentials.enums.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class UsedBoard {
     public final boolean[][] used;
@@ -26,62 +28,75 @@ public class UsedBoard {
         this.used = used;
     }
 
-    public UsedBoard(boolean[][] used) {
-        if (used.length == 0 || used[0].length == 0) {
-            throw new IllegalArgumentException("used cannot be empty");
+    public UsedBoard(final byte width, final byte height, final PlacedBlock[] placed) {
+        this(width, height);
+
+        if (placed == null) {
+            throw new IllegalArgumentException("placed must not be null");
         }
 
-        this.used = used;
+        for (PlacedBlock block : placed) {
+            this.place(block);
+        }
     }
 
 
-    public Position[] canBePlaced(final Block block) {
-        // TODO: implement
-        return null;
+    public List<Position> canBePlaced(final Block block) {
+        List<Position> variants = new LinkedList<Position>();
+
+        for (byte x = 0; x < used[0].length; x++) {
+            Position lastValid = null;
+
+            for (byte y = (byte) (used.length - 1); y >= 0; y--) {
+                boolean guessValid = !this.used[y][x];
+
+                if (guessValid) {
+                    for (Position shape : block.getBlock()) {
+                        final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
+
+                        if (this.isPositionUnsuitable(shapePos)) {
+                            guessValid = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (guessValid) {
+                    lastValid = new Position(x, y);
+                } else {
+                    break;
+                }
+            }
+
+            if (lastValid != null) {
+                variants.add(lastValid);
+            }
+        }
+
+        return variants;
     }
 
     public void place(final PlacedBlock block) {
-        Position last = new Position((byte) 0, (byte) 0);
-        for (Position shape : block.getBlock()) {
-            last = new Position((byte) (last.getX() + shape.getX()), (byte) (last.getY() + shape.getY()));
-
-            if (this.used[last.getY()][last.getX()]) {
+        for (Position shapePos : block.getBlock()) {
+            if (this.isPositionUnsuitable(shapePos)) {
                 throw new IllegalArgumentException("Block " + block + " can not be placed");
             }
 
-            this.used[last.getY()][last.getX()] = true;
+            this.used[shapePos.getY()][shapePos.getX()] = true;
         }
     }
 
     public byte rowsFilled(final PlacedBlock block) {
         byte count = 0;
 
-        Position last = new Position((byte) 0, (byte) 0);
-        for (Position shape : block.getBlock()) {
-            last = new Position((byte) (last.getX() + shape.getX()), (byte) (last.getY() + shape.getY()));
-
-            if (!this.used[last.getY()][last.getX()]) {
+        byte lastY = -1;
+        for (Position shapePos : block.getBlock()) {
+            if (this.isPositionUnsuitable(shapePos)) {
                 throw new IllegalArgumentException("Block " + block + " is not placed");
             }
 
-            if (shape.getY() != 0 && this.isRowFilled(last.getY())) {
-                count++;
-            }
-        }
-
-        // One pretty exceptional situation
-        if (block.getBlock()[0].getY() == 0 && this.isRowFilled(block.getBlock()[0].getY())) {
-            count++;
-        }
-
-        return count;
-    }
-
-    public byte rowsAlmostFilled(final byte exactTolerance) {
-        byte count = 0;
-
-        for (byte y = 0; y < this.used.length; y++) {
-            if (this.isRowFilled(y, exactTolerance)) {
+            if (shapePos.getY() != lastY && this.isRowFilled(shapePos.getY())) {
+                lastY = shapePos.getY();
                 count++;
             }
         }
@@ -89,20 +104,32 @@ public class UsedBoard {
         return count;
     }
 
+    public byte countRowsGaps(final byte y) {
+        byte gaps = 0;
 
-    // TODO: validate placement
-
-    private boolean isRowFilled(final byte y, byte exactTolerance) {
         for (byte x = 0; x < this.used[y].length; x++) {
             if (!this.used[y][x]) {
-                exactTolerance--;
+                gaps++;
             }
         }
 
-        return exactTolerance == 0;
+        return gaps;
     }
 
+
     private boolean isRowFilled(final byte y) {
-        return this.isRowFilled(y, (byte) 0);
+        for (byte x = 0; x < this.used[y].length; x++) {
+            if (!this.used[y][x]) { return false; }
+        }
+
+        return true;
+    }
+
+    private boolean isPositionUnsuitable(final Position position) {
+        if (position == null) {
+            throw new IllegalArgumentException("Block shape must not be null");
+        }
+
+        return position.getY() < 0 || position.getY() >= this.used.length || position.getX() < 0 || position.getX() >= this.used[0].length || this.used[position.getY()][position.getX()];
     }
 }

@@ -7,8 +7,6 @@ import java.util.List;
 
 
 public class Main {
-    private static final byte BLOCK_LEN = 4;
-
     public static void main(String[] args) {
 /*
         Block[][] table = generateBlocksTable();
@@ -20,9 +18,15 @@ public class Main {
             System.out.println("--------");
         }
 */
+        Position[] p = new Position[0];
+        System.out.println(p.length + " len");
+        for (Position i : p) {
+            System.out.println(i);
+        }
+        System.out.println("All works!");
     }
 
-    private static Block[][] generateBlocksTable() {
+    public static Block[][] generateBlocksTable() {
         Block[][] blocks = new Block[BlocksTable.HEIGHT][BlocksTable.WIDTH];
 
 
@@ -204,32 +208,47 @@ public class Main {
         return blocks;
     }
 
-    private static Position[] mkShape(final String shape) {
-        final char color = 'x';
-        Position last = null;
 
-        for (byte x = 0; x < BLOCK_LEN; x++) {
-            if (shape.charAt((BLOCK_LEN - 1) * BLOCK_LEN + x) == color) {
-                last = new Position(x, (byte) (BLOCK_LEN - 1));
-                break;
-            }
-        }
-        // Error
-        if (last == null) {
-            throw new IllegalArgumentException("Shape " + shape + " not found\nUse " + color + " to describe the shape");
-        }
+    public static Position[] mkShape(final String shape) {
+        return mkShape(shape, 'x', (byte) 4);
+    }
+
+    public static Position[] mkShape(final String shape, final char color, final byte block_length) {
+        final Position start = getShapeStart(shape, color, block_length);
 
         final List<Position> block = new LinkedList<Position>();
-        for (byte y = BLOCK_LEN - 1; y >= 0; y--) {
-            for (byte x = 0; x < BLOCK_LEN; x++) {
-                if (shape.charAt(y * BLOCK_LEN + x) == color) {
-                    block.add(new Position((byte) (x - last.getX()), (byte) (y - last.getY())));
-                    last = new Position(x, y);
+        for (byte y = (byte) (block_length - 1); y >= 0; y--) {
+            for (byte x = 0; x < block_length; x++) {
+                if (shape.charAt(y * block_length + x) == color) {
+                    block.add(new Position((byte) (x - start.getX()), (byte) (y - start.getY())));
                 }
             }
         }
         block.removeFirst();
 
         return block.toArray(Position[]::new);
+    }
+
+    private static Position getShapeStart(String shape, char color, final byte block_length) {
+        if (shape.length() % block_length != 0) {
+            throw new IllegalArgumentException("Shape must be exact square with side length of block_length");
+        }
+
+        Position start = null;
+
+        for (byte y = (byte) (block_length - 1); y >= 0; y--) {
+            for (byte x = 0; x < block_length; x++) {
+                if (shape.charAt(y * block_length + x) == color) {
+                    start = new Position(x, (byte) (block_length - 1));
+                    break;
+                }
+            }
+        }
+
+        if (start == null) {
+            throw new IllegalArgumentException("Shape " + shape + " not found\nUse " + color + " to describe the shape");
+        }
+
+        return start;
     }
 }

@@ -10,7 +10,7 @@ public class BonusScore {
         this(BonusScore.generateScalingRate(), (byte) 0);
     }
 
-    public BonusScore(byte[] scalingRate, byte scale) {
+    public BonusScore(final byte[] scalingRate, final byte scale) {
         if (scalingRate == null) {
             throw new NullPointerException("Scaling rate cannot be null");
         }
@@ -26,7 +26,7 @@ public class BonusScore {
     }
 
     private static byte[] generateScalingRate() {
-        byte[] bonusScore = new byte[] {0, 1, 3, 6, 10, 15, 21, 28, 36, 44, 51, 58, 64, 70, 75};
+        byte[] bonusScore = new byte[]{0, 1, 3, 6, 10, 15, 21, 28, 36, 44, 51, 58, 64, 70, 75};
 
         if (bonusScore.length != BonusScore.MAXIMUM_SCALE) {
             throw new IllegalArgumentException("Generated scaling rate has to be" + BonusScore.MAXIMUM_SCALE + " long");
@@ -45,7 +45,30 @@ public class BonusScore {
     }
 
 
-    public void grow(byte amount) {
+    public void growByEnergy(final byte amount) {
+        this.grow(amount);
+    }
+
+    public byte growByBoard(final byte rowsFilled) {
+        final byte amount = switch (rowsFilled) {
+            case 0, 1 -> 0;
+//            case 2 -> 1;
+//            case 3 -> 2;
+            case 4 -> 4;
+            default -> (byte) (rowsFilled - 1);
+        };
+
+        this.grow(amount);
+
+        return amount;
+    }
+
+    public short calculateFinal() {
+        return this.scallingRate[this.scale];
+    }
+
+
+    private void grow(byte amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("You can not grow negatively");
         }
@@ -58,9 +81,5 @@ public class BonusScore {
         }
 
         this.scale += amount;
-    }
-
-    public short calculateFinal() {
-        return this.scallingRate[this.scale];
     }
 }
