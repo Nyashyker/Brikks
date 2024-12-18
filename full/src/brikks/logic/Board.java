@@ -89,6 +89,14 @@ public class Board {
         return this.bonusEnergy.bonusEnergy;
     }
 
+    public byte getRowMultiplier(final byte y) {
+        return switch (y) {
+            case 0 -> 4;
+            case 1, 2, 3, 4, 5 -> 2;
+            default -> 1;
+        };
+    }
+
 
     public Position[] canBePlaced() {
         List<Position> variants = this.used.canBePlaced(Board.duelBlock);
@@ -152,13 +160,7 @@ public class Board {
             default -> 0;
         };
 
-        final short multiplier = switch (y) {
-            case 0 -> 4;
-            case 1, 2, 3, 4, 5 -> 2;
-            default -> 1;
-        };
-
-        return (short) (points * multiplier);
+        return (short) (points * this.getRowMultiplier(y));
     }
 
     public short calculateFinal() {

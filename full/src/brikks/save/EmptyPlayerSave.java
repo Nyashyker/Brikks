@@ -22,5 +22,5 @@ public class EmptyPlayerSave extends PlayerSave {
     @Override
     public void save(final Player player) {}
     @Override
-    public void save(final byte row, final byte column) {}
+    public void save(final Position matrixDie) {}
 }

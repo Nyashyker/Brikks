@@ -10,6 +10,10 @@ public class Position {
         this.setY(y);
     }
 
+    public Position(final Position other) {
+        this(other.x, other.y);
+    }
+
 
     public byte getX() {
         return this.x;

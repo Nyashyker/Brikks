@@ -44,6 +44,17 @@ public class BonusScore {
         return this.scale;
     }
 
+    public byte get() {
+        return this.scallingRate[this.scale];
+    }
+
+    public byte getNext() {
+        if (this.scale == BonusScore.MAXIMUM_SCALE - 1) {
+            return -1;
+        }
+
+        return this.scallingRate[this.scale + 1];
+    }
 
     public void growByEnergy(final byte amount) {
         this.grow(amount);
@@ -64,7 +75,7 @@ public class BonusScore {
     }
 
     public short calculateFinal() {
-        return this.scallingRate[this.scale];
+        return this.get();
     }
 
 

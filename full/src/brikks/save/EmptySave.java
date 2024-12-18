@@ -8,6 +8,8 @@ public class EmptySave extends Save {
     public EmptySave() {}
 
     @Override
+    public boolean playerExists(String name) { return false; }
+    @Override
     public PlayerSave createPlayerSave(final String name) { return new EmptyPlayerSave(); }
     @Override
     public SavedGame[] savedGames() { return new SavedGame[0]; }
@@ -16,7 +18,7 @@ public class EmptySave extends Save {
     @Override
     public PlayerLiderboard[] liderboard() { return null; }
     @Override
-    public String[] existingPlayers() { return new String[0]; }
+    public Rank[] getRanks() { return new Rank[0]; }
     @Override
     public PlayerSave getPlayerSave(final String name) { return null; }
     @Override

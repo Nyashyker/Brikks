@@ -74,6 +74,24 @@ public class Energy {
         return this.available;
     }
 
+    public byte getDistanceToNextBonus() {
+        if (this.position == Energy.MAXIMUM - 1) {
+            return -1;
+        }
+
+        byte distance = 0;
+
+        for (byte i = (byte) (this.position + 1); i < Energy.MAXIMUM; i++) {
+            if (this.bonuses[i]) {
+                break;
+            } else {
+                distance++;
+            }
+        }
+
+        return distance;
+    }
+
 
     public boolean canSpend(final byte amount) {
         return this.available >= amount;

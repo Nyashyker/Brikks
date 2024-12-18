@@ -72,6 +72,14 @@ public class Player {
     }
 
 
+    public void stop() {
+        this.plays = false;
+    }
+
+    public boolean isPlays() {
+        return this.plays;
+    }
+
     public PlayerSave getSaver() {
         return this.saver;
     }
@@ -93,63 +101,91 @@ public class Player {
     }
 
 
-    public boolean canContinue(final BlocksTable blocks, final Position dieRoll) {
-        // TODO: zroby canContinue()
-        return this.plays;
-    }
 
-    // TODO: a tocxno treba?
-    public byte turn(final PlayerAsk user, final BlocksTable blocks, final MatrixDice matrixDie) {
-        if (user.askReroll()) {
+    public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final MatrixDice matrixDie) {
+        if (user.askReroll(blocks, matrixDie)) {
             matrixDie.roll();
         }
 
         return this.turn(user, blocks, matrixDie.get());
     }
 
-    public byte turn(final PlayerAsk user, final BlocksTable blocks, final Position roll) {
-        while (user.askUseSpecial()) {
-            switch (user.askSpecial()) {
+    public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final Position roll) {
+        boolean canGiveUp;
+        while (true) {
+            final Block block = blocks.getBlock(roll);
+            final Position[] variants = this.board.canBePlaced(block);
+            canGiveUp = variants.length == 0;
+
+            switch (user.askDoing(blocks, roll)) {
                 case BOMB -> {
                     if (this.bombs.canUse()) {
                         this.bombs.use();
-                        return 0;
+                        user.successBomb();
+                        return new TurnsResults(false, (byte) 0);
                     } else {
-                        // I am allowing multiple failing
                         user.failBomb();
                     }
                 }
 
                 case ROTATE -> {
                     final byte rotation = user.askRotation(blocks.getRowOfBlocks(roll.getY()));
-                    // I am allowing to rotate to the same state for no cost
-                    if (this.energy.canSpend((byte) Math.abs(roll.getX() - rotation))) {
-                        this.energy.spend((byte) Math.abs(roll.getX() - rotation));
+                    final byte energyCost = (byte) Math.abs(roll.getX() - rotation);
+
+                    if (energyCost != 0 && this.energy.canSpend(energyCost)) {
+                        this.energy.spend(energyCost);
                         roll.setX(rotation);
+
+                        user.successRotation(energyCost);
                     } else {
-                        // I am allowing multiple failing
                         user.failRotation();
                     }
                 }
 
                 case CHOICE -> {
-                    if (this.energy.canSpend((byte) 5)) {
-                        this.energy.spend((byte) 5);
+                    final byte energyCost = 5;
+                    if (this.energy.canSpend(energyCost)) {
+                        this.energy.spend(energyCost);
                         roll.set(user.askChoice(blocks));
+
+                        user.successChoice(energyCost);
                     } else {
-                        // I am allowing multiple failing
                         user.failChoice();
                     }
                 }
 
-                //  case BACK -> /*nothing*/
+                case PLACE -> {
+                    if (!canGiveUp) {
+                        final Position choice = user.askPlacingSpot(block, variants);
+                        final PlacedBlock placed = new PlacedBlock(block, choice);
+
+                        user.successPlace(placed);
+                        return new TurnsResults(false, this.board.place(placed));
+                    } else {
+                        user.failPlace();
+                    }
+                }
+
+                case GIVE_UP -> {
+                    if (canGiveUp) {
+                        this.plays = false;
+                        user.fail();
+                        return new TurnsResults(false, (byte) 0);
+                    } else {
+                        user.failGiveUp();
+                    }
+                }
+
+                case SAVE -> {
+                    this.save();
+                    this.saver.save(roll);
+                }
+
+                case EXIT -> {
+                    return new TurnsResults(true, (byte) 0);
+                }
             }
         }
-
-        final Block block = blocks.getBlock(roll);
-        final Position choice = user.askPlacingSpot(block, this.board.canBePlaced(block));
-
-        return this.board.place(new PlacedBlock(block, choice));
     }
 
     public boolean duelTurn(final DuelAsk user, final Board opponentsBoard, byte amount) {

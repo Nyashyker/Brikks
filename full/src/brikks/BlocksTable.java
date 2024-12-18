@@ -12,8 +12,8 @@ public class BlocksTable {
         if (table == null) {
             throw new NullPointerException("table is null");
         }
-        if (table.length == 0 || table[0].length == 0) {
-            throw new IllegalArgumentException("table is empty");
+        if (table.length != BlocksTable.HEIGHT || table[0].length != BlocksTable.WIDTH) {
+            throw new IllegalArgumentException("table has to be " + BlocksTable.WIDTH + " x " + BlocksTable.HEIGHT);
         }
 
         this.blocks = table;

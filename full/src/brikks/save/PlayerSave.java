@@ -12,5 +12,5 @@ public abstract class PlayerSave {
     abstract public void save(final short finalScore);
     abstract public void save(final MatrixDice matrixDie);
     abstract public void save(final Player player);
-    abstract public void save(final byte row, final byte column);
+    abstract public void save(final Position matrixDie);
 }
