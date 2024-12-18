@@ -10,8 +10,6 @@ public class EmptySave extends Save {
     @Override
     public boolean playerExists(String name) { return false; }
     @Override
-    public PlayerSave createPlayerSave(final String name) { return new EmptyPlayerSave(); }
-    @Override
     public SavedGame[] savedGames() { return new SavedGame[0]; }
     @Override
     public LoadedGame loadGame(final int id) { return null; }
