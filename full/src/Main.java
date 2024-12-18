@@ -1,6 +1,8 @@
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.*;
+import brikks.save.EmptySave;
+import brikks.view.ConsoleView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,22 +10,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-/*
-        Block[][] table = generateBlocksTable();
-        for (byte y = 0; y < table.length; y++) {
-            for (byte x = 0; x < table[y].length; x++) {
-                System.out.println(table[y][x]);
-                System.out.println();
-            }
-            System.out.println("--------");
-        }
-*/
-        Position[] p = new Position[0];
-        System.out.println(p.length + " len");
-        for (Position i : p) {
-            System.out.println(i);
-        }
-        System.out.println("All works!");
+        final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
     }
 
     public static Block[][] generateBlocksTable() {

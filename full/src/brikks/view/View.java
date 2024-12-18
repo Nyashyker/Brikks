@@ -3,7 +3,6 @@ package brikks.view;
 import brikks.*;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
-import brikks.logic.*;
 import brikks.save.*;
 import brikks.view.enums.*;
 
@@ -17,7 +16,6 @@ public abstract class View implements PlayerAsk, DuelAsk {
     abstract public Mode askMode();
     abstract public byte askPlayerCount(final byte maxPlayers);
     abstract public String askName();
-    abstract public boolean askToSave();
     abstract public PlacedBlock[] sakFirstChoise(BlocksTable variants, Player[] players);
 
 

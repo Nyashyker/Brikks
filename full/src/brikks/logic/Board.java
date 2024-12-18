@@ -35,7 +35,7 @@ public class Board {
             throw new IllegalArgumentException("Difficulty cannot be null");
         }
 
-        this.placed = new ArrayList<PlacedBlock>();
+        this.placed = new ArrayList<>();
 
         this.bonusScore = bonusScore;
         this.energy = energy;
@@ -71,7 +71,7 @@ public class Board {
         }
 
 
-        this.placed = new ArrayList<PlacedBlock>(Arrays.asList(placed));
+        this.placed = new ArrayList<>(Arrays.asList(placed));
 
         this.bonusScore = bonusScore;
         this.energy = energy;
@@ -102,7 +102,7 @@ public class Board {
         List<Position> variants = this.used.canBePlaced(Board.duelBlock);
 
         // TODO: mozxe, zberigaty okremo?
-        List<Position> placedMiniblock = new ArrayList<Position>();
+        List<Position> placedMiniblock = new ArrayList<>();
         for (PlacedBlock placed : this.placed) {
             if (placed.getColor() == Color.DUELER) {
                 placedMiniblock.add(placed.getPlace());

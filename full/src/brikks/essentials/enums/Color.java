@@ -1,5 +1,5 @@
 package brikks.essentials.enums;
 
 public enum Color {
-    WHITE, YELLOW, GREEN, RED, BLUE, BLACK, DUELER;
+    WHITE, YELLOW, GREEN, RED, BLUE, BLACK, DUELER
 }

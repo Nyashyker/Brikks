@@ -5,5 +5,5 @@ import brikks.essentials.*;
 import brikks.view.enums.*;
 
 public interface DuelAsk {
-    public Position askPlacingMiniblock(Board opponentsBoard, Position[] variants);
+    Position askPlacingMiniblock(Board opponentsBoard, Position[] variants);
 }
