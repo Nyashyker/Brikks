@@ -19,8 +19,19 @@ public class Player {
 
 
     public Player(final PlayerSave saver, final String name, final byte playerCount, final Level difficulty) {
-        // TODO: try to make this call work
-        //this(saver, name, true, new Board())
+        if (saver == null) {
+            throw new IllegalArgumentException("Saver cannot be null");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        if (playerCount <= 0) {
+            throw new IllegalArgumentException("Player count must be greater than 0");
+        }
+        if (difficulty == null) {
+            throw new IllegalArgumentException("Difficulty cannot be null");
+        }
+
         this.saver = saver;
         this.name = name;
         this.plays = true;
@@ -31,6 +42,26 @@ public class Player {
     }
 
     public Player(final PlayerSave saver, final String name, final boolean plays, final Board board, final Energy energy, final Bombs bombs, BonusScore bonusScore) {
+        if (saver == null) {
+            throw new IllegalArgumentException("Saver cannot be null");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        if (board == null) {
+            throw new IllegalArgumentException("Board cannot be null");
+        }
+        if (energy == null) {
+            throw new IllegalArgumentException("Energy cannot be null");
+        }
+        if (bombs == null) {
+            throw new IllegalArgumentException("Bombs cannot be null");
+        }
+        if (bonusScore == null) {
+            throw new IllegalArgumentException("BonusScore cannot be null");
+        }
+
+
         this.saver = saver;
         this.name = name;
         this.plays = plays;
@@ -62,10 +93,9 @@ public class Player {
     }
 
 
-    // TODO: implement Player
     public boolean canContinue(final BlocksTable blocks, final Position dieRoll) {
         // TODO: zroby canContinue()
-        return true;
+        return this.plays;
     }
 
     // TODO: a tocxno treba?
