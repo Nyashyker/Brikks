@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="final for each for-each">
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/View.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/View.java" afterDir="false" />
-    </list>
+    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="IthinkIdoneALLthelogic" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -152,7 +148,7 @@
       <workItem from="1734361836487" duration="4972000" />
       <workItem from="1734433679995" duration="36868000" />
       <workItem from="1734513131710" duration="38127000" />
-      <workItem from="1734617702858" duration="3778000" />
+      <workItem from="1734617702858" duration="5468000" />
     </task>
     <task id="LOCAL-00001" summary="porject-struct">
       <option name="closed" value="true" />
@@ -330,7 +326,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734628274125</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="IthinkIdoneALLthelogic">
+      <option name="closed" value="true" />
+      <created>1734630968334</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1734630968334</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -370,6 +374,7 @@
     <MESSAGE value="completed Brikks.run" />
     <MESSAGE value="synk-SonsoleView" />
     <MESSAGE value="final for each for-each" />
-    <option name="LAST_COMMIT_MESSAGE" value="final for each for-each" />
+    <MESSAGE value="IthinkIdoneALLthelogic" />
+    <option name="LAST_COMMIT_MESSAGE" value="IthinkIdoneALLthelogic" />
   </component>
 </project>
