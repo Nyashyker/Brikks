@@ -4,7 +4,8 @@ import brikks.*;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.logic.Board;
-import brikks.save.*;
+import brikks.save.container.PlayerLiderboard;
+import brikks.save.container.Rank;
 import brikks.view.enums.*;
 
 import java.util.Scanner;
@@ -25,13 +26,13 @@ public class ConsoleView extends View {
     @Override
     public Level askDifficulty() { return Level.TWO; }
     @Override
-    public Mode askMode() { return Mode.SOLO; }
+    public boolean askDuel() { return false; }
     @Override
     public byte askPlayerCount(final byte maxPlayers) { return maxPlayers; }
     @Override
     public String askName() { return "NONE"; }
     @Override
-    public PlacedBlock[] sakFirstChoise(BlocksTable variants, Player[] players) { return new PlacedBlock[0]; }
+    public Position askFirstChoice(BlocksTable variants) { return new Position((byte) 0, (byte) 0); }
     @Override
     public void draw(Player player) {}
     @Override

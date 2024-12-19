@@ -41,6 +41,9 @@ public class Position {
         return new Position((byte) (this.getX() + other.getX()), (byte) (this.getY() + other.getY()));
     }
 
+    public boolean equals(final Position other) {
+        return this.getX() == other.getX() && this.getY() == other.getY();
+    }
 
     @Override
     public String toString() {

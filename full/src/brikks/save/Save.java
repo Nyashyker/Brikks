@@ -1,8 +1,11 @@
 package brikks.save;
 
 import brikks.Player;
-import brikks.essentials.enums.Level;
-import brikks.essentials.enums.Mode;
+import brikks.essentials.enums.*;
+import brikks.save.container.LoadedGame;
+import brikks.save.container.PlayerLiderboard;
+import brikks.save.container.Rank;
+import brikks.save.container.SavedGame;
 
 public abstract class Save {
     abstract public boolean playerExists(String name);
@@ -21,7 +24,7 @@ public abstract class Save {
 
     abstract public void save(final Level difficulty);
 
-    abstract public void save(final Mode mode);
+    abstract public void save(final boolean duel);
 
     abstract public void save(final Player player);
 
@@ -30,8 +33,5 @@ public abstract class Save {
 
     abstract public void saveEndDateTime();
 
-    abstract public void updateDuration(final int seconds);
-
-
-    abstract public void dropSave();
+    abstract public void updateDuration();
 }

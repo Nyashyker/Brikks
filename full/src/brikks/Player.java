@@ -1,5 +1,6 @@
 package brikks;
 
+import brikks.container.TurnsResults;
 import brikks.save.PlayerSave;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
@@ -101,6 +102,26 @@ public class Player {
     }
 
 
+    public boolean firstChoice(final PlayerAsk user, final Block block) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        if (block == null) {
+            throw new IllegalArgumentException("Block cannot be null");
+        }
+
+        final Position[] variants = this.board.canBePlaced(block);
+        final Position choice = user.askPlacingSpot(block, variants);
+        if (choice == null) {
+            return false;
+        }
+
+        final PlacedBlock placed = new PlacedBlock(block, choice);
+
+        user.successPlace(placed);
+        this.board.place(placed);
+        return true;
+    }
 
     public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final MatrixDice matrixDie) {
         if (user.askReroll(blocks, matrixDie)) {
@@ -122,7 +143,7 @@ public class Player {
                     if (this.bombs.canUse()) {
                         this.bombs.use();
                         user.successBomb();
-                        return new TurnsResults(false, (byte) 0);
+                        return new TurnsResults(false, false, (byte) 0);
                     } else {
                         user.failBomb();
                     }
@@ -157,10 +178,13 @@ public class Player {
                 case PLACE -> {
                     if (!canGiveUp) {
                         final Position choice = user.askPlacingSpot(block, variants);
+                        if (choice == null) {
+                            break;
+                        }
                         final PlacedBlock placed = new PlacedBlock(block, choice);
 
                         user.successPlace(placed);
-                        return new TurnsResults(false, this.board.place(placed));
+                        return new TurnsResults(false, false, this.board.place(placed));
                     } else {
                         user.failPlace();
                     }
@@ -170,7 +194,7 @@ public class Player {
                     if (canGiveUp) {
                         this.plays = false;
                         user.fail();
-                        return new TurnsResults(false, (byte) 0);
+                        return new TurnsResults(false, true, (byte) 0);
                     } else {
                         user.failGiveUp();
                     }
@@ -182,7 +206,7 @@ public class Player {
                 }
 
                 case EXIT -> {
-                    return new TurnsResults(true, (byte) 0);
+                    return new TurnsResults(true, false, (byte) 0);
                 }
             }
         }

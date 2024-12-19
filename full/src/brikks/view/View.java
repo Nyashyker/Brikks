@@ -3,7 +3,8 @@ package brikks.view;
 import brikks.*;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
-import brikks.save.*;
+import brikks.save.container.PlayerLiderboard;
+import brikks.save.container.Rank;
 import brikks.view.enums.*;
 
 public abstract class View implements PlayerAsk, DuelAsk {
@@ -13,10 +14,11 @@ public abstract class View implements PlayerAsk, DuelAsk {
 
     abstract public boolean askUseExistingPlayer(final String name);
     abstract public Level askDifficulty();
-    abstract public Mode askMode();
+    abstract public boolean askDuel();
     abstract public byte askPlayerCount(final byte maxPlayers);
     abstract public String askName();
-    abstract public PlacedBlock[] sakFirstChoise(BlocksTable variants, Player[] players);
+    abstract public Position askFirstChoice(BlocksTable variants);
+    abstract public Position firstChoiceTaken();
 
 
     abstract public void draw(Player player);
