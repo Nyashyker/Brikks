@@ -4,6 +4,8 @@ import brikks.container.*;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.save.*;
+import brikks.save.container.LoadedGame;
+import brikks.save.container.SavedGame;
 import brikks.view.*;
 import circle_loop.ByteLoop;
 
@@ -59,22 +61,40 @@ public class Brikks {
     }
 
     public void start() {
-        this.save.saveStartDateTime();
-
         // Creating the players
         final byte playerCount = this.view.askPlayerCount(Brikks.MAX_PLAYERS);
-        final String[] name$s = new String[playerCount];
-        final Level difficulty = this.view.askDifficulty();
-        this.save.save(difficulty);
+        if (playerCount == -1) {
+            return;
+        }
 
         final Player[] players = new Player[playerCount];
-        for (byte i = 0; i < playerCount; i++) {
-            String name;
-            do {
-                name = this.view.askName();
-            } while (this.save.playerExists(name) && !this.view.askUseExistingPlayer(name));
+        {
+            final String[] name$s = new String[playerCount];
+            final Level difficulty = this.view.askDifficulty();
+            if (difficulty == null) {
+                return;
+            }
+            this.save.save(difficulty);
 
-            players[i] = new Player(this.save.getPlayerSave(name), name, (byte) name$s.length, difficulty);
+            for (byte i = 0; i < playerCount; i++) {
+                String name;
+                boolean nameDecided = false;
+                do {
+                    name = this.view.askName();
+                    if (name == null) {
+                        return;
+                    }
+
+                    final boolean nameExists = this.save.playerExists(name);
+                    if (!nameExists) {
+                        nameDecided = true;
+                    } else if (this.view.askUseExistingPlayer(name)) {
+                        nameDecided = true;
+                    }
+                } while (nameDecided);
+
+                players[i] = new Player(this.save.getPlayerSave(name), name, (byte) name$s.length, difficulty);
+            }
         }
 
         this.firstChoice(players);
@@ -89,14 +109,36 @@ public class Brikks {
         this.save.save(duelMode);
 
         // Run the game
+        this.save.saveStartDateTime();
+        this.save.startCountingTime();
         final RunsResults results = this.run(players, duelMode);
-        if (!results.endGame()) {
+        if (results.endGame()) {
             this.end(players, duelMode, results.duelWinnerIndex());
         }
     }
 
     public void load() {
-        // TODO: The load functional
+        final Player[] players;
+        final boolean duelMode;
+        {
+            final SavedGame[] variants = this.save.savedGames();
+            final SavedGame choice = this.view.askChoiceSave(variants);
+            if (choice == null) {
+                return;
+            }
+
+            final LoadedGame loaded = this.save.loadGame(choice.ID());
+
+            players = loaded.players();
+            this.matrixDie.cheat(loaded.matrixDie());
+            duelMode = loaded.duel();
+        }
+
+        this.save.startCountingTime();
+        final RunsResults results = this.run(players, duelMode);
+        if (results.endGame()) {
+            this.end(players, duelMode, results.duelWinnerIndex());
+        }
     }
 
 

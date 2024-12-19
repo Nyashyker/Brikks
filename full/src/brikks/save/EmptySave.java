@@ -33,5 +33,7 @@ public class EmptySave extends Save {
     @Override
     public void saveEndDateTime() {}
     @Override
+    public void startCountingTime() {}
+    @Override
     public void updateDuration() {}
 }

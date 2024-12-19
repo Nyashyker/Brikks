@@ -33,5 +33,7 @@ public abstract class Save {
 
     abstract public void saveEndDateTime();
 
+    abstract public void startCountingTime();
+
     abstract public void updateDuration();
 }

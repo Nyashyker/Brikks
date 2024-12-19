@@ -1,12 +1,6 @@
 package brikks.save.container;
 
 import brikks.Player;
-import brikks.essentials.MatrixDice;
-import brikks.essentials.enums.Level;
+import brikks.essentials.Position;
 
-public record LoadedGame(
-        Player[] players,
-        MatrixDice matrixDie,
-        Level difficulty,
-        boolean duel
-) {}
+public record LoadedGame( Player[] players, Position matrixDie, boolean duel ) {}
