@@ -34,6 +34,8 @@ public class ConsoleView extends View {
     @Override
     public Position askFirstChoice(BlocksTable variants) { return new Position((byte) 0, (byte) 0); }
     @Override
+    public Position firstChoiceTaken() { return new Position((byte) 0, (byte) 0); }
+    @Override
     public void draw(Player player) {}
     @Override
     public void endSolo(Rank[] ranks, short finalScore) {}
