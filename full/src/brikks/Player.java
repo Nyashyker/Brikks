@@ -102,23 +102,13 @@ public class Player {
     }
 
 
-    public boolean firstChoice(final PlayerAsk user, final Block block) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
+    public boolean firstChoice(final Block block) {
         if (block == null) {
             throw new IllegalArgumentException("Block cannot be null");
         }
 
-        final Position[] variants = this.board.canBePlaced(block);
-        final Position choice = user.askPlacingSpot(block, variants);
-        if (choice == null) {
-            return false;
-        }
+        final PlacedBlock placed = new PlacedBlock(block, this.board.canBePlaced(block)[0]);
 
-        final PlacedBlock placed = new PlacedBlock(block, choice);
-
-        user.successPlace(placed);
         this.board.place(placed);
         return true;
     }

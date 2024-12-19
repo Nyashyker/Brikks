@@ -26,7 +26,7 @@ public class BonusEnergyBoardD3 extends BonusEnergyBoard {
     public byte place(PlacedBlock block) {
         byte bonusPoints = 0;
 
-        for (Position shapePos : block.getBlock()) {
+        for (final Position shapePos : block.getBlock()) {
             this.validatePosition(shapePos);
 
             final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getY()];

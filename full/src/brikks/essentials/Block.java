@@ -32,7 +32,7 @@ public class Block {
     public String toString() {
         StringBuilder shape = new StringBuilder();
 
-        for (Position p : this.shape) {
+        for (final Position p : this.shape) {
             shape.append(p.toString());
             shape.append(", ");
         }

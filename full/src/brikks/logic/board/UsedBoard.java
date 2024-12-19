@@ -35,7 +35,7 @@ public class UsedBoard {
             throw new IllegalArgumentException("placed must not be null");
         }
 
-        for (PlacedBlock block : placed) {
+        for (final PlacedBlock block : placed) {
             this.place(block);
         }
     }
@@ -51,7 +51,7 @@ public class UsedBoard {
                 boolean guessValid = !this.used[y][x];
 
                 if (guessValid) {
-                    for (Position shape : block.getBlock()) {
+                    for (final Position shape : block.getBlock()) {
                         final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
 
                         if (this.isPositionUnsuitable(shapePos)) {
@@ -77,7 +77,7 @@ public class UsedBoard {
     }
 
     public void place(final PlacedBlock block) {
-        for (Position shapePos : block.getBlock()) {
+        for (final Position shapePos : block.getBlock()) {
             if (this.isPositionUnsuitable(shapePos)) {
                 throw new IllegalArgumentException("Block " + block + " can not be placed");
             }
@@ -90,7 +90,7 @@ public class UsedBoard {
         byte count = 0;
 
         byte lastY = -1;
-        for (Position shapePos : block.getBlock()) {
+        for (final Position shapePos : block.getBlock()) {
             if (this.isPositionUnsuitable(shapePos)) {
                 throw new IllegalArgumentException("Block " + block + " is not placed");
             }

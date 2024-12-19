@@ -11,6 +11,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
+        game.start();
     }
 
     public static Block[][] generateBlocksTable() {

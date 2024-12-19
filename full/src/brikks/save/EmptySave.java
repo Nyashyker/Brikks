@@ -21,7 +21,7 @@ public class EmptySave extends Save {
     @Override
     public Rank[] getRanks() { return new Rank[0]; }
     @Override
-    public PlayerSave getPlayerSave(final String name) { return null; }
+    public PlayerSave getPlayerSave(final String name) { return new EmptyPlayerSave(); }
     @Override
     public void save(final Level difficulty) {}
     @Override

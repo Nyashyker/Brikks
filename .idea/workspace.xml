@@ -4,8 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="completed Brikks.run">
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
+    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/container/RunsResults.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/container/RunsResults.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,6 +76,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Brikks.executor": "Run",
     "Application.Main.executor": "Run",
     "Application.MakeDatabase.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -106,6 +112,17 @@
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="Brikks" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="full" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -137,7 +154,8 @@
       <workItem from="1734358467590" duration="3362000" />
       <workItem from="1734361836487" duration="4972000" />
       <workItem from="1734433679995" duration="36868000" />
-      <workItem from="1734513131710" duration="35399000" />
+      <workItem from="1734513131710" duration="38127000" />
+      <workItem from="1734617702858" duration="2364000" />
     </task>
     <task id="LOCAL-00001" summary="porject-struct">
       <option name="closed" value="true" />
@@ -299,7 +317,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734607107115</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="synk-SonsoleView">
+      <option name="closed" value="true" />
+      <created>1734607216660</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1734607216660</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -337,6 +363,7 @@
     <MESSAGE value="no-errors" />
     <MESSAGE value="nov-should-do" />
     <MESSAGE value="completed Brikks.run" />
-    <option name="LAST_COMMIT_MESSAGE" value="completed Brikks.run" />
+    <MESSAGE value="synk-SonsoleView" />
+    <option name="LAST_COMMIT_MESSAGE" value="synk-SonsoleView" />
   </component>
 </project>

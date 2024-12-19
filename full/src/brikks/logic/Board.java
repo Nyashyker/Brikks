@@ -58,7 +58,7 @@ public class Board {
         if (placed == null) {
             throw new IllegalArgumentException("PlacedBlocks cannot be null");
         }
-        for (PlacedBlock check : placed) {
+        for (final PlacedBlock check : placed) {
             if (check == null) {
                 throw new IllegalArgumentException("PlacedBlock cannot be null");
             }
@@ -103,7 +103,7 @@ public class Board {
 
         // TODO: mozxe, zberigaty okremo?
         List<Position> placedMiniblock = new ArrayList<>();
-        for (PlacedBlock placed : this.placed) {
+        for (final PlacedBlock placed : this.placed) {
             if (placed.getColor() == Color.DUELER) {
                 placedMiniblock.add(placed.getPlace());
             }
@@ -112,7 +112,7 @@ public class Board {
         for (byte i = 0; i < variants.size();) {
             boolean guesPlacable = true;
 
-            for (Position check : placedMiniblock) {
+            for (final Position check : placedMiniblock) {
                 final byte distanceY = (byte) (Math.abs(variants.get(i).getY() - check.getY()));
                 final byte distanceX = (byte) (Math.abs(variants.get(i).getX() - check.getX()));
 
