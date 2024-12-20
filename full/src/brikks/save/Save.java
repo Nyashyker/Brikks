@@ -7,6 +7,7 @@ import brikks.save.container.PlayerLiderboard;
 import brikks.save.container.Rank;
 import brikks.save.container.SavedGame;
 
+// TODO: make it keep track of time
 public abstract class Save {
     abstract public boolean playerExists(String name);
 

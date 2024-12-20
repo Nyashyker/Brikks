@@ -1,21 +1,27 @@
 package brikks.view;
 
 public record GameText(
-        String newGame,
-        String loadGame,
+        String exitVariant,
+        String choiceInRange,
+        String inputValidNumber,
+        String inputValidChoice,
+
+        String menu,
+        String[] menuVariants,
+
         String liderboard,
-        String exit,
-        String choiceName,
-        String finalScore,
-        String reroll,
-        String playerNamed,
-        String placeORSpecial,
-        String placingSpot,
-        String placingSpotForMiniblock,
-        String choiceRotation,
-        String choiceBlock,
-        String choiceSpecial,
-        String gameOverFor,
-        String gameOver,
-        String cantChoiceIt
+        String liderboardExit,
+
+        String askUseExistingPlayer,
+
+        String askDifficulty,
+        String[] difficultyVariants,
+
+        String askDuel,
+
+        String askPlayerCount,
+
+        String askName,
+
+        String exit
 ) {}
