@@ -163,7 +163,7 @@ public class ConsoleView extends View {
         List<Block> alreadyChosen = new ArrayList<>(); // Для отслеживания уже выбранных блоков
 
         for (int i = 0; i < players.length; i++) {
-            System.out.printf("Player %s, it's your turn to choose a block.%n", players[i].getName()); // Предполагаем, что Player имеет метод getName()
+            System.out.printf("Player %s, it's your turn to choose a block.%n", players[i].name); // Предполагаем, что Player имеет метод getName()
 
             // Получить доступные блоки с исключением уже выбранных
             Block[] availableBlocks = variants.getAvailableBlocks(); // Получить полный список блоков
@@ -376,23 +376,6 @@ public class ConsoleView extends View {
 
 
 
-
-
-    public PlaceORSpecial askPlaceOrSpecial() {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.print("Do you want to place a block or use a special move? (place/special): ");
-            String input = scanner.nextLine().trim().toLowerCase();
-
-            if (input.equals("place")) {
-                return PlaceORSpecial.PLACE;
-            } else if (input.equals("special")) {
-                return PlaceORSpecial.SPECIAL;
-            } else {
-                System.out.println("Invalid input. Please type 'place' or 'special'.");
-            }
-        }
-    }
 
 
 
@@ -608,14 +591,12 @@ public class ConsoleView extends View {
 
     public void endPlayer(Player player) {
         System.out.println("======================================");
-        System.out.printf("End of turn for player: %s%n", player.getName()); //add this
+        System.out.printf("Player %s has been eliminated from the game.%n", player.name);
+        System.out.printf("Final Score: %d%n", player.calculateFinal());
+        System.out.printf("Final Energy: %d%n", player.getEnergy());
+        System.out.printf("Final Bombs: %d%n", player.getBombs()); // поменять для бомб
 
-        // Display player's score and other relevant statistics
-        System.out.printf("Score: %d%n", player.getScore()); // add this
-        System.out.printf("Energy: %d%n", player.getEnergy()); // add this
-        System.out.printf("Bombs remaining: %d%n", player.getBombs()); // add this
-
-        System.out.println("Thank you for playing this turn!");
+        System.out.println("Thank you for playing. Better luck next time!");
         System.out.println("======================================");
     }
 
@@ -630,7 +611,7 @@ public class ConsoleView extends View {
         // Sort players by score in descending order
         for (int i = 0; i < players.length - 1; i++) {
             for (int j = 0; j < players.length - i - 1; j++) {
-                if (players[j].getScore() < players[j + 1].getScore()) { //add this methods to Player
+                if (players[j].calculateFinal() < players[j + 1].calculateFinal()) { //add this methods to Player
 
                     // Swap players[j] and players[j + 1]
                     Player temp = players[j];
@@ -644,14 +625,14 @@ public class ConsoleView extends View {
         System.out.println("Final Scores:");
         System.out.println("--------------------------------------");
         for (int i = 0; i < players.length; i++) {
-            System.out.printf("%d. %s - Score: %d%n", i + 1, players[i].getName(), players[i].getScore()); //add this methods to Player
+            System.out.printf("%d. %s - Score: %d%n", i + 1, players[i].name, players[i].calculateFinal()); //add this methods to Player
         }
         System.out.println("--------------------------------------");
 
         // Congratulate the winner
         if (players.length > 0) {
             System.out.printf("Congratulations to the winner: %s with %d points!%n",
-                    players[0].getName(), players[0].getScore()); //add this methods to Player
+                    players[0].name, players[0].calculateFinal()); //add this methods to Player
         }
 
         System.out.println("Thank you for playing! See you next time!");
@@ -677,16 +658,30 @@ public class ConsoleView extends View {
 
 
     public void exit() {
-        System.out.println("======================================");
-        System.out.println("           Thank You for Playing!     ");
-        System.out.println("======================================");
-        System.out.println("We hope you had fun playing BRIKKS.");
-        System.out.println("Come back soon for more challenges!");
-        System.out.println("--------------------------------------");
-        System.out.println("Exiting the game...");
-        System.out.println("Goodbye!");
-        System.out.println("======================================");
+        try {
+            System.out.println("======================================");
+            Thread.sleep(1000); //1 sec delay
+            System.out.println("           Thank You for Playing!     ");
+            Thread.sleep(1000);
+            System.out.println("======================================");
+            Thread.sleep(1000);
+            System.out.println("We hope you had fun playing BRIKKS.");
+            Thread.sleep(1000);
+            System.out.println("Come back soon for more challenges!");
+            Thread.sleep(1000);
+            System.out.println("--------------------------------------");
+            Thread.sleep(1000);
+            System.out.println("Exiting the game...");
+            Thread.sleep(1000);
+            System.out.println("Goodbye!");
+            Thread.sleep(1000);
+            System.out.println("======================================");
+        } catch (InterruptedException e) {
+            // Обработка прерывания
+            System.out.println("The game exit was interrupted.");
+        }
     }
+
 
 
 
