@@ -182,8 +182,6 @@ public class ConsoleView extends View {
     }
 
 
-
-
     @Override
     public void draw(Player player) {
         Board board = player.getBoard();

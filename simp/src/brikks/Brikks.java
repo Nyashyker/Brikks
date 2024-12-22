@@ -91,7 +91,7 @@ public class Brikks {
                     } else if (this.view.askUseExistingPlayer(name)) {
                         nameDecided = true;
                     }
-                } while (nameDecided);
+                } while (!nameDecided);
 
                 players[i] = new Player(this.save.getPlayerSave(name), name, (byte) name$s.length, difficulty);
             }

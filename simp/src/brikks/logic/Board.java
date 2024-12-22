@@ -103,6 +103,7 @@ public class Board {
 
 
     public Position[] canBePlaced() {
+        // Duel specific function
         List<Position> variants = this.used.canBePlaced(Board.duelBlock);
 
         // TODO: mozxe, zberigaty okremo?

@@ -47,14 +47,23 @@ public class UsedBoard {
         for (byte x = 0; x < used[0].length; x++) {
             Position lastValid = null;
 
-            for (byte y = (byte) (used.length - 1); y >= 0; y--) {
+            for (byte y = 0; y < used.length; y++) {
                 boolean guessValid = !this.used[y][x];
+                boolean nothingToSearchMore = false;
 
                 if (guessValid) {
                     for (final Position shape : block.getBlock()) {
                         final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
 
-                        if (this.isPositionUnsuitable(shapePos)) {
+                        if (shapePos.getY() < 0 || shapePos.getX() < 0 || shapePos.getX() >= this.used[0].length) {
+                            guessValid = false;
+                            break;
+                        } else if (shapePos.getY() >= this.used.length) {
+                            nothingToSearchMore = true;
+                            guessValid = false;
+                            break;
+                        } else if (this.used[shapePos.getY()][shapePos.getX()]) {
+                            nothingToSearchMore = true;
                             guessValid = false;
                             break;
                         }
@@ -63,7 +72,7 @@ public class UsedBoard {
 
                 if (guessValid) {
                     lastValid = new Position(x, y);
-                } else {
+                } else if (nothingToSearchMore) {
                     break;
                 }
             }
@@ -91,7 +100,7 @@ public class UsedBoard {
 
         byte lastY = -1;
         for (final Position shapePos : block.getBlock()) {
-            if (this.isPositionUnsuitable(shapePos)) {
+            if (!this.isPositionUnsuitable(shapePos)) {
                 throw new IllegalArgumentException("Block " + block + " is not placed");
             }
 

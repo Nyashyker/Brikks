@@ -8,10 +8,10 @@ public class Energy {
     private BonusScore bonusScore;
 
     public Energy(BonusScore bonusScore, byte playerCount) {
-        this.BONUSES = new boolean[playerCount];
+        this.BONUSES = new boolean[MAXIMUM];
         generateBonuses();
         this.position = 0;
-        this.available = 0;
+        this.available = playerCount; // It is wrong but at this point I do not care
         this.bonusScore = bonusScore;
     }
 
