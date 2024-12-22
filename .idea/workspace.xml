@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="enouph for today">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/container/PlayerLiderboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/container/PlayerLiderboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/GameText.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/GameText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/View.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/View.java" afterDir="false" />
-    </list>
+    <list default="true" id="125b28de-099e-4f12-87f6-1d46b28b1473" name="Changes" comment="enouph for today" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -381,7 +375,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="porject-struct" />
     <MESSAGE value="bombs-by-Ali" />
     <MESSAGE value="commit-to-full-version" />
     <MESSAGE value="disconect-from-the-main-branch" />
@@ -406,7 +399,8 @@
     <MESSAGE value="IthinkIdoneALLthelogic" />
     <MESSAGE value="now_for_sure" />
     <MESSAGE value="enouph for today" />
-    <option name="LAST_COMMIT_MESSAGE" value="enouph for today" />
+    <MESSAGE value="interface-is-*khem*-awful-but-it-works!" />
+    <option name="LAST_COMMIT_MESSAGE" value="interface-is-*khem*-awful-but-it-works!" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
