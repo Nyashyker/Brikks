@@ -1,6 +1,5 @@
 package be.kdg.integration.brikks_project;
 
-
 import java.sql.*;
 import java.util.Scanner;
 
@@ -42,7 +41,7 @@ public abstract class PlayerSave {
     }
 
 
-    // Establish database connection
+
     private static Connection connect() throws SQLException {
         return DriverManager.getConnection(SERVER_URL, DB_USERNAME, DB_PASSWORD);
     }
@@ -105,25 +104,22 @@ public abstract class PlayerSave {
     }
 
 
-    private static void loadPlayerInfo(int playerId) {
-        String sql = "SELECT * FROM players WHERE player_id = ?";
 
+    private static void loadPlayerInfo(int playerId) {
+        String sql = "SELECT player_id, player_name FROM players WHERE player_id = ?";
 
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
 
             stmt.setInt(1, playerId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String playerName = rs.getString("player_name");
-                    int highScore = rs.getInt("player_highscore");
-
 
                     System.out.println("\nPlayer Information:");
                     System.out.println("Player ID: " + playerId);
                     System.out.println("Player Name: " + playerName);
-                    System.out.println("High Score: " + highScore);
+                    // Removed the high score display
                 } else {
                     System.out.println("Player not found.");
                 }
@@ -133,11 +129,9 @@ public abstract class PlayerSave {
         }
     }
 
-
     private static int generatePlayerId() {
         return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
     }
-
 
 
     public abstract void save(Board board);
