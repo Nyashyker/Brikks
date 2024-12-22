@@ -1,4 +1,4 @@
-package be.kdg.integration.brikks_project;
+package brikks.logic;
 
 public class Energy {
     public static final byte MAXIMUM = 28;
@@ -75,7 +75,7 @@ public class Energy {
         position += amount;
         available += amount;
 
-        bonusScore.grow(bonusesEncountered);
+        bonusScore.growByEnergy(bonusesEncountered);
         return bonusesEncountered;
     }
 

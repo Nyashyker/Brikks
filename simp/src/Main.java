@@ -11,21 +11,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner k =  new Scanner(System.in);
-        System.out.println("t ");
-        byte x = 0;
-        while (x == 0) {
-            if (k.hasNextByte()) {
-                x = k.nextByte();
-            } else {
-                k.next();
-            }
-        }
-        System.out.println(x);
-/*
         final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
         game.start();
-*/
     }
 
     public static Block[][] generateBlocksTable() {

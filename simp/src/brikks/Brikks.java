@@ -221,7 +221,7 @@ public class Brikks {
         }
 
         if (players.length == 1) {
-            this.view.endSolo(this.save.getRanks(), players[0].calculateFinal());
+            this.view.endSolo(players, this.save.getRanks(), players[0].calculateFinal());
         } else if (duelMode) {
             final ByteLoop loop = new ByteLoop(winnerIndex, (byte) 2);
             this.view.endDuel(players[loop.current()], players[loop.forecast()]);

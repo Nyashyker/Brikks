@@ -1,16 +1,21 @@
-package be.simp;
+package brikks.view;
 
-import be.kdg.integration.brikks_project.*;
+import brikks.*;
+import brikks.container.*;
+import brikks.essentials.*;
+import brikks.essentials.enums.*;
+import brikks.logic.*;
+import brikks.logic.board.*;
+import brikks.save.*;
+import brikks.save.container.*;
+import brikks.view.enums.*;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
 
 public class ConsoleView extends View {
-
-    public GameText text;
-
-
+    public ConsoleView() {}
 
     @Override
     public Menu menu() {
@@ -41,20 +46,23 @@ public class ConsoleView extends View {
         }
 
 
-        switch (choice) {
-            case 1:
-                return Menu.NEW_GAME;
-            case 2:
-                return Menu.LOAD;
-            case 3:
-                return Menu.LIDERBOARD;
-            case 4:
-                return Menu.EXIT;
-            default:
-                throw new IllegalStateException("Unexpected value: " + choice);
-        }
+        return switch (choice) {
+            case 1 -> Menu.NEW_GAME;
+            case 2 -> Menu.LOAD;
+            case 3 -> Menu.LIDERBOARD;
+            case 4 -> Menu.EXIT;
+            default -> throw new IllegalStateException("Unexpected value: " + choice);
+        };
     }
 
+    @Override
+    public void liderboard(final PlayerLiderboard[] players) {}
+
+    @Override
+    public boolean askUseExistingPlayer(final String name) {return false;}
+
+    @Override
+    public SavedGame askChoiceSave(final SavedGame[] variants) {return null;}
 
 
     @Override
@@ -91,104 +99,77 @@ public class ConsoleView extends View {
     }
 
 
-
-
     @Override
-    public Mode askMode() {
+    public Doing askDoing(final BlocksTable blocks, final Position roll) {
         Scanner scanner = new Scanner(System.in);
-        Mode mode = null;
-        while (mode == null) {
-            System.out.println("Select game mode:");
-            System.out.println("1. Solo");
-            System.out.println("2. Standard");
-            System.out.println("3. Duel");
-            System.out.print("Enter your choice (1-3): ");
+        Doing doing = null;
+        while (doing == null) {
+            System.out.println("Select doing:");
+            System.out.println("1. bomb");
+            System.out.println("2. rotate");
+            System.out.println("3. chose block");
+            System.out.println("4. place");
+            System.out.println("5. give up");
+            System.out.println("6. save");
+            System.out.println("7. exit");
+            System.out.print("Enter your choice (1-7): ");
 
             String choice = scanner.nextLine();
-            switch (choice) {
+            switch (choice.strip()) {
                 case "1":
-                    mode = Mode.SOLO;
+                    doing = Doing.BOMB;
                     break;
                 case "2":
-                    mode = Mode.STANDARD;
+                    doing = Doing.ROTATE;
                     break;
-                    case "3":
-                        mode = Mode.DUEL;
-                        break;
+                case "3":
+                    doing = Doing.CHOICE;
+                    break;
+                case "4":
+                    doing = Doing.PLACE;
+                    break;
+                case "5":
+                    doing = Doing.GIVE_UP;
+                    break;
+                case "6":
+                    doing = Doing.SAVE;
+                    break;
+                case "7":
+                    doing = Doing.EXIT;
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
-        return mode;
+        return doing;
     }
 
 
     @Override
-    public String[] askNames() {
+    public boolean askDuel() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of players: ");
-        int playerCount;
         while (true) {
-            try {
-                playerCount = Integer.parseInt(scanner.nextLine());
-                if (playerCount > 0) break;
-                else {
-                    System.out.print("Please enter a valid number greater than 0: ");
-                }
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a valid number: ");
+            System.out.print("Do you want to duel? (y/n)");
+
+            String choice = scanner.nextLine();
+            if (choice.equals("y")) {
+                return true;
+            } else if (choice.equals("n")) {
+                return false;
             }
         }
-
-        String[] playerNames = new String[playerCount];
-        for (int i = 0; i < playerCount; i++) {
-            System.out.printf("Enter the name of player %d: ", i + 1);
-            playerNames[i] = scanner.nextLine();
-        }
-        return playerNames;
-
     }
 
-
-
+    @Override
+    public byte askPlayerCount(final byte maxPlayers) {
+        return 1;
+    }
 
     @Override
-    public PlacedBlock[] askFirstChoice(BlocksTable variants, Player[] players) {
+    public String askName() {
         Scanner scanner = new Scanner(System.in);
-        Block[] chosenBlocks = new Block[players.length];
-
-        for (int i = 0; i < players.length; i++) {
-            System.out.printf("Player %s, it's your turn to choose a block.%n", players[i].getName()); // add getName to Player!!!
-
-            //display available blocks from BlocksTable
-            Block[] availableBlocks = variants.getAvailableBlocks(); // add this method to Blocks!!!
-            for (int j = 0; j < availableBlocks.length; j++) {
-                System.out.printf("%d: Block of color %s with shape: %s%n",
-                        j + 1,
-                        availableBlocks[j].getColor(),
-                        formatShape(availableBlocks[j].getBlock())
-                );
-            }
-
-            //ask the player to make a choice
-            int choice = -1;
-            while (choice < 1 || choice > availableBlocks.length) {
-                System.out.print("Enter the number of your choice: ");
-                try {
-                    choice = Integer.parseInt(scanner.nextLine());
-                    if (choice < 1 || choice > availableBlocks.length) {
-                        System.out.println("Invalid choice. Please select a valid block number.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                }
-            }
-
-            // Store the chosen block
-            chosenBlocks[i] = availableBlocks[choice - 1];
-        }
-
-        return (PlacedBlock[]) chosenBlocks;
+        System.out.print("Enter the name of player: ");
+        return scanner.nextLine();
     }
 
 
@@ -203,10 +184,15 @@ public class ConsoleView extends View {
 
 
 
-    public void draw(Board board, Energy energy, Bombs bombs, BonusScore bonusScore) {
+    @Override
+    public void draw(Player player) {
+        Board board = player.getBoard();
+        Energy energy = player.getEnergy();
+        Bombs bombs = player.getBombs();
+        BonusScore bonusScore = player.getBonusScore();
         //fetching board dimensions (need logic from board + getters)
-        int rows = board.getRows(); //add this method to board
-        int cols = board.getCols(); //add this method to board
+        int rows = Board.HEIGHT; //add this method to board!!!
+        int cols = Board.WIDTH; //add this method to board!!!
 
         //header
         System.out.println("+-----------------------------------------+");
@@ -226,8 +212,8 @@ public class ConsoleView extends View {
         for (int row = 0; row < rows; row++) {
             System.out.printf("| %02d  ", row);
             for (int col = 0; col < cols; col++) {
-                String cellContent = board.getCell(row, col); //change when board is finished with logic
-                System.out.printf("|%2s", cellContent != null ? cellContent : " ");
+                String cellContent = board.getUsedBoard()[row][col] ? "XX" : "  "; //change when board is finished with logic
+                System.out.printf("|%2s", cellContent);
             }
             System.out.println("|  x" + (4 - row) + " |");
             System.out.println("|     +--".repeat(cols) + "+     |");
@@ -236,10 +222,8 @@ public class ConsoleView extends View {
 
         //footer (need logic of energy + getters) !!!!!!!
         System.out.println("+-----------------------------------------+");
-        System.out.println("|Victory Points: " + bonusScore.getVictoryPoints() + "               |");
-        System.out.println("+-----------------------------------------+");
-        System.out.println("|  Extra Points: " + bonusScore.getExtraPoints() + "                |");
-        System.out.println("|  Energy: " + energy.getPoints() + "                              |");
+        System.out.println("|  Extra Points: " + bonusScore.get() + "                |");
+        System.out.println("|  Energy: " + energy.getAvailable() + "                              |");
         System.out.println("|  Bombs: " + Arrays.toString(bombs.getPoints()) + "                              |");
         System.out.println("+-----------------------------------------+");
 
@@ -247,41 +231,12 @@ public class ConsoleView extends View {
     }
 
 
-
-
-
-
-
     @Override
-    public PlaceORSpecial askRoll() {
+    public boolean askReroll(final BlocksTable blocks, final MatrixDice matrixDie) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Do you want to place a block or use a special action?");
-        System.out.println("1. Place a block");
-        System.out.println("2. Use a special action");
+        System.out.println(this.formatBlock(blocks.getBlock(matrixDie.get())));
 
-        int choice = -1;
-        while (choice < 1 || choice > 2) {
-            System.out.print("Enter your choice (1-2): ");
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                if (choice < 1 || choice > 2) {
-                    System.out.println("Invalid choice. Please select 1 or 2.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-
-
-        return (choice == 1) ? PlaceORSpecial.PLACE : PlaceORSpecial.SPECIAL;
-    }
-
-
-
-    @Override
-    public boolean askReroll() {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.print("Do you want to reroll? (yes/no): ");
             String input = scanner.nextLine().trim().toLowerCase();
@@ -297,29 +252,7 @@ public class ConsoleView extends View {
     }
 
 
-
-
-
-    public PlaceORSpecial askPlaceOrSpecial() {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.print("Do you want to place a block or use a special move? (place/special): ");
-            String input = scanner.nextLine().trim().toLowerCase();
-
-            if (input.equals("place")) {
-                return PlaceORSpecial.PLACE;
-            } else if (input.equals("special")) {
-                return PlaceORSpecial.SPECIAL;
-            } else {
-                System.out.println("Invalid input. Please type 'place' or 'special'.");
-            }
-        }
-    }
-
-
-
-
-
+    @Override
     public Position askPlacingSpot(Block block, Position[] variants) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("You are placing the following block:");
@@ -361,6 +294,7 @@ public class ConsoleView extends View {
 
 
 
+    @Override
     public Position askPlacingMiniblock(Board opponentsBoard, Position[] variants) {
         Scanner scanner = new Scanner(System.in);
 
@@ -394,14 +328,14 @@ public class ConsoleView extends View {
 
 
     private void displayBoard(Board board) {
-        int rows = board.getRows(); //add this method to board!!!
-        int cols = board.getCols(); //add this method to board!!!
+        int rows = Board.HEIGHT; //add this method to board!!!
+        int cols = Board.WIDTH; //add this method to board!!!
 
         System.out.println("+--".repeat(cols) + "+");
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                String cellContent = board.getCell(row, col); //add this method to board!!!
-                System.out.printf("|%2s", cellContent != null ? cellContent : "  ");
+                String cellContent = board.getUsedBoard()[row][col] ? "XX" : "  "; //add this method to board!!!
+                System.out.printf("|%2s", cellContent);
             }
             System.out.println("|");
             System.out.println("+--".repeat(cols) + "+");
@@ -409,51 +343,8 @@ public class ConsoleView extends View {
     }
 
 
-
-    public Special askSpecial() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Choose a special action:");
-        System.out.println("1. Bomb");
-        System.out.println("2. Rotate");
-        System.out.println("3. Choice");
-        System.out.println("4. Back");
-
-
-        int choice = -1;
-        while (choice < 1 || choice > 4) {
-            System.out.print("Enter your choice (1-4): ");
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                if (choice < 1 || choice > 4) {
-                    System.out.println("Invalid choice. Please select a valid number.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-
-        // Map the player's choice to a Special enum value
-        switch (choice) {
-            case 1:
-                return Special.BOMB;
-            case 2:
-                return Special.ROTATE;
-            case 3:
-                return Special.CHOICE;
-            case 4:
-                return Special.BACK;
-            default:
-                throw new IllegalStateException("Unexpected value: " + choice);
-        }
-    }
-
-
-
-
-
-
-    public Block askRotation(Block[] variants) {
+    @Override
+    public byte askRotation(Block[] variants) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Choose a rotated version of the block:");
@@ -474,7 +365,7 @@ public class ConsoleView extends View {
             }
         }
 
-        return variants[choice - 1];
+        return (byte) (choice - 1);
     }
 
     //helper method to format a block for display
@@ -488,31 +379,28 @@ public class ConsoleView extends View {
     }
 
 
-
-
-    public Block askChoice(BlocksTable variants) {
+    @Override
+    public Position askChoice(BlocksTable variants) {
         Scanner scanner = new Scanner(System.in);
 
 
-        Block[] availableBlocks = variants.getAvailableBlocks(); // add this method to BlocksTable !!!!!!
-        if (availableBlocks == null || availableBlocks.length == 0) {
-            System.out.println("No blocks available to choose from.");
-            return null; // if blocks table is NULL
-        }
+        Block[][] availableBlocks = variants.getTable();
 
         //display all blocks
         System.out.println("Available blocks to choose from:");
         for (int i = 0; i < availableBlocks.length; i++) {
-            System.out.printf("%d: %s%n", i + 1, formatBlock(availableBlocks[i]));
+            for (int j = 0; j < availableBlocks[i].length; j++) {
+                System.out.printf("%d: %s%n", i + 1, formatBlock(availableBlocks[i][j]));
+            }
         }
 
         // ask  player to make a choice
-        int choice = -1;
-        while (choice < 1 || choice > availableBlocks.length) {
-            System.out.print("Enter your choice (1-" + availableBlocks.length + "): ");
+        int choiceX = -1;
+        while (choiceX < 1 || choiceX > availableBlocks.length) {
+            System.out.print("Enter your choice x (1-" + availableBlocks.length + "): ");
             try {
-                choice = Integer.parseInt(scanner.nextLine());
-                if (choice < 1 || choice > availableBlocks.length) {
+                choiceX = Integer.parseInt(scanner.nextLine());
+                if (choiceX < 1 || choiceX > availableBlocks.length) {
                     System.out.println("Invalid choice. Please select a valid block number.");
                 }
             } catch (NumberFormatException e) {
@@ -520,31 +408,24 @@ public class ConsoleView extends View {
             }
         }
 
-        return availableBlocks[choice - 1];
+        int choiceY = -1;
+        while (choiceY < 1 || choiceY > availableBlocks.length) {
+            System.out.print("Enter your choice y (1-" + availableBlocks.length + "): ");
+            try {
+                choiceY = Integer.parseInt(scanner.nextLine());
+                if (choiceY < 1 || choiceY > availableBlocks.length) {
+                    System.out.println("Invalid choice. Please select a valid block number.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+
+        return new Position((byte) choiceX, (byte) choiceY);
     }
 
-
-
-
-
-
-    public void endPlayer(Player player) {
-        System.out.println("======================================");
-        System.out.printf("End of turn for player: %s%n", player.getName()); //add this
-
-        // Display player's score and other relevant statistics
-        System.out.printf("Score: %d%n", player.getScore()); // add this
-        System.out.printf("Energy: %d%n", player.getEnergy()); // add this
-        System.out.printf("Bombs remaining: %d%n", player.getBombs()); // add this
-
-        System.out.println("Thank you for playing this turn!");
-        System.out.println("======================================");
-    }
-
-
-
-
-    public void end(Player[] players) {
+    @Override
+    public void endSolo(Player[] players, final Rank[] ranks, final short finalScore) {
         System.out.println("======================================");
         System.out.println("           Game Over!                 ");
         System.out.println("======================================");
@@ -552,7 +433,7 @@ public class ConsoleView extends View {
         // Sort players by score in descending order
         for (int i = 0; i < players.length - 1; i++) {
             for (int j = 0; j < players.length - i - 1; j++) {
-                if (players[j].getScore() < players[j + 1].getScore()) { //add this methods to Player
+                if (players[j].calculateFinal() < players[j + 1].calculateFinal()) { //add this methods to Player
 
                     // Swap players[j] and players[j + 1]
                     Player temp = players[j];
@@ -566,38 +447,25 @@ public class ConsoleView extends View {
         System.out.println("Final Scores:");
         System.out.println("--------------------------------------");
         for (int i = 0; i < players.length; i++) {
-            System.out.printf("%d. %s - Score: %d%n", i + 1, players[i].getName(), players[i].getScore()); //add this methods to Player
+            System.out.printf("%d. %s - Score: %d%n", i + 1, players[i].name, players[i].calculateFinal()); //add this methods to Player
         }
         System.out.println("--------------------------------------");
 
         // Congratulate the winner
         if (players.length > 0) {
             System.out.printf("Congratulations to the winner: %s with %d points!%n",
-                    players[0].getName(), players[0].getScore()); //add this methods to Player
+                    players[0].name, players[0].calculateFinal()); //add this methods to Player
         }
 
         System.out.println("Thank you for playing! See you next time!");
         System.out.println("======================================");
     }
+    @Override
+    public void endStandard(final Player[] players) {}
+    @Override
+    public void endDuel(final Player winner, final Player loser) {}
 
-
-
-    public void start() {
-        System.out.println("======================================");
-        System.out.println("           Welcome to BRIKKS!         ");
-        System.out.println("======================================");
-        System.out.println("Get ready for a fun and challenging game.");
-        System.out.println("Rules:");
-        System.out.println("- Place blocks strategically to maximize your score.");
-        System.out.println("- Use special moves like bombs and rotations wisely.");
-        System.out.println("- Compete to achieve the highest score!");
-        System.out.println("--------------------------------------");
-        System.out.println("Let's get started!");
-        System.out.println("======================================");
-    }
-
-
-
+    @Override
     public void exit() {
         System.out.println("======================================");
         System.out.println("           Thank You for Playing!     ");
@@ -612,4 +480,44 @@ public class ConsoleView extends View {
 
 
 
+    @Override
+    public void successPlace(final PlacedBlock placed) {
+        System.out.println("Block placed");
+    }
+    @Override
+    public void successBomb() {
+        System.out.println("bomb used");
+    }
+    @Override
+    public void successRotation(final byte energyCost) {
+        System.out.println("block rotated");
+    }
+    @Override
+    public void successChoice(final byte energyCost) {
+        System.out.println("block chosen");
+    }
+    @Override
+    public void failPlace() {
+        System.out.println("you can not place");
+    }
+    @Override
+    public void failBomb() {
+        System.out.println("no bombs available");
+    }
+    @Override
+    public void failRotation() {
+        System.out.println("you have no energy");
+    }
+    @Override
+    public void failChoice() {
+        System.out.println("you have not enough energy");
+    }
+    @Override
+    public void failGiveUp() {
+        System.out.println("you can not give up yet");
+    }
+    @Override
+    public void fail() {
+        System.out.println("you are fail");
+    }
 }

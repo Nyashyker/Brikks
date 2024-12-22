@@ -89,6 +89,10 @@ public class Board {
         return this.bonusEnergy.bonusEnergy;
     }
 
+    public boolean[][] getUsedBoard() {
+        return this.used.used;
+    }
+
     public byte getRowMultiplier(final byte y) {
         return switch (y) {
             case 0 -> 4;
