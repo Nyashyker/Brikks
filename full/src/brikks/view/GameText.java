@@ -23,5 +23,7 @@ public record GameText(
 
         String askName,
 
+        String askChoiceSave,
+
         String exit
 ) {}

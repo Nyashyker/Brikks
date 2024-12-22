@@ -45,7 +45,8 @@ public class ConsoleView extends View {
         System.out.println();
 
         for (final PlayerLiderboard player : players) {
-            System.out.println(player.toString());
+            System.out.printf("%s - (%s - %s) %s - %d",
+                    player.name(), player.startDateTime(), player.endDateTime(), player.duration(), player.score());
         }
         System.out.println();
 
@@ -91,15 +92,44 @@ public class ConsoleView extends View {
     }
 
 
-    // TODO: real'no zroby ConsoleView
     @Override
-    public SavedGame askChoiceSave(SavedGame[] variants) {
-        return null;
+    public SavedGame askChoiceSave(final SavedGame[] variants) {
+        final String[] textedVariants = new String[variants.length];
+
+        for (byte i = 0; i < textedVariants.length; i++) {
+            final StringBuilder played = new StringBuilder();
+            for (final String name : variants[i].playerNames()) {
+                played.append(name);
+                played.append(", ");
+            }
+            played.delete(played.length() - 2, played.length());
+
+            textedVariants[i] = String.format("%s: %s", variants[i].startTime(), played);
+        }
+
+        final byte choice = this.askUserChoice(this.text.askChoiceSave(), textedVariants, true);
+        return choice == 0 ? null : variants[choice];
     }
 
 
+    // TODO: real'no zroby ConsoleView
     @Override
     public void draw(Player player) {
+        final byte side = 5 * 2;
+        final byte width = Board.WIDTH * 2 + Board.WIDTH + 1 + side * 2;
+
+        System.out.println('+' + "-".repeat(width) + '+');
+        System.out.println('|' + " ".repeat((width - player.name.length()) / 2) + player.name +
+            " ".repeat((width - player.name.length()) / 2) + '|');
+        System.out.println('+' + "-".repeat(width - 2) + '+');
+
+        System.out.print('|' + " ".repeat(side + 1));
+        for (byte i = 1; i <= Board.WIDTH; i++) {
+            System.out.print((String) (this.normNumberLen(i, (byte) 2) + ' '));
+        }
+
+        
+
     }
 
     @Override
@@ -261,5 +291,23 @@ public class ConsoleView extends View {
         } while (!emptyAllowed && input.isEmpty());
 
         return input;
+    }
+
+    private String normNumberLen(byte number, final byte len) {
+        if (number < 0) {
+            throw new IllegalArgumentException("Numbers less than zero is not supported for the moment");
+        }
+
+        final StringBuilder normNumber = new StringBuilder();
+        while (number != 0) {
+            normNumber.append(number % 10);
+            number /= 10;
+        }
+
+        if (normNumber.length() <= len) {
+            normNumber.append("0".repeat(len - normNumber.length()));
+        }
+
+        return normNumber.reverse().toString();
     }
 }

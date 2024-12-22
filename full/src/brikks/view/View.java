@@ -7,7 +7,7 @@ import brikks.view.enums.*;
 
 public abstract class View implements PlayerAsk, DuelAsk {
     abstract public Menu menu();
-    abstract public void liderboard(PlayerLiderboard[] players);
+    abstract public void liderboard(final PlayerLiderboard[] players);
 
 
     abstract public boolean askUseExistingPlayer(final String name);
@@ -17,13 +17,12 @@ public abstract class View implements PlayerAsk, DuelAsk {
     abstract public String askName();
 
 
-    // TODO: can return null (exit)
     abstract public SavedGame askChoiceSave(final SavedGame[] variants);
 
 
-    abstract public void draw(Player player);
-    abstract public void endSolo(Rank[] ranks, short finalScore);
-    abstract public void endStandard(Player[] players);
-    abstract public void endDuel(Player winner, Player loser);
+    abstract public void draw(final Player player);
+    abstract public void endSolo(final Rank[] ranks, final short finalScore);
+    abstract public void endStandard(final Player[] players);
+    abstract public void endDuel(final Player winner, final Player loser);
     abstract public void exit();
 }
