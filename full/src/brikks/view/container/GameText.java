@@ -1,16 +1,15 @@
-package brikks.view;
+package brikks.view.container;
 
 public record GameText(
-        String exitVariant,
+        String backVariant,
+        String goToMainMenuOnTap,
         String choiceInRange,
-        String inputValidNumber,
         String inputValidChoice,
 
         String menu,
         String[] menuVariants,
 
         String liderboard,
-        String liderboardExit,
 
         String askUseExistingPlayer,
 
@@ -24,6 +23,19 @@ public record GameText(
         String askName,
 
         String askChoiceSave,
+
+        String bonusScore,
+        String energy,
+        String bombs,
+
+        String end,
+
+        String endSolo,
+        String[] ranks,
+
+        String endStandard,
+
+        String endDuel,
 
         String exit
 ) {}

@@ -1,27 +1,66 @@
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.*;
-import brikks.save.EmptySave;
-import brikks.view.ConsoleView;
+import brikks.save.*;
+import brikks.view.*;
+import brikks.view.container.GameText;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class Main {
     public static void main(String[] args) {
-        Scanner k =  new Scanner(System.in);
-        System.out.println("t ");
-        byte x = 0;
-        while (x == 0) {
-            if (k.hasNextByte()) {
-                x = k.nextByte();
-            } else {
-                k.next();
-            }
-        }
-        System.out.println(x);
+        final GameText t = new GameText(
+                "Назад",
+                "Уведіть будь-що, щоб перейти в головне меню. ",
+                "Оберіть (%d-%d): ",
+                "Уведіть число з указаного діапазону!",
+                "МЕНЮ",
+                new String[]{
+                        "Нова гра",
+                        "Завантажити",
+                        "Таблиця лідерів",
+                        "Вийти"
+                },
+                "ТАБЛИЦЯ ЛІДЕРІВ",
+                "Гравець із таким ім'ям уже існує. Бажаєте використати його?",
+                "Оберіть рівень складности:",
+                new String[]{
+                        "Перший: 1 ОЕ дається навіть за накриття неправильним кольором",
+                        "Другий: 2 ОЕ дається за накриття правильним кольором (стандартний)",
+                        "Третій: 1 ОЕ відбирається за накриття неправильним кольором",
+                        "Четвертий: 2 ОЕ відберається за накриття неправильним кольором",
+                },
+                "Хочете провести дуель? ",
+                "Скільки гравців гратиме? ",
+                "Оберіть ім'я гравцю: ",
+                "Оберіть зебереження:",
+                "Додаткові бали: %d (-> %d)",
+                "Очки енергії: %d (+ДБ -> %d)",
+                "Бомби: %d (= %d бал.)",
+                "\tГру завершено!!!",
+                "%s - %s - %d\n",
+                new String[]{
+                        "Перший раз?",
+                        "Ти можеш більше!",
+                        "Молодець!",
+                        "А хтось наловчився!",
+                        "Насолоджуйся своїми здобутками!",
+                        "Ти це бачив?",
+                        "Та ти вже певно професіонал!",
+                        "От хвалько!",
+                        "МАЙСТЕР-БЛОКАЙСТЕР 2000!!!",
+                },
+                "Підсумки:",
+                "%s переміг %s\n",
+                "Вихід..."
+        );
+
+        final Player p = new Player(new EmptyPlayerSave(), "Nyashyker", (byte) 1, Level.TWO);
+        final View v = new ConsoleView(t, "\n\n\t\tBRIKKS\n\n");
+
+        v.draw(p);
 /*
         final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
         game.start();

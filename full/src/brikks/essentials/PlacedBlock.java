@@ -19,7 +19,7 @@ public class PlacedBlock extends Block {
     public Position[] getBlock() {
         Position[] block = new Position[this.shape.length + 1];
 
-        block[0] = this.position;
+        block[0] = new Position((byte) 0, (byte) 0);
         for (int i = 1; i < Block.LEN; i++) {
             block[i] = this.shape[i - 1].add(this.position);
         }

@@ -3,17 +3,34 @@ package brikks.view;
 import brikks.*;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
-import brikks.logic.Board;
+import brikks.logic.*;
 import brikks.save.container.*;
+import brikks.view.container.GameText;
 import brikks.view.enums.*;
 
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleView extends View {
-    public static final Scanner keyboard = new Scanner(System.in);
+    public final static Scanner keyboard = new Scanner(System.in);
 
+    private static class Colors {
+        private final static String ANSI_RESET = "\u001B[0m";
+        private final static String ANSI_WHITE = "\u001B[37m";
+        private final static String ANSI_YELLOW = "\u001B[33m";
+        private final static String ANSI_GREEN = "\u001B[32m";
+        private final static String ANSI_RED = "\u001B[31m";
+        private final static String ANSI_BLUE = "\u001B[34m";
+        private final static String ANSI_BLACK = "\u001B[30m";
+        private final static String ANSI_DUELER = "\u001B[36m";
+
+        private final static String ANSI_BG_WHITE = "\u001B[47m";
+        private final static String ANSI_BG_YELLOW = "\u001B[43m";
+        private final static String ANSI_BG_GREEN = "\u001B[42m";
+        private final static String ANSI_BG_RED = "\u001B[41m";
+        private final static String ANSI_BG_BLUE = "\u001B[44m";
+        private final static String ANSI_BG_BLACK = "\u001B[40m";
+        private final static String ANSI_BG_DUELER = "\u001B[46m";
+    }
 
     private final GameText text;
     private final String gameLogo;
@@ -29,17 +46,17 @@ public class ConsoleView extends View {
     public Menu menu() {
         System.out.println(this.gameLogo);
 
-        return switch (this.askUserChoice(this.text.menu(), this.text.menuVariants(), true)) {
-            case 0 -> Menu.EXIT;
+        return switch (this.askUserChoice(this.text.menu(), this.text.menuVariants(), false)) {
             case 1 -> Menu.NEW_GAME;
             case 2 -> Menu.LOAD;
             case 3 -> Menu.LIDERBOARD;
+            case 4 -> Menu.EXIT;
             default -> throw new InputMismatchException("Unexpected choice variant");
         };
     }
 
     @Override
-    public void liderboard(PlayerLiderboard[] players) {
+    public void liderboard(final PlayerLiderboard[] players) {
         // TODO: players arrive from save already ordered decreasing
         System.out.println(this.text.liderboard());
         System.out.println();
@@ -50,10 +67,7 @@ public class ConsoleView extends View {
         }
         System.out.println();
 
-        System.out.println(this.text.liderboardExit());
-        try {
-            keyboard.nextLine();
-        } catch (NoSuchElementException | IllegalStateException ignored) {}
+        this.goToMainMenuOnTap();
     }
 
 
@@ -112,36 +126,187 @@ public class ConsoleView extends View {
     }
 
 
-    // TODO: real'no zroby ConsoleView
     @Override
-    public void draw(Player player) {
-        final byte side = 5 * 2;
-        final byte width = Board.WIDTH * 2 + Board.WIDTH + 1 + side * 2;
+    public void draw(final Player player) {
+        final byte side = 5;
+        // cellLen + bordersCount
+        final byte center = Board.WIDTH * 2 + Board.WIDTH + 1;
+        final byte width = center + side * 2;
 
-        System.out.println('+' + "-".repeat(width) + '+');
-        System.out.println('|' + " ".repeat((width - player.name.length()) / 2) + player.name +
-            " ".repeat((width - player.name.length()) / 2) + '|');
-        System.out.println('+' + "-".repeat(width - 2) + '+');
+        // Creating border
+        final String border = '+' + "-".repeat(width) + '+' + '\n';
 
-        System.out.print('|' + " ".repeat(side + 1));
+        // Creating column number
+        final StringBuilder columnNumber = new StringBuilder();
+        columnNumber.append('|').append(" ".repeat(side + 1));
         for (byte i = 1; i <= Board.WIDTH; i++) {
-            System.out.print((String) (this.normNumberLen(i, (byte) 2) + ' '));
+            columnNumber.append(this.normNumberLen(i, (byte) 2)).append(' ');
+        }
+        // one space already added
+        columnNumber.append(" ".repeat(side)).append('|').append('\n');
+
+        final StringBuilder playerScreen = new StringBuilder();
+
+
+        playerScreen.append(border);
+        // Centred name
+        {
+            final byte nameTab = (byte) (width - player.name.length());
+            playerScreen.append('|').append(" ".repeat(nameTab / 2));
+            playerScreen.append(player.name);
+            playerScreen.append(" ".repeat(nameTab / 2 + nameTab % 2)).append('|').append('\n');
         }
 
-        
+        playerScreen.append(border);
+        playerScreen.append(columnNumber);
 
+        // BOARD
+        {
+            final Board board = player.getBoard();
+
+            // Transform board to String
+            final String[][] stringedBoard = new String[Board.HEIGHT][Board.WIDTH];
+            // Filling up
+            for (byte y = 0; y < Board.HEIGHT; y++) {
+                stringedBoard[y] = new String[Board.WIDTH];
+                for (byte x = 0; x < Board.WIDTH; x++) {
+                    stringedBoard[y][x] = "  ";
+                }
+            }
+
+            // Adding bonuses
+            {
+                final Color[][] bonuses = board.getEnergyBonus();
+                for (byte y = 0; y < Board.HEIGHT; y++) {
+                    for (byte x = 0; x < Board.WIDTH; x++) {
+                        if (bonuses[y][x] != null) {
+                            stringedBoard[y][x] = this.bgColor2string(bonuses[y][x]);
+                        }
+                    }
+                }
+            }
+
+            // Adding placed blocks
+            for (PlacedBlock placed : board.getBoard()) {
+                final String color = this.color2string(placed.getColor());
+
+                final Position start = placed.getPlace();
+                for (Position relativePos : placed.getBlock()) {
+                    final Position pos = start.add(relativePos);
+                    stringedBoard[pos.getY()][pos.getX()] = color;
+                }
+            }
+
+            // Drawing
+            for (byte y = 0; y < Board.HEIGHT; y++) {
+                // Border
+                playerScreen.append('|').append(" ".repeat(side));
+                playerScreen.append("+--".repeat(Board.WIDTH)).append('+');
+                playerScreen.append(" ".repeat(side)).append('|').append('\n');
+
+                playerScreen.append("| ");
+                // Score for row
+                playerScreen.append(this.normNumberLen((byte) board.calculateRow(y), (byte) 2));
+                playerScreen.append("  ");
+                // Board itself
+                for (String cell : stringedBoard[y]) {
+                    playerScreen.append('|').append(cell);
+                }
+                playerScreen.append("| ");
+                // Row multiplier
+                playerScreen.append(String.format("%3s", "x" + board.getRowMultiplier(y)));
+                playerScreen.append(" |");
+                playerScreen.append('\n');
+            }
+            // Border
+            playerScreen.append('|').append(" ".repeat(side));
+            playerScreen.append("+--".repeat(Board.WIDTH)).append('+');
+            playerScreen.append(" ".repeat(side)).append('|').append('\n');
+        }
+
+        playerScreen.append(columnNumber);
+        playerScreen.append(border);
+
+        // BONUS SCORE
+        {
+            final BonusScore bonusScore = player.getBonusScore();
+
+            playerScreen.append('|').append(" ".repeat(side));
+            final String stringedBonusScore = String.format(this.text.bonusScore(),
+                    bonusScore.get(), bonusScore.getNext());
+            playerScreen.append(stringedBonusScore);
+            playerScreen.append(" ".repeat(center - stringedBonusScore.length() + side));
+            playerScreen.append('|').append('\n');
+        }
+
+        // ENERGY
+        {
+            final Energy energy = player.getEnergy();
+
+            playerScreen.append('|').append(" ".repeat(side));
+            final String stringedEnergy = String.format(this.text.energy(),
+                    energy.getAvailable(), energy.getDistanceToNextBonus());
+            playerScreen.append(stringedEnergy);
+            playerScreen.append(" ".repeat(center - stringedEnergy.length() + side));
+            playerScreen.append('|').append('\n');
+        }
+        // BOMBS
+        {
+            final Bombs bombs = player.getBombs();
+
+            playerScreen.append('|').append(" ".repeat(side));
+            final String stringedBombs = String.format(this.text.bombs(),
+                    bombs.get(), bombs.calculateFinal());
+            playerScreen.append(stringedBombs);
+            playerScreen.append(" ".repeat(center - stringedBombs.length() + side));
+            playerScreen.append('|').append('\n');
+        }
+
+        playerScreen.append(border);
+
+        System.out.println(playerScreen.toString() + '\n');
     }
 
     @Override
-    public void endSolo(Rank[] ranks, short finalScore) {
+    public void endSolo(final String name, final short finalScore, final Level difficulty) {
+        System.out.println("\n\n");
+        System.out.println(this.text.end());
+
+        System.out.printf(this.text.endSolo(),
+                name, this.text.ranks()[Ranks.getRank(difficulty, finalScore)], finalScore);
+
+        System.out.println("\n\n");
+
+        this.goToMainMenuOnTap();
     }
 
     @Override
-    public void endStandard(Player[] players) {
+    public void endStandard(final Player[] players) {
+        Arrays.sort(players);
+
+        System.out.println("\n\n");
+        System.out.println(this.text.end());
+        System.out.println(this.text.endStandard());
+
+        for (byte i = 0; i < players.length; i++) {
+            System.out.printf("%d. %s - %d\n", i, players[i].name, players[i].calculateFinal());
+        }
+
+        System.out.println("\n\n");
+
+        this.goToMainMenuOnTap();
     }
 
     @Override
-    public void endDuel(Player winner, Player loser) {
+    public void endDuel(final String winner, final String loser) {
+        System.out.println("\n\n");
+        System.out.println(this.text.end());
+
+        System.out.printf(this.text.endDuel(), winner, loser);
+
+        System.out.println("\n\n");
+
+        this.goToMainMenuOnTap();
     }
 
     @Override
@@ -150,6 +315,7 @@ public class ConsoleView extends View {
     }
 
 
+    // TODO: real'no zroby ConsoleView
     // PlayerAsk
     @Override
     public boolean askReroll(final BlocksTable blocks, final MatrixDice matrixDie) {
@@ -159,7 +325,9 @@ public class ConsoleView extends View {
     // TODO: placing spot mozxe buty null
     @Override
     public Position askPlacingSpot(final Block block, final Position[] variants) {
-        return new Position((byte) 0, (byte) 0);
+//        final byte choice = this.askUserChoice(this.text.askPlacingSpot(), variants, true);
+//        return choice == 0 ? null : variants[choice - 1];
+        return variants[0];
     }
 
     @Override
@@ -225,7 +393,59 @@ public class ConsoleView extends View {
     }
 
 
-    // askers
+    private void goToMainMenuOnTap() {
+        System.out.println(this.text.goToMainMenuOnTap());
+        try {
+            keyboard.nextLine();
+        } catch (NoSuchElementException | IllegalStateException ignored) {
+        }
+    }
+
+    private String color2string(final Color color) {
+        return switch (color) {
+            case Color.WHITE -> Colors.ANSI_WHITE + "WH";
+            case Color.YELLOW -> Colors.ANSI_YELLOW + "YW";
+            case Color.GREEN -> Colors.ANSI_GREEN + "GN";
+            case Color.RED -> Colors.ANSI_RED + "RD";
+            case Color.BLUE -> Colors.ANSI_BLUE + "BL";
+            case Color.BLACK -> Colors.ANSI_BLACK + "BK";
+            case Color.DUELER -> Colors.ANSI_DUELER + "MB";
+            default -> throw new InputMismatchException("Unexpected color");
+        } + Colors.ANSI_RESET;
+    }
+
+    private String bgColor2string(final Color bgColor) {
+        return switch (bgColor) {
+            case Color.WHITE -> Colors.ANSI_BG_WHITE + "wh";
+            case Color.YELLOW -> Colors.ANSI_BG_YELLOW + "yw";
+            case Color.GREEN -> Colors.ANSI_BG_GREEN + "gn";
+            case Color.RED -> Colors.ANSI_BG_RED + "rd";
+            case Color.BLUE -> Colors.ANSI_BG_BLUE + "bl";
+            case Color.BLACK -> Colors.ANSI_BG_BLACK + "bk";
+            case Color.DUELER -> Colors.ANSI_BG_DUELER + "mb";
+            default -> throw new InputMismatchException("Unexpected color");
+        } + Colors.ANSI_RESET;
+    }
+
+    private String normNumberLen(byte number, final byte len) {
+        if (number < 0) {
+            throw new IllegalArgumentException("Numbers less than zero is not supported for the moment");
+        }
+
+        final StringBuilder normNumber = new StringBuilder();
+        while (number != 0) {
+            normNumber.append(number % 10);
+            number /= 10;
+        }
+
+        if (normNumber.length() <= len) {
+            normNumber.append("0".repeat(len - normNumber.length()));
+        }
+
+        return normNumber.reverse().toString();
+    }
+
+    // Askers
     private byte askUserChoice(final String message, final String[] variants, final boolean exitAvailable) {
         final byte minimumChoice = (byte) (exitAvailable ? 0 : 1);
 
@@ -236,7 +456,7 @@ public class ConsoleView extends View {
         if (exitAvailable) {
             description.append(0);
             description.append(". ");
-            description.append(this.text.exitVariant());
+            description.append(this.text.backVariant());
             description.append("\n");
         }
         for (byte i = 0; i < variants.length; i++) {
@@ -291,23 +511,5 @@ public class ConsoleView extends View {
         } while (!emptyAllowed && input.isEmpty());
 
         return input;
-    }
-
-    private String normNumberLen(byte number, final byte len) {
-        if (number < 0) {
-            throw new IllegalArgumentException("Numbers less than zero is not supported for the moment");
-        }
-
-        final StringBuilder normNumber = new StringBuilder();
-        while (number != 0) {
-            normNumber.append(number % 10);
-            number /= 10;
-        }
-
-        if (normNumber.length() <= len) {
-            normNumber.append("0".repeat(len - normNumber.length()));
-        }
-
-        return normNumber.reverse().toString();
     }
 }

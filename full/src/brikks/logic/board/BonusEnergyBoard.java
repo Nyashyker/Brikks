@@ -2,6 +2,7 @@ package brikks.logic.board;
 
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
+import brikks.logic.Board;
 
 import java.util.Random;
 
@@ -31,7 +32,7 @@ public abstract class BonusEnergyBoard {
 
 
     protected BonusEnergyBoard(final byte width, final byte height) {
-        this(generateBonusEnergy(width, height));
+        this(generateBonusEnergy(width, (byte) (height)));
     }
 
     protected BonusEnergyBoard(final Color[][] bonusEnergy) {
@@ -48,17 +49,42 @@ public abstract class BonusEnergyBoard {
     protected static Color[][] generateBonusEnergy(final byte width, final byte height) {
         final Random rand = new Random();
 
+        final byte maxHeight = (byte) (height - Block.LEN / 2);
+
         final Color[][] bonusEnergy = new Color[height][height];
         for (byte y = 0; y < height; y++) {
-            for (byte x = 0; x < width; x++) {
-                int r = rand.nextInt(Color.values().length) * 10;
-                if (r < Color.values().length) {
-                    bonusEnergy[y][x] = Color.values()[r];
-                } else {
-                    bonusEnergy[y][x] = null;
+            bonusEnergy[y] = new Color[width];
+        }
+
+        for (byte _i = 0; _i < 2; _i++) {
+            for (Color color : Color.values()) {
+                if (color == Color.DUELER) {
+                    continue;
                 }
+
+                Position place = new Position((byte) 0, (byte) 0);
+                do {
+                    place.setY((byte) rand.nextInt(maxHeight));
+                    place.setX((byte) rand.nextInt(width));
+                } while (bonusEnergy[place.getY()][place.getX()] != null);
+                bonusEnergy[place.getY()][place.getX()] = color;
             }
         }
+
+/*
+        bonusEnergy[0][6] = Color.GREEN;
+        bonusEnergy[1][0] = Color.RED;
+        bonusEnergy[1][9] = Color.BLUE;
+        bonusEnergy[2][3] = Color.BLACK;
+        bonusEnergy[3][7] = Color.WHITE;
+        bonusEnergy[4][1] = Color.YELLOW;
+        bonusEnergy[5][5] = Color.RED;
+        bonusEnergy[6][2] = Color.BLUE;
+        bonusEnergy[6][9] = Color.YELLOW;
+        bonusEnergy[7][0] = Color.BLACK;
+        bonusEnergy[7][7] = Color.GREEN;
+        bonusEnergy[8][4] = Color.WHITE;
+*/
 
         return bonusEnergy;
     }

@@ -67,14 +67,15 @@ public class Brikks {
             return;
         }
 
+        final Level difficulty = this.view.askDifficulty();
+        if (difficulty == null) {
+            return;
+        }
+        this.save.save(difficulty);
+
         final Player[] players = new Player[playerCount];
         {
             final String[] name$s = new String[playerCount];
-            final Level difficulty = this.view.askDifficulty();
-            if (difficulty == null) {
-                return;
-            }
-            this.save.save(difficulty);
 
             for (byte i = 0; i < playerCount; i++) {
                 String name;
@@ -91,7 +92,7 @@ public class Brikks {
                     } else if (this.view.askUseExistingPlayer(name)) {
                         nameDecided = true;
                     }
-                } while (nameDecided);
+                } while (!nameDecided);
 
                 players[i] = new Player(this.save.getPlayerSave(name), name, (byte) name$s.length, difficulty);
             }
@@ -113,12 +114,13 @@ public class Brikks {
         this.save.startCountingTime();
         final RunsResults results = this.run(players, duelMode);
         if (results.endGame()) {
-            this.end(players, duelMode, results.duelWinnerIndex());
+            this.end(players, difficulty, duelMode, results.duelWinnerIndex());
         }
     }
 
     public void load() {
         final Player[] players;
+        final Level difficulty;
         final boolean duelMode;
         {
             final SavedGame[] variants = this.save.savedGames();
@@ -131,13 +133,14 @@ public class Brikks {
 
             players = loaded.players();
             this.matrixDie.cheat(loaded.matrixDie());
+            difficulty = loaded.difficulty();
             duelMode = loaded.duel();
         }
 
         this.save.startCountingTime();
         final RunsResults results = this.run(players, duelMode);
         if (results.endGame()) {
-            this.end(players, duelMode, results.duelWinnerIndex());
+            this.end(players, difficulty, duelMode, results.duelWinnerIndex());
         }
     }
 
@@ -214,17 +217,17 @@ public class Brikks {
         return new RunsResults(true, (byte) -1);
     }
 
-    private void end(final Player[] players, final boolean duelMode, final byte winnerIndex) {
+    private void end(final Player[] players, final Level difficulty, final boolean duelMode, final byte winnerIndex) {
         this.save.saveEndDateTime();
         for (final Player player : players) {
             player.saveFinal();
         }
 
         if (players.length == 1) {
-            this.view.endSolo(this.save.getRanks(), players[0].calculateFinal());
+            this.view.endSolo(players[0].name, players[0].calculateFinal(), difficulty);
         } else if (duelMode) {
             final ByteLoop loop = new ByteLoop(winnerIndex, (byte) 2);
-            this.view.endDuel(players[loop.current()], players[loop.forecast()]);
+            this.view.endDuel(players[loop.current()].name, players[loop.forecast()].name);
         } else {
             this.view.endStandard(players);
         }

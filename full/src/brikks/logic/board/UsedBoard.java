@@ -42,6 +42,7 @@ public class UsedBoard {
 
 
     public List<Position> canBePlaced(final Block block) {
+        // TODO: fix
         List<Position> variants = new LinkedList<Position>();
 
         for (byte x = 0; x < used[0].length; x++) {

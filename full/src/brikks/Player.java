@@ -8,7 +8,7 @@ import brikks.logic.*;
 import brikks.view.DuelAsk;
 import brikks.view.PlayerAsk;
 
-public class Player {
+public class Player implements Comparable<Player> {
     public final String name;
     private boolean plays;
 
@@ -102,7 +102,7 @@ public class Player {
     }
 
 
-    public boolean firstChoice(final Block block) {
+    public void firstChoice(final Block block) {
         if (block == null) {
             throw new IllegalArgumentException("Block cannot be null");
         }
@@ -110,7 +110,6 @@ public class Player {
         final PlacedBlock placed = new PlacedBlock(block, this.board.canBePlaced(block)[0]);
 
         this.board.place(placed);
-        return true;
     }
 
     public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final MatrixDice matrixDie) {
@@ -230,5 +229,10 @@ public class Player {
 
     public void saveFinal() {
         this.saver.save(this.calculateFinal());
+    }
+
+    @Override
+    public int compareTo(final Player other) {
+        return this.calculateFinal() - other.calculateFinal();
     }
 }

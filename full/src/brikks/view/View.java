@@ -21,8 +21,8 @@ public abstract class View implements PlayerAsk, DuelAsk {
 
 
     abstract public void draw(final Player player);
-    abstract public void endSolo(final Rank[] ranks, final short finalScore);
+    abstract public void endSolo(final String name, final short finalScore, final Level difficulty);
     abstract public void endStandard(final Player[] players);
-    abstract public void endDuel(final Player winner, final Player loser);
+    abstract public void endDuel(final String winner, final String loser);
     abstract public void exit();
 }
