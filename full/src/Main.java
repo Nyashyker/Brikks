@@ -58,7 +58,18 @@ public class Main {
                     "Підсумки:",
                     "%s переміг %s\n",
                     "Вихід...",
-                    "Хочете перекинути кубик? "
+                    "Хочете перекинути кубик? ",
+                    "Де розмістити блок?:",
+                    "Ваші дії:",
+                    new String[] {
+                            "Вористати бомбу;",
+                            "Повернути блок;",
+                            "Замінити блок",
+                            "Поставити блок",
+                            "Здатися",
+                            "Зберегтися",
+                            "Вийти в головне меню"
+                    }
             );
         }
 
@@ -66,34 +77,10 @@ public class Main {
         final View v = new ConsoleView(t, "\n\n\t\tBRIKKS\n\n");
         final BlocksTable bt = new BlocksTable(generateBlocksTable());
 
-        for (final Block[] bl : bt.getTable()) {
-            final byte len;
-            if (bl[0].getColor() == Color.BLACK) {
-                len = 4 + 4;
-            } else {
-                len = 3 + 4;
-            }
-            StringBuilder[] builder = new StringBuilder[len];
-            for (byte i = 0; i < len; i++) {
-                builder[i] = new StringBuilder();
-            }
-            for (final Block b : bl) {
-                stak(builder, ((ConsoleView) v).tmp(b, len));
-            }
-            for (byte i = 0; i < len; i++) {
-                System.out.println(builder[i]);
-            }
-        }
 /*
         final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
         game.start();
 */
-    }
-
-    private static void stak(final StringBuilder[] builder, final StringBuilder[] add) {
-        for (byte y = 0; y < builder.length; y++) {
-            builder[y].append(add[y]);
-        }
     }
 
     public static Block[][] generateBlocksTable() {

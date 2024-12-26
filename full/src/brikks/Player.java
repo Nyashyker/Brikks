@@ -127,7 +127,7 @@ public class Player implements Comparable<Player> {
             final Position[] variants = this.board.canBePlaced(block);
             canGiveUp = variants.length == 0;
 
-            switch (user.askDoing(blocks, roll)) {
+            switch (user.askDoing(block)) {
                 case BOMB -> {
                     if (this.bombs.canUse()) {
                         this.bombs.use();

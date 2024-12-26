@@ -7,10 +7,9 @@ import brikks.view.enums.*;
 public interface PlayerAsk {
     boolean askReroll(final Block block);
 
-    // TODO: placing spot mozxe buty null
     Position askPlacingSpot(final Block block, final Position[] variants);
 
-    Doing askDoing(final BlocksTable blocks, final Position roll);
+    Doing askDoing(final Block block);
 
     byte askRotation(final Block[] variants);
 

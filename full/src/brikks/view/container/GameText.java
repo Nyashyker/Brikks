@@ -40,5 +40,10 @@ public record GameText(
         String exit,
 
 
-        String askReroll
+        String askReroll,
+
+        String askPlacingSpot,
+
+        String askDoing,
+        String[] doingVariants
 ) {}

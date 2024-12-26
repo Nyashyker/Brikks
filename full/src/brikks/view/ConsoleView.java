@@ -315,28 +315,43 @@ public class ConsoleView extends View {
     }
 
 
-    // TODO: real'no zroby ConsoleView
     // PlayerAsk
     @Override
     public boolean askReroll(final Block block) {
         this.showBlock(block);
-//        return this.askUserChoice(this.text.askReroll());
-        return false;
+        return this.askUserChoice(this.text.askReroll());
     }
 
-    // TODO: placing spot mozxe buty null
     @Override
     public Position askPlacingSpot(final Block block, final Position[] variants) {
-//        final byte choice = this.askUserChoice(this.text.askPlacingSpot(), variants, true);
-//        return choice == 0 ? null : variants[choice - 1];
-        return variants[0];
+        this.showBlock(block);
+
+        final String[] stringedVariants = new String[variants.length];
+        for (byte i = 0; i < variants.length; i++) {
+            stringedVariants[i] = String.format("%d  %d", variants[i].getX(), variants[i].getY());
+        }
+
+        final byte choice = this.askUserChoice(this.text.askPlacingSpot(), stringedVariants, true);
+        return choice == 0 ? null : variants[choice - 1];
     }
 
     @Override
-    public Doing askDoing(final BlocksTable blocks, final Position roll) {
-        return Doing.EXIT;
+    public Doing askDoing(final Block block) {
+        // TODO: vyznacxty, koly krasxcxe blok vidobrazxty
+        this.showBlock(block);
+        return switch (this.askUserChoice(this.text.askDoing(), this.text.doingVariants(), false)) {
+            case 1 -> Doing.BOMB;
+            case 2 -> Doing.ROTATE;
+            case 3 -> Doing.CHOICE;
+            case 4 -> Doing.PLACE;
+            case 5 -> Doing.GIVE_UP;
+            case 6 -> Doing.SAVE;
+            case 7 -> Doing.EXIT;
+            default -> throw new IllegalArgumentException("Unexpected value for doing");
+        };
     }
 
+    // TODO: real'no zroby ConsoleView
     @Override
     public byte askRotation(final Block[] variants) {
         return (byte) 0;
@@ -419,50 +434,6 @@ public class ConsoleView extends View {
         }
 
         return normNumber.reverse().toString();
-    }
-
-    public StringBuilder[] tmp(final Block block, byte height) {
-        final Position size = block.getSize();
-
-        final String[][] blockTable = new String[size.getY()][size.getX()];
-        for (byte y = 0; y < size.getY(); y++) {
-            blockTable[y] = new String[size.getX()];
-            for (byte x = 0; x < size.getX(); x++) {
-                blockTable[y][x] = null;
-            }
-        }
-
-        final String color = this.color2string(block.getColor());
-        final Position start = new Position((byte) 0, (byte) (size.getY() - 1));
-
-        for (final Position relativePos : block.getBlock()) {
-            final Position shape = start.add(relativePos);
-            blockTable[shape.getY()][shape.getX()] = color;
-        }
-
-        final StringBuilder[] stringedBlock = new StringBuilder[height];
-        for (byte i = 0; i < height; i++) {
-            stringedBlock[i] = new StringBuilder();
-        }
-        final String border = '+' + "--".repeat(size.getX() + 2) + '+';
-        final String subBorder = '|' + "  ".repeat(size.getX() + 2) + '|';
-
-        stringedBlock[--height].append(border);
-        stringedBlock[--height].append(subBorder);
-        for (byte y = 0; y < size.getY(); y++) {
-            stringedBlock[--height].append('|').append("  ");
-            for (byte x = 0; x < size.getX(); x++) {
-                stringedBlock[height].append(blockTable[y][x] == null ? "  " : blockTable[y][x]);
-            }
-            stringedBlock[height].append("  ").append('|');
-        }
-        while (height > 2) {
-            stringedBlock[--height].append(subBorder);
-        }
-        stringedBlock[--height].append(subBorder);
-        stringedBlock[--height].append(border);
-
-        return stringedBlock;
     }
 
     private void showBlock(final Block block) {
