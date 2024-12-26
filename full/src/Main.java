@@ -77,6 +77,7 @@ public class Main {
         final View v = new ConsoleView(t, "\n\n\t\tBRIKKS\n\n");
         final BlocksTable bt = new BlocksTable(generateBlocksTable());
 
+        v.draw(p);
 /*
         final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
         game.start();

@@ -231,11 +231,11 @@ public class ConsoleView extends View {
         {
             final BonusScore bonusScore = player.getBonusScore();
 
-            playerScreen.append('|').append(" ".repeat(side));
+            playerScreen.append('|').append(" ".repeat(side - 2));
             final String stringedBonusScore = String.format(this.text.bonusScore(),
                     bonusScore.get(), bonusScore.getNext());
             playerScreen.append(stringedBonusScore);
-            playerScreen.append(" ".repeat(center - stringedBonusScore.length() + side));
+            playerScreen.append(" ".repeat(center - stringedBonusScore.length() + side + 2));
             playerScreen.append('|').append('\n');
         }
 
@@ -243,22 +243,22 @@ public class ConsoleView extends View {
         {
             final Energy energy = player.getEnergy();
 
-            playerScreen.append('|').append(" ".repeat(side));
+            playerScreen.append('|').append(" ".repeat(side - 2));
             final String stringedEnergy = String.format(this.text.energy(),
                     energy.getAvailable(), energy.getDistanceToNextBonus());
             playerScreen.append(stringedEnergy);
-            playerScreen.append(" ".repeat(center - stringedEnergy.length() + side));
+            playerScreen.append(" ".repeat(center - stringedEnergy.length() + side + 2));
             playerScreen.append('|').append('\n');
         }
         // BOMBS
         {
             final Bombs bombs = player.getBombs();
 
-            playerScreen.append('|').append(" ".repeat(side));
+            playerScreen.append('|').append(" ".repeat(side - 2));
             final String stringedBombs = String.format(this.text.bombs(),
                     bombs.get(), bombs.calculateFinal());
             playerScreen.append(stringedBombs);
-            playerScreen.append(" ".repeat(center - stringedBombs.length() + side));
+            playerScreen.append(" ".repeat(center - stringedBombs.length() + side + 2));
             playerScreen.append('|').append('\n');
         }
 
@@ -436,44 +436,108 @@ public class ConsoleView extends View {
         return normNumber.reverse().toString();
     }
 
+    // Showers for blocks
     private void showBlock(final Block block) {
         System.out.println();
 
-        final Position size = block.getSize();
+        final Position blockSize = block.getSize();
 
-        final String[][] blockTable = new String[size.getY()][size.getX()];
-        for (byte y = 0; y < size.getY(); y++) {
-            blockTable[y] = new String[size.getX()];
-            for (byte x = 0; x < size.getX(); x++) {
+        final StringBuilder[] shownBlock = new StringBuilder[blockSize.getY() + 4];
+        for (byte y = 0; y < blockSize.getY() + 4; y++) {
+            shownBlock[y] = new StringBuilder();
+        }
+
+        this.buildBlock(block, shownBlock, blockSize.getX());
+
+        for (final StringBuilder stringedBlock : shownBlock) {
+            System.out.println(stringedBlock);
+        }
+    }
+
+    private void showBlockRow(final Block[] blocksRow) {
+        System.out.println();
+
+        byte blockSize = 0;
+        for (final Block block : blocksRow) {
+            final Position size = block.getSize();
+            final byte maxSize = size.getX() > size.getY() ? size.getX() : size.getY();
+            if (blockSize < maxSize) {
+                blockSize = maxSize;
+            }
+        }
+
+        final StringBuilder[] shownBlock = new StringBuilder[blockSize + 4];
+        for (byte y = 0; y < blockSize + 4; y++) {
+            shownBlock[y] = new StringBuilder();
+        }
+
+        for (final Block block : blocksRow) {
+            // `shownBlock` gets modified by this call
+            this.buildBlock(block, shownBlock, blockSize);
+        }
+
+        for (final StringBuilder stringedBlock : shownBlock) {
+            System.out.println(stringedBlock);
+        }
+
+    }
+
+    private void buildBlock(final Block block, final StringBuilder[] base, final byte width) {
+        final Position blockSize = block.getSize();
+
+        final String[][] blockTable = new String[blockSize.getY()][blockSize.getX()];
+        for (byte y = 0; y < blockSize.getY(); y++) {
+            blockTable[y] = new String[blockSize.getX()];
+            for (byte x = 0; x < blockSize.getX(); x++) {
                 blockTable[y][x] = null;
             }
         }
 
-        final String color = this.color2string(block.getColor());
-        final Position start = new Position((byte) 0, (byte) (size.getY() - 1));
+        // TODO: mozxe, vynesty v okremu funkciju zadl'a vidobrazxenn'a dosxky
+        // Converting Block to stringed 2D array
+        {
+            final String color = this.color2string(block.getColor());
+            final Position start = new Position((byte) 0, (byte) (blockSize.getY() - 1));
 
-        for (final Position relativePos : block.getBlock()) {
-            final Position shape = start.add(relativePos);
-            blockTable[shape.getY()][shape.getX()] = color;
-        }
-
-        final StringBuilder stringedBlock = new StringBuilder();
-        final String border = '+' + "--".repeat(size.getX() + 2) + '+' + '\n';
-        final String subBorder = '|' + "  ".repeat(size.getX() + 2) + '|' + '\n';
-
-        stringedBlock.append(border);
-        stringedBlock.append(subBorder);
-        for (byte y = 0; y < size.getY(); y++) {
-            stringedBlock.append('|').append("  ");
-            for (byte x = 0; x < size.getX(); x++) {
-                stringedBlock.append(blockTable[y][x] == null ? "  " : blockTable[y][x]);
+            for (final Position relativePos : block.getBlock()) {
+                final Position shape = start.add(relativePos);
+                blockTable[shape.getY()][shape.getX()] = color;
             }
-            stringedBlock.append("  ").append('|').append('\n');
         }
-        stringedBlock.append(subBorder);
-        stringedBlock.append(border);
 
-        System.out.print(stringedBlock);
+        byte height = (byte) base.length;
+
+        // Some border const
+        final String border = '+' + "--".repeat(width + 2) + '+';
+        final String subBorder = '|' + "  ".repeat(width + 2) + '|';
+
+        base[--height].append(border);
+        // Centring the shape vertically
+        {
+            byte subHeight;
+            do {
+                base[--height].append(subBorder);
+                subHeight = (byte) (height - 3 - blockSize.getY());
+            } while (subHeight / 2 + subHeight % 2 > 0);
+        }
+        // Drawing the shape
+        // & centring it horizontally
+        {
+            final byte subWidth = (byte) (width + 2 - blockSize.getX());
+            for (byte y = 0; y < blockSize.getY(); y++) {
+                base[--height].append('|').append(" ".repeat(subWidth));
+                for (byte x = 0; x < blockSize.getX(); x++) {
+                    base[height].append(blockTable[y][x] == null ? "  " : blockTable[y][x]);
+                }
+                base[height].append(" ".repeat(subWidth)).append('|');
+            }
+        }
+        // Centring the shape vertically
+        // for the sake of simplicity, just taking the reminder
+        do {
+            base[--height].append(subBorder);
+        } while (height > 1);
+        base[--height].append(border);
     }
 
     // Colors
