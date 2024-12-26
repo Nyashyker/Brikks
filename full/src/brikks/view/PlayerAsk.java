@@ -5,7 +5,7 @@ import brikks.essentials.*;
 import brikks.view.enums.*;
 
 public interface PlayerAsk {
-    boolean askReroll(final BlocksTable blocks, final MatrixDice matrixDie);
+    boolean askReroll(final Block block);
 
     // TODO: placing spot mozxe buty null
     Position askPlacingSpot(final Block block, final Position[] variants);

@@ -12,7 +12,7 @@ public class Board {
     public static final byte WIDTH = 10;
     public static final byte HEIGHT = 11;
 
-    private static final Block duelBlock = new Block(new Position[0], Color.DUELER);
+    private static final Block duelBlock = new Block(new Position[]{new Position()}, Color.DUELER);
 
 
     private final List<PlacedBlock> placed;

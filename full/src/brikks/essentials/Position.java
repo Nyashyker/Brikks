@@ -5,6 +5,10 @@ public class Position {
     protected byte y;
 
 
+    public Position() {
+        this((byte) 0, (byte) 0);
+    }
+
     public Position(final byte x, final byte y) {
         this.setX(x);
         this.setY(y);
@@ -44,6 +48,7 @@ public class Position {
     public boolean equals(final Position other) {
         return this.getX() == other.getX() && this.getY() == other.getY();
     }
+
 
     @Override
     public String toString() {

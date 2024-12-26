@@ -62,7 +62,7 @@ public abstract class BonusEnergyBoard {
                     continue;
                 }
 
-                Position place = new Position((byte) 0, (byte) 0);
+                Position place = new Position();
                 do {
                     place.setY((byte) rand.nextInt(maxHeight));
                     place.setX((byte) rand.nextInt(width));

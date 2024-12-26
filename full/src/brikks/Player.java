@@ -113,7 +113,7 @@ public class Player implements Comparable<Player> {
     }
 
     public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final MatrixDice matrixDie) {
-        if (user.askReroll(blocks, matrixDie)) {
+        if (user.askReroll(blocks.getBlock(matrixDie.get()))) {
             matrixDie.roll();
         }
 

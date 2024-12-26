@@ -37,5 +37,8 @@ public record GameText(
 
         String endDuel,
 
-        String exit
+        String exit,
+
+
+        String askReroll
 ) {}
