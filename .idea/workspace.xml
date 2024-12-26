@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="some-PlayerAsk-progress">
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="I-am-gonna-break-the-draw">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,7 +89,7 @@
       <workItem from="1735169064329" duration="58000" />
       <workItem from="1735169126826" duration="158000" />
       <workItem from="1735169290651" duration="11063000" />
-      <workItem from="1735234018542" duration="11058000" />
+      <workItem from="1735234018542" duration="12923000" />
     </task>
     <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
       <option name="closed" value="true" />
@@ -124,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735181232046</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="I-am-gonna-break-the-draw">
+      <option name="closed" value="true" />
+      <created>1735252979829</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1735252979829</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -135,6 +142,7 @@
     <MESSAGE value="whatever" />
     <MESSAGE value="All-blocks-can-be-checked-HERE" />
     <MESSAGE value="some-PlayerAsk-progress" />
-    <option name="LAST_COMMIT_MESSAGE" value="some-PlayerAsk-progress" />
+    <MESSAGE value="I-am-gonna-break-the-draw" />
+    <option name="LAST_COMMIT_MESSAGE" value="I-am-gonna-break-the-draw" />
   </component>
 </project>

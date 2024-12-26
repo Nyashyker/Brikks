@@ -134,7 +134,7 @@ public class ConsoleView extends View {
         final byte width = center + side * 2;
 
         // Creating border
-        final String border = '+' + "-".repeat(width) + '+' + '\n';
+        final String border = '+' + "-".repeat(width) + '+';
 
         // Creating column number
         final StringBuilder columnNumber = new StringBuilder();
@@ -143,22 +143,31 @@ public class ConsoleView extends View {
             columnNumber.append(this.normNumberLen(i, (byte) 2)).append(' ');
         }
         // one space already added
-        columnNumber.append(" ".repeat(side)).append('|').append('\n');
+        columnNumber.append(" ".repeat(side)).append('|');
 
-        final StringBuilder playerScreen = new StringBuilder();
+        // Creating screen plate
+        final StringBuilder[] playerScreen;
+        {
+            final byte height = 11 + Board.HEIGHT * 2;
+            playerScreen = new StringBuilder[height];
+            for (byte y = 0; y < height; y++) {
+                playerScreen[y] = new StringBuilder();
+            }
+        }
+        byte index = 0;
 
 
-        playerScreen.append(border);
+        playerScreen[index++].append(border);
         // Centred name
         {
             final byte nameTab = (byte) (width - player.name.length());
-            playerScreen.append('|').append(" ".repeat(nameTab / 2));
-            playerScreen.append(player.name);
-            playerScreen.append(" ".repeat(nameTab / 2 + nameTab % 2)).append('|').append('\n');
+            playerScreen[index].append('|').append(" ".repeat(nameTab / 2));
+            playerScreen[index].append(player.name);
+            playerScreen[index++].append(" ".repeat(nameTab / 2 + nameTab % 2)).append('|');
         }
 
-        playerScreen.append(border);
-        playerScreen.append(columnNumber);
+        playerScreen[index++].append(border);
+        playerScreen[index++].append(columnNumber);
 
         // BOARD
         {
@@ -200,71 +209,73 @@ public class ConsoleView extends View {
             // Drawing
             for (byte y = 0; y < Board.HEIGHT; y++) {
                 // Border
-                playerScreen.append('|').append(" ".repeat(side));
-                playerScreen.append("+--".repeat(Board.WIDTH)).append('+');
-                playerScreen.append(" ".repeat(side)).append('|').append('\n');
+                playerScreen[index].append('|').append(" ".repeat(side));
+                playerScreen[index].append("+--".repeat(Board.WIDTH)).append('+');
+                playerScreen[index++].append(" ".repeat(side)).append('|');
 
-                playerScreen.append("| ");
+                playerScreen[index].append("| ");
                 // Score for row
-                playerScreen.append(this.normNumberLen((byte) board.calculateRow(y), (byte) 2));
-                playerScreen.append("  ");
+                playerScreen[index].append(this.normNumberLen((byte) board.calculateRow(y), (byte) 2));
+                playerScreen[index].append("  ");
                 // Board itself
                 for (String cell : stringedBoard[y]) {
-                    playerScreen.append('|').append(cell);
+                    playerScreen[index].append('|').append(cell);
                 }
-                playerScreen.append("| ");
+                playerScreen[index].append("| ");
                 // Row multiplier
-                playerScreen.append(String.format("%3s", "x" + board.getRowMultiplier(y)));
-                playerScreen.append(" |");
-                playerScreen.append('\n');
+                playerScreen[index].append(String.format("%3s", "x" + board.getRowMultiplier(y)));
+                playerScreen[index++].append(" |");
             }
             // Border
-            playerScreen.append('|').append(" ".repeat(side));
-            playerScreen.append("+--".repeat(Board.WIDTH)).append('+');
-            playerScreen.append(" ".repeat(side)).append('|').append('\n');
+            playerScreen[index].append('|').append(" ".repeat(side));
+            playerScreen[index].append("+--".repeat(Board.WIDTH)).append('+');
+            playerScreen[index++].append(" ".repeat(side)).append('|');
         }
 
-        playerScreen.append(columnNumber);
-        playerScreen.append(border);
+        playerScreen[index++].append(columnNumber);
+        playerScreen[index++].append(border);
 
         // BONUS SCORE
         {
             final BonusScore bonusScore = player.getBonusScore();
 
-            playerScreen.append('|').append(" ".repeat(side - 2));
+            playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedBonusScore = String.format(this.text.bonusScore(),
                     bonusScore.get(), bonusScore.getNext());
-            playerScreen.append(stringedBonusScore);
-            playerScreen.append(" ".repeat(center - stringedBonusScore.length() + side + 2));
-            playerScreen.append('|').append('\n');
+            playerScreen[index].append(stringedBonusScore);
+            playerScreen[index].append(" ".repeat(center - stringedBonusScore.length() + side + 2));
+            playerScreen[index++].append('|');
         }
 
         // ENERGY
         {
             final Energy energy = player.getEnergy();
 
-            playerScreen.append('|').append(" ".repeat(side - 2));
+            playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedEnergy = String.format(this.text.energy(),
                     energy.getAvailable(), energy.getDistanceToNextBonus());
-            playerScreen.append(stringedEnergy);
-            playerScreen.append(" ".repeat(center - stringedEnergy.length() + side + 2));
-            playerScreen.append('|').append('\n');
+            playerScreen[index].append(stringedEnergy);
+            playerScreen[index].append(" ".repeat(center - stringedEnergy.length() + side + 2));
+            playerScreen[index++].append('|');
         }
         // BOMBS
         {
             final Bombs bombs = player.getBombs();
 
-            playerScreen.append('|').append(" ".repeat(side - 2));
+            playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedBombs = String.format(this.text.bombs(),
                     bombs.get(), bombs.calculateFinal());
-            playerScreen.append(stringedBombs);
-            playerScreen.append(" ".repeat(center - stringedBombs.length() + side + 2));
-            playerScreen.append('|').append('\n');
+            playerScreen[index].append(stringedBombs);
+            playerScreen[index].append(" ".repeat(center - stringedBombs.length() + side + 2));
+            playerScreen[index++].append('|');
         }
 
-        playerScreen.append(border);
+        playerScreen[index].append(border);
 
-        System.out.println(playerScreen.toString() + '\n');
+        for (final StringBuilder display : playerScreen) {
+            System.out.println(display);
+        }
+        System.out.println();
     }
 
     @Override
@@ -493,7 +504,6 @@ public class ConsoleView extends View {
             }
         }
 
-        // TODO: mozxe, vynesty v okremu funkciju zadl'a vidobrazxenn'a dosxky
         // Converting Block to stringed 2D array
         {
             final String color = this.color2string(block.getColor());
