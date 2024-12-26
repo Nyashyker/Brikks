@@ -96,7 +96,7 @@ public class ConsoleView extends View {
     @Override
     public byte askPlayerCount(final byte maxPlayers) {
         final byte count = this.askUserNumber(this.text.askPlayerCount() + ": ", (byte) 0, (byte) 4);
-        return count == 0 ? -1 : count;
+        return (byte) (count - 1);
     }
 
     @Override
@@ -362,17 +362,28 @@ public class ConsoleView extends View {
         };
     }
 
-    // TODO: real'no zroby ConsoleView
     @Override
     public byte askRotation(final Block[] variants) {
-        return (byte) 0;
+        this.showBlockRow(variants);
+        final byte choice = this.askUserNumber(this.text.askRotation(), (byte) 0, (byte) variants.length);
+        return (byte) (choice - 1);
     }
 
     @Override
     public Position askChoice(final BlocksTable variants) {
-        return new Position();
+        this.showBlocksTable(variants.getTable());
+        final byte choiceX = this.askUserNumber(this.text.askChoiceX(), (byte) 0, BlocksTable.WIDTH);
+        if (choiceX == 0) {
+            return null;
+        }
+        final byte choiceY = this.askUserNumber(this.text.askChoiceY(), (byte) 0, BlocksTable.HEIGHT);
+        if (choiceY == 0) {
+            return null;
+        }
+        return new Position((byte) (choiceX - 1), (byte) (choiceY - 1));
     }
 
+    // TODO: real'no zroby ConsoleView
     @Override
     public void successPlace(final PlacedBlock placed) {
     }
@@ -448,20 +459,18 @@ public class ConsoleView extends View {
     }
 
     // Showers for blocks
-    private void showBlock(final Block block) {
+    private void showBlocksTable(final Block[][] blocksTable) {
         System.out.println();
 
-        final Position blockSize = block.getSize();
+        for (final Block[] blocksRow : blocksTable) {
+            final byte blockHeight;
+            if (blocksRow[0].getColor() == Color.BLACK) {
+                blockHeight = 4;
+            } else {
+                blockHeight = 3;
+            }
 
-        final StringBuilder[] shownBlock = new StringBuilder[blockSize.getY() + 4];
-        for (byte y = 0; y < blockSize.getY() + 4; y++) {
-            shownBlock[y] = new StringBuilder();
-        }
-
-        this.buildBlock(block, shownBlock, blockSize.getX());
-
-        for (final StringBuilder stringedBlock : shownBlock) {
-            System.out.println(stringedBlock);
+            this.showBlockRow(blocksRow, blockHeight, (byte) 4);
         }
     }
 
@@ -477,20 +486,40 @@ public class ConsoleView extends View {
             }
         }
 
-        final StringBuilder[] shownBlock = new StringBuilder[blockSize + 4];
-        for (byte y = 0; y < blockSize + 4; y++) {
+        this.showBlockRow(blocksRow, blockSize, blockSize);
+    }
+
+    private void showBlockRow(final Block[] blocksRow, final byte blockHeight, final byte blockWidth) {
+        final StringBuilder[] shownBlock = new StringBuilder[blockHeight + 4];
+        for (byte y = 0; y < blockHeight + 4; y++) {
             shownBlock[y] = new StringBuilder();
         }
 
         for (final Block block : blocksRow) {
             // `shownBlock` gets modified by this call
-            this.buildBlock(block, shownBlock, blockSize);
+            this.buildBlock(block, shownBlock, blockWidth);
         }
 
         for (final StringBuilder stringedBlock : shownBlock) {
             System.out.println(stringedBlock);
         }
+    }
 
+    private void showBlock(final Block block) {
+        System.out.println();
+
+        final Position blockSize = block.getSize();
+
+        final StringBuilder[] shownBlock = new StringBuilder[blockSize.getY() + 4];
+        for (byte y = 0; y < blockSize.getY() + 4; y++) {
+            shownBlock[y] = new StringBuilder();
+        }
+
+        this.buildBlock(block, shownBlock, blockSize.getX());
+
+        for (final StringBuilder stringedBlock : shownBlock) {
+            System.out.println(stringedBlock);
+        }
     }
 
     private void buildBlock(final Block block, final StringBuilder[] base, final byte width) {

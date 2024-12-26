@@ -45,5 +45,10 @@ public record GameText(
         String askPlacingSpot,
 
         String askDoing,
-        String[] doingVariants
+        String[] doingVariants,
+
+        String askRotation,
+
+        String askChoiceX,
+        String askChoiceY
 ) {}

@@ -140,6 +140,9 @@ public class Player implements Comparable<Player> {
 
                 case ROTATE -> {
                     final byte rotation = user.askRotation(blocks.getRowOfBlocks(roll.getY()));
+                    if (rotation == -1) {
+                        break;
+                    }
                     final byte energyCost = (byte) Math.abs(roll.getX() - rotation);
 
                     if (energyCost != 0 && this.energy.canSpend(energyCost)) {
@@ -156,7 +159,11 @@ public class Player implements Comparable<Player> {
                     final byte energyCost = 5;
                     if (this.energy.canSpend(energyCost)) {
                         this.energy.spend(energyCost);
-                        roll.set(user.askChoice(blocks));
+                        final Position choice = user.askChoice(blocks);
+                        if (choice == null) {
+                            break;
+                        }
+                        roll.set(choice);
 
                         user.successChoice(energyCost);
                     } else {
