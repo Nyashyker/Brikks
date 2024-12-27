@@ -121,11 +121,10 @@ public class Player implements Comparable<Player> {
     }
 
     public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final Position roll) {
-        boolean canGiveUp;
         while (true) {
             final Block block = blocks.getBlock(roll);
             final Position[] variants = this.board.canBePlaced(block);
-            canGiveUp = variants.length == 0;
+            final boolean canGiveUp = variants.length == 0;
 
             switch (user.askDoing(block)) {
                 case BOMB -> {
@@ -208,15 +207,15 @@ public class Player implements Comparable<Player> {
         }
     }
 
-    public boolean duelTurn(final DuelAsk user, final Board opponentsBoard, byte amount) {
+    public boolean duelTurn(final DuelAsk user, final Player opponent, byte amount) {
         for (; amount > 0; amount--) {
             final Position[] variants = this.board.canBePlaced();
             if (variants.length == 0) {
                 return false;
             }
 
-            final Position choice = user.askPlacingMiniblock(opponentsBoard, variants);
-            opponentsBoard.opponentsPlace(choice);
+            final Position choice = user.askPlacingMiniblock(opponent, variants);
+            opponent.board.opponentsPlace(choice);
         }
 
         return true;

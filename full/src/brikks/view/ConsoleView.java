@@ -348,7 +348,6 @@ public class ConsoleView extends View {
 
     @Override
     public Doing askDoing(final Block block) {
-        // TODO: vyznacxty, koly krasxcxe blok vidobrazxty
         this.showBlock(block);
         return switch (this.askUserChoice(this.text.askDoing(), this.text.doingVariants(), false)) {
             case 1 -> Doing.BOMB;
@@ -383,57 +382,75 @@ public class ConsoleView extends View {
         return new Position((byte) (choiceX - 1), (byte) (choiceY - 1));
     }
 
-    // TODO: real'no zroby ConsoleView
     @Override
     public void successPlace(final PlacedBlock placed) {
+        // There could be something in not console version
     }
 
     @Override
     public void successBomb() {
+        // There could be something in not console version
     }
 
     @Override
     public void successRotation(final byte energyCost) {
+        // There could be something in not console version
     }
 
     @Override
     public void successChoice(final byte energyCost) {
+        // There could be something in not console version
     }
 
     @Override
     public void failPlace() {
+        System.out.println(this.text.failPlace());
     }
 
     @Override
     public void failBomb() {
+        System.out.println(this.text.failBomb());
     }
 
     @Override
     public void failRotation() {
+        System.out.println(this.text.failRotation());
     }
 
     @Override
     public void failChoice() {
+        System.out.println(this.text.failChoice());
     }
 
     @Override
     public void failGiveUp() {
+        System.out.println(this.text.failGiveUp());
     }
 
     @Override
     public void fail() {
+        System.out.println(this.text.fail());
     }
 
 
     // DuelAsk
     @Override
-    public Position askPlacingMiniblock(Board opponentsBoard, Position[] variants) {
-        return new Position();
+    public Position askPlacingMiniblock(final Player opponent, final Position[] variants) {
+        this.draw(opponent);
+        this.showBlock(Board.duelBlock);
+
+        final String[] stringedVariants = new String[variants.length];
+        for (byte i = 0; i < variants.length; i++) {
+            stringedVariants[i] = String.format("%d  %d", variants[i].getX(), variants[i].getY());
+        }
+
+        final byte choice = this.askUserChoice(this.text.askPlacingSpotDuel(), stringedVariants, false);
+        return variants[choice - 1];
     }
 
 
     private void goToMainMenuOnTap() {
-        System.out.println(this.text.goToMainMenuOnTap());
+        System.out.println(this.text.goToMainMenuOnTap() + " ");
         try {
             keyboard.nextLine();
         } catch (NoSuchElementException | IllegalStateException ignored) {
@@ -636,7 +653,7 @@ public class ConsoleView extends View {
 
         byte choice = -1;
         while (choice == -1) {
-            System.out.printf(this.text.choiceInRange(), minimumChoice, maximumChoice);
+            System.out.printf(this.text.choiceInRange() + ": ", minimumChoice, maximumChoice);
             if (!keyboard.hasNextByte()) {
                 keyboard.nextLine();
                 continue;
@@ -654,7 +671,7 @@ public class ConsoleView extends View {
 
     private boolean askUserChoice(final String message) {
         while (true) {
-            final String input = this.askUserString(message, false);
+            final String input = this.askUserString(message + "? ", false);
 
             if (LanguagesSupport.isTrue(input)) {
                 return true;

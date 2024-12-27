@@ -11,13 +11,14 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        final GameText t;
-        // Defining t
+        final GameText text;
+        // Defining text
+        // TODO: translate from Ukrainian
         {
-            t = new GameText(
+            text = new GameText(
                     "Назад",
-                    "Уведіть будь-що, щоб перейти в головне меню. ",
-                    "Оберіть (%d-%d): ",
+                    "Уведіть будь-що, щоб перейти в головне меню.",
+                    "Оберіть (%d-%d)",
                     "Уведіть число з указаного діапазону!",
                     "МЕНЮ",
                     new String[]{
@@ -27,7 +28,7 @@ public class Main {
                             "Вийти"
                     },
                     "ТАБЛИЦЯ ЛІДЕРІВ",
-                    "Гравець із таким ім'ям уже існує. Бажаєте використати його?",
+                    "Гравець із таким ім'ям уже існує. Бажаєте використати його",
                     "Оберіть рівень складности:",
                     new String[]{
                             "Перший: 1 ОЕ дається навіть за накриття неправильним кольором",
@@ -35,7 +36,7 @@ public class Main {
                             "Третій: 1 ОЕ відбирається за накриття неправильним кольором",
                             "Четвертий: 2 ОЕ відберається за накриття неправильним кольором",
                     },
-                    "Хочете провести дуель? ",
+                    "Хочете провести дуель",
                     "Скільки гравців гратиме? ",
                     "Оберіть ім'я гравцю: ",
                     "Оберіть зебереження:",
@@ -58,12 +59,12 @@ public class Main {
                     "Підсумки:",
                     "%s переміг %s\n",
                     "Вихід...",
-                    "Хочете перекинути кубик? ",
+                    "Хочете перекинути кубик",
                     "Де розмістити блок?:",
                     "Ваші дії:",
                     new String[] {
-                            "Вористати бомбу;",
-                            "Повернути блок;",
+                            "Вористати бомбу",
+                            "Повернути блок",
                             "Замінити блок",
                             "Поставити блок",
                             "Здатися",
@@ -72,19 +73,21 @@ public class Main {
                     },
                     "Оберіть варіацію оберту блоку (0 = назад)",
                     "Оберіть стовпець блоку (0 = назад)",
-                    "Оберіть ряд блоку (0 = назад)"
+                    "Оберіть ряд блоку (0 = назад)",
+                    "Цей блок немає куди ставити!",
+                    "Бомб не залишилося!",
+                    "Недостатньо енергії, щоб повернути болок",
+                    "Недостатньо енергії, щоб замінити блок!",
+                    "Ще є куди ставити блок!!!",
+                    "Для вас гра завершена.",
+                    "Оберіть місце для мініатюрного блоку на дошці опонента"
             );
         }
+        // TODO: design normal logo
+        final String logo = "BRIKKS";
 
-        final Player p = new Player(new EmptyPlayerSave(), "Nyashyker", (byte) 1, Level.TWO);
-        final View v = new ConsoleView(t, "\n\n\t\tBRIKKS\n\n");
-        final BlocksTable bt = new BlocksTable(generateBlocksTable());
-
-        v.draw(p);
-/*
-        final Brikks game = new Brikks(new ConsoleView(), new EmptySave(), generateBlocksTable());
+        final Brikks game = new Brikks(new ConsoleView(text, logo), new EmptySave(), generateBlocksTable());
         game.start();
-*/
     }
 
     public static Block[][] generateBlocksTable() {

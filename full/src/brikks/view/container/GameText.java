@@ -50,5 +50,15 @@ public record GameText(
         String askRotation,
 
         String askChoiceX,
-        String askChoiceY
+        String askChoiceY,
+
+        String failPlace,
+        String failBomb,
+        String failRotation,
+        String failChoice,
+        String failGiveUp,
+        String fail,
+
+
+        String askPlacingSpotDuel
 ) {}

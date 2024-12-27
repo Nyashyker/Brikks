@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="I-am-gonna-break-the-draw">
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="finishna-pr'ama">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +94,7 @@
       <workItem from="1735169064329" duration="58000" />
       <workItem from="1735169126826" duration="158000" />
       <workItem from="1735169290651" duration="11063000" />
-      <workItem from="1735234018542" duration="12923000" />
+      <workItem from="1735234018542" duration="17106000" />
     </task>
     <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
       <option name="closed" value="true" />
@@ -131,7 +136,23 @@
       <option name="project" value="LOCAL" />
       <updated>1735252979829</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Nope-all-works-just-fine">
+      <option name="closed" value="true" />
+      <created>1735254625238</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1735254625238</updated>
+    </task>
+    <task id="LOCAL-00007" summary="finishna-pr'ama">
+      <option name="closed" value="true" />
+      <created>1735256958517</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1735256958517</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,6 +164,8 @@
     <MESSAGE value="All-blocks-can-be-checked-HERE" />
     <MESSAGE value="some-PlayerAsk-progress" />
     <MESSAGE value="I-am-gonna-break-the-draw" />
-    <option name="LAST_COMMIT_MESSAGE" value="I-am-gonna-break-the-draw" />
+    <MESSAGE value="Nope-all-works-just-fine" />
+    <MESSAGE value="finishna-pr'ama" />
+    <option name="LAST_COMMIT_MESSAGE" value="finishna-pr'ama" />
   </component>
 </project>
