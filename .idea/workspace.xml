@@ -4,14 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="finishna-pr'ama">
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="should-be-good">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/brikks/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/PlacedBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/PlacedBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD1.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD2.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD3.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD4.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/UsedBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/UsedBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +60,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Brikks.executor": "Run",
+    "Application.Brikks.executor": "Debug",
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "full",
@@ -94,7 +100,7 @@
       <workItem from="1735169064329" duration="58000" />
       <workItem from="1735169126826" duration="158000" />
       <workItem from="1735169290651" duration="11063000" />
-      <workItem from="1735234018542" duration="17106000" />
+      <workItem from="1735234018542" duration="23442000" />
     </task>
     <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
       <option name="closed" value="true" />
@@ -152,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735256958517</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="should-be-good">
+      <option name="closed" value="true" />
+      <created>1735259214944</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1735259214944</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +180,18 @@
     <MESSAGE value="I-am-gonna-break-the-draw" />
     <MESSAGE value="Nope-all-works-just-fine" />
     <MESSAGE value="finishna-pr'ama" />
-    <option name="LAST_COMMIT_MESSAGE" value="finishna-pr'ama" />
+    <MESSAGE value="should-be-good" />
+    <option name="LAST_COMMIT_MESSAGE" value="should-be-good" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/full/src/brikks/Brikks.java</url>
+          <line>83</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -29,7 +29,7 @@ public class BonusEnergyBoardD2 extends BonusEnergyBoard {
         for (final Position shapePos : block.getBlock()) {
             this.validatePosition(shapePos);
 
-            final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getY()];
+            final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getX()];
             if (point != null && point == block.getColor()) {
                 bonusPoints += 2;
             }

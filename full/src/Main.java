@@ -37,8 +37,8 @@ public class Main {
                             "Четвертий: 2 ОЕ відберається за накриття неправильним кольором",
                     },
                     "Хочете провести дуель",
-                    "Скільки гравців гратиме? ",
-                    "Оберіть ім'я гравцю: ",
+                    "Скільки гравців гратиме? (0 = назад)",
+                    "Оберіть ім'я гравцю (нічого = назад)",
                     "Оберіть зебереження:",
                     "Додаткові бали: %d (-> %d)",
                     "Очки енергії: %d (+ДБ -> %d)",
@@ -86,6 +86,10 @@ public class Main {
         // TODO: design normal logo
         final String logo = "BRIKKS";
 
+        /// !!! WARNING !!!
+        // There are some strange problems with Scanner.nextLine()
+        // I do not why, but it or going ahead, meanwhile I have not touched enter
+        // or asks again without no reason
         final Brikks game = new Brikks(new ConsoleView(text, logo), new EmptySave(), generateBlocksTable());
         game.start();
     }

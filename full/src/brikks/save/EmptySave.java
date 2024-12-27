@@ -16,7 +16,7 @@ public class EmptySave extends Save {
     @Override
     public LoadedGame loadGame(final int id) { return null; }
     @Override
-    public PlayerLiderboard[] liderboard() { return null; }
+    public PlayerLiderboard[] liderboard() { return new PlayerLiderboard[0]; }
     @Override
     public PlayerSave getPlayerSave(final String name) { return new EmptyPlayerSave(); }
     @Override

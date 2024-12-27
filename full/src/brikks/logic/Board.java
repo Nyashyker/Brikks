@@ -44,8 +44,7 @@ public class Board {
         this.used = new UsedBoard(Board.WIDTH, Board.HEIGHT);
     }
 
-    public Board(final BonusScore bonusScore, final Energy energy, final Level difficulty,
-                 final PlacedBlock[] placed, final Color[][] bonusEnergyBoard) {
+    public Board(final BonusScore bonusScore, final Energy energy, final Level difficulty, final PlacedBlock[] placed, final Color[][] bonusEnergyBoard) {
         if (bonusScore == null) {
             throw new IllegalArgumentException("Bonus score cannot be null");
         }
@@ -109,7 +108,7 @@ public class Board {
             }
         }
 
-        for (byte i = 0; i < variants.size();) {
+        for (byte i = 0; i < variants.size(); ) {
             boolean guesPlacable = true;
 
             for (final Position check : placedMiniblock) {
@@ -139,10 +138,7 @@ public class Board {
         this.used.place(block);
         this.placed.add(block);
 
-        return (byte) (
-                this.energy.grow(this.bonusEnergy.place(block)) +
-                        this.bonusScore.growByBoard(this.used.rowsFilled(block))
-        );
+        return (byte) (this.energy.grow(this.bonusEnergy.place(block)) + this.bonusScore.growByBoard(this.used.rowsFilled(block)));
     }
 
     public void opponentsPlace(final Position position) {

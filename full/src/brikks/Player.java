@@ -107,6 +107,7 @@ public class Player implements Comparable<Player> {
             throw new IllegalArgumentException("Block cannot be null");
         }
 
+        // TODO: add some randomness or whatever
         final PlacedBlock placed = new PlacedBlock(block, this.board.canBePlaced(block)[0]);
 
         this.board.place(placed);

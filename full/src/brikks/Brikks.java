@@ -63,7 +63,7 @@ public class Brikks {
     public void start() {
         // Creating the players
         final byte playerCount = this.view.askPlayerCount(Brikks.MAX_PLAYERS);
-        if (playerCount == -1) {
+        if (playerCount == 0) {
             return;
         }
 
@@ -112,7 +112,14 @@ public class Brikks {
         // Run the game
         this.save.saveStartDateTime();
         this.save.startCountingTime();
-        final RunsResults results = this.run(players, duelMode);
+
+        final RunsResults results;
+        if (playerCount == 1) {
+            results = this.run(players[0]);
+        } else {
+            results = this.run(players, duelMode);
+        }
+
         if (results.endGame()) {
             this.end(players, difficulty, duelMode, results.duelWinnerIndex());
         }
@@ -174,6 +181,22 @@ public class Brikks {
         }
     }
 
+    private RunsResults run(final Player player) {
+        while (true) {
+            this.save.updateDuration();
+            this.view.draw(player);
+
+            final TurnsResults result = player.turn(this.view, this.blocksTable, new Position(this.matrixDie.get()));
+
+            if (result.exit()) {
+                return new RunsResults(false, (byte) -1);
+            } else if (result.giveUp()) {
+                player.saveFinal();
+                return new RunsResults(true, (byte) -1);
+            }
+        }
+    }
+
     private RunsResults run(final Player[] players, final boolean duelMode) {
         final ByteLoop loopingLoop = new ByteLoop((byte) players.length);
         final ByteLoop loop = new ByteLoop((byte) players.length);
@@ -184,7 +207,7 @@ public class Brikks {
             loop.setPosition(loopingLoop.goForward());
 
             boolean first = true;
-            for (; loop.loopedForward(); loop.goForward()) {
+            for (; !loop.loopedForward(); loop.goForward()) {
                 final Player player = players[loop.current()];
 
                 if (!player.isPlays()) {

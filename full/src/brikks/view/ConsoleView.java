@@ -95,8 +95,7 @@ public class ConsoleView extends View {
 
     @Override
     public byte askPlayerCount(final byte maxPlayers) {
-        final byte count = this.askUserNumber(this.text.askPlayerCount() + ": ", (byte) 0, (byte) 4);
-        return (byte) (count - 1);
+        return this.askUserNumber(this.text.askPlayerCount(), (byte) 0, (byte) 4);
     }
 
     @Override
@@ -451,10 +450,10 @@ public class ConsoleView extends View {
 
     private void goToMainMenuOnTap() {
         System.out.println(this.text.goToMainMenuOnTap() + " ");
-        try {
+        if (keyboard.hasNextLine()) {
             keyboard.nextLine();
-        } catch (NoSuchElementException | IllegalStateException ignored) {
         }
+        keyboard.nextLine();
     }
 
     private String normNumberLen(byte number, final byte len) {
@@ -643,7 +642,6 @@ public class ConsoleView extends View {
             description.append(variants[i]);
             description.append("\n");
         }
-        description.append("\n");
 
         return this.askUserNumber(description.toString(), minimumChoice, (byte) variants.length);
     }
@@ -682,6 +680,8 @@ public class ConsoleView extends View {
     }
 
     private String askUserString(final String message, final boolean emptyAllowed) {
+        keyboard.nextLine();
+
         String input;
         do {
             System.out.print(message + ": ");

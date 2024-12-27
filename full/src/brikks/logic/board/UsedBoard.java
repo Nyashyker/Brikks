@@ -2,10 +2,12 @@ package brikks.logic.board;
 
 import brikks.essentials.*;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsedBoard {
+    private final byte width;
+    private final byte height;
     public final boolean[][] used;
 
 
@@ -25,6 +27,8 @@ public class UsedBoard {
             }
         }
 
+        this.width = width;
+        this.height = height;
         this.used = used;
     }
 
@@ -42,30 +46,36 @@ public class UsedBoard {
 
 
     public List<Position> canBePlaced(final Block block) {
-        // TODO: fix
-        List<Position> variants = new LinkedList<Position>();
+        List<Position> variants = new ArrayList<>();
 
-        for (byte x = 0; x < used[0].length; x++) {
+        for (byte x = 0; x < this.width; x++) {
             Position lastValid = null;
 
-            for (byte y = (byte) (used.length - 1); y >= 0; y--) {
-                boolean guessValid = !this.used[y][x];
+            boolean noMoreOptions = false;
+            for (byte y = 0; y < this.height; y++) {
+                boolean guessValid = true;
 
-                if (guessValid) {
-                    for (final Position shape : block.getBlock()) {
-                        final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
+                for (final Position shape : block.getBlock()) {
+                    final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
+                    if (shapePos.getY() >= this.height) {
+                        throw new IllegalArgumentException("Blocks shape should be started from the bottom");
+                    }
 
-                        if (this.isPositionUnsuitable(shapePos)) {
-                            guessValid = false;
-                            break;
-                        }
+                    if (shapePos.getY() < 0) {
+                        guessValid = false;
+                        break;
+                    }
+                    if (shapePos.getX() < 0 || shapePos.getX() >= this.width || this.used[shapePos.getY()][shapePos.getX()]) {
+                        guessValid = false;
+                        noMoreOptions = true;
+                        break;
                     }
                 }
 
-                if (guessValid) {
-                    lastValid = new Position(x, y);
-                } else {
+                if (noMoreOptions) {
                     break;
+                } else if (guessValid) {
+                    lastValid = new Position(x, y);
                 }
             }
 
@@ -74,12 +84,14 @@ public class UsedBoard {
             }
         }
 
+        // TODO: support placing block under other blocks if there is space for them to fall this way
+
         return variants;
     }
 
     public void place(final PlacedBlock block) {
         for (final Position shapePos : block.getBlock()) {
-            if (this.isPositionUnsuitable(shapePos)) {
+            if (shapePos.getY() < 0 || shapePos.getY() >= this.height || shapePos.getX() < 0 || shapePos.getX() >= this.width || this.used[shapePos.getY()][shapePos.getX()]) {
                 throw new IllegalArgumentException("Block " + block + " can not be placed");
             }
 
@@ -92,7 +104,7 @@ public class UsedBoard {
 
         byte lastY = -1;
         for (final Position shapePos : block.getBlock()) {
-            if (this.isPositionUnsuitable(shapePos)) {
+            if (shapePos.getY() < 0 || shapePos.getY() >= this.height || shapePos.getX() < 0 || shapePos.getX() >= this.width || !this.used[shapePos.getY()][shapePos.getX()]) {
                 throw new IllegalArgumentException("Block " + block + " is not placed");
             }
 
@@ -108,7 +120,7 @@ public class UsedBoard {
     public byte countRowsGaps(final byte y) {
         byte gaps = 0;
 
-        for (byte x = 0; x < this.used[y].length; x++) {
+        for (byte x = 0; x < this.width; x++) {
             if (!this.used[y][x]) {
                 gaps++;
             }
@@ -119,18 +131,12 @@ public class UsedBoard {
 
 
     private boolean isRowFilled(final byte y) {
-        for (byte x = 0; x < this.used[y].length; x++) {
-            if (!this.used[y][x]) { return false; }
+        for (byte x = 0; x < this.width; x++) {
+            if (!this.used[y][x]) {
+                return false;
+            }
         }
 
         return true;
-    }
-
-    private boolean isPositionUnsuitable(final Position position) {
-        if (position == null) {
-            throw new IllegalArgumentException("Block shape must not be null");
-        }
-
-        return position.getY() < 0 || position.getY() >= this.used.length || position.getX() < 0 || position.getX() >= this.used[0].length || this.used[position.getY()][position.getX()];
     }
 }
