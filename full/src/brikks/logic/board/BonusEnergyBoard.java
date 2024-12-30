@@ -2,7 +2,6 @@ package brikks.logic.board;
 
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
-import brikks.logic.Board;
 
 import java.util.Random;
 
@@ -32,7 +31,7 @@ public abstract class BonusEnergyBoard {
 
 
     protected BonusEnergyBoard(final byte width, final byte height) {
-        this(generateBonusEnergy(width, (byte) (height)));
+        this(generateBonusEnergy(width, height));
     }
 
     protected BonusEnergyBoard(final Color[][] bonusEnergy) {
@@ -71,7 +70,7 @@ public abstract class BonusEnergyBoard {
             }
         }
 
-/*
+        /*
         bonusEnergy[0][6] = Color.GREEN;
         bonusEnergy[1][0] = Color.RED;
         bonusEnergy[1][9] = Color.BLUE;
@@ -84,7 +83,7 @@ public abstract class BonusEnergyBoard {
         bonusEnergy[7][0] = Color.BLACK;
         bonusEnergy[7][7] = Color.GREEN;
         bonusEnergy[8][4] = Color.WHITE;
-*/
+        */
 
         return bonusEnergy;
     }

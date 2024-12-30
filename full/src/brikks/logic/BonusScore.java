@@ -2,7 +2,7 @@ package brikks.logic;
 
 public class BonusScore {
     public static final byte MAXIMUM_SCALE = 15;
-    private final byte[] scallingRate;
+    private final byte[] scalingRate;
     private byte scale;
 
 
@@ -21,13 +21,14 @@ public class BonusScore {
             throw new IllegalArgumentException("Scale cannot be greater than the scaling rate");
         }
 
-        this.scallingRate = scalingRate;
+        this.scalingRate = scalingRate;
         this.scale = scale;
     }
 
     private static byte[] generateScalingRate() {
         byte[] bonusScore = new byte[]{0, 1, 3, 6, 10, 15, 21, 28, 36, 44, 51, 58, 64, 70, 75};
 
+        //noinspection ConstantValue
         if (bonusScore.length != BonusScore.MAXIMUM_SCALE) {
             throw new IllegalArgumentException("Generated scaling rate has to be" + BonusScore.MAXIMUM_SCALE + " long");
         }
@@ -37,7 +38,7 @@ public class BonusScore {
 
 
     public byte[] getScalingRate() {
-        return this.scallingRate;
+        return this.scalingRate;
     }
 
     public byte getScale() {
@@ -45,7 +46,7 @@ public class BonusScore {
     }
 
     public byte get() {
-        return this.scallingRate[this.scale];
+        return this.scalingRate[this.scale];
     }
 
     public byte getNext() {
@@ -53,7 +54,7 @@ public class BonusScore {
             return -1;
         }
 
-        return this.scallingRate[this.scale + 1];
+        return this.scalingRate[this.scale + 1];
     }
 
     public void growByEnergy(final byte amount) {

@@ -9,6 +9,7 @@ public class Ranks {
             case TWO -> 5;
             case THREE -> 10;
             case FOUR -> 15;
+            //noinspection UnnecessaryDefault
             default -> throw new IllegalStateException("Unexpected difficulty");
         };
 

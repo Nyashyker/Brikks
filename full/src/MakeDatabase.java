@@ -9,7 +9,7 @@ public class MakeDatabase {
                 Connection con = DriverManager.getConnection("jdbc:postgresql:file:db/brikks",
                         "postgres",
                         "Student_1234");
-                Statement stmt = con.createStatement();
+                Statement stmt = con.createStatement()
         ) {
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS players (name VARCHAR(3), score INTEGER)");
         } catch (SQLException sql_e) {

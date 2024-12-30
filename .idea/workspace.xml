@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SPLITTER_PROPORTION" value="0.31555554" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="seems-fixed">
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="some-unused-parts-deleted">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/MakeDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/MakeDatabase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/LanguagesSupport.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/LanguagesSupport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/circle_loop/Loop.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/Loop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/Loop.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/Loop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/MatrixDice.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/MatrixDice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/BonusScore.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/BonusScore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/Ranks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/Ranks.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +48,9 @@
     &quot;accountId&quot;: &quot;e890a826-e94f-4cd1-ae8e-8f098f45fb0c&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -62,6 +76,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
@@ -86,7 +101,7 @@
       <workItem from="1735570951688" duration="1277000" />
       <workItem from="1735572235409" duration="100000" />
       <workItem from="1735572340653" duration="4235000" />
-      <workItem from="1735576584264" duration="3697000" />
+      <workItem from="1735576584264" duration="4976000" />
     </task>
     <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
       <option name="closed" value="true" />
@@ -176,7 +191,23 @@
       <option name="project" value="LOCAL" />
       <updated>1735579895419</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="yes/no-fix">
+      <option name="closed" value="true" />
+      <created>1735580338528</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1735580338528</updated>
+    </task>
+    <task id="LOCAL-00013" summary="some-unused-parts-deleted">
+      <option name="closed" value="true" />
+      <created>1735580594374</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1735580594374</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -194,22 +225,8 @@
     <MESSAGE value="nu-na" />
     <MESSAGE value="now-it-lanches" />
     <MESSAGE value="seems-fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="seems-fixed" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java</url>
-          <line>674</line>
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java</url>
-          <line>672</line>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="yes/no-fix" />
+    <MESSAGE value="some-unused-parts-deleted" />
+    <option name="LAST_COMMIT_MESSAGE" value="some-unused-parts-deleted" />
   </component>
 </project>

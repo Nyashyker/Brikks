@@ -100,7 +100,6 @@ public class Board {
     public Position[] canBePlaced() {
         List<Position> variants = this.used.canBePlaced(Board.duelBlock);
 
-        // TODO: mozxe, zberigaty okremo?
         List<Position> placedMiniblock = new ArrayList<>();
         for (final PlacedBlock placed : this.placed) {
             if (placed.getColor() == Color.DUELER) {
@@ -109,20 +108,20 @@ public class Board {
         }
 
         for (byte i = 0; i < variants.size(); ) {
-            boolean guesPlacable = true;
+            boolean guessPlaceable = true;
 
             for (final Position check : placedMiniblock) {
                 final byte distanceY = (byte) (Math.abs(variants.get(i).getY() - check.getY()));
                 final byte distanceX = (byte) (Math.abs(variants.get(i).getX() - check.getX()));
 
                 if (distanceY == 1 && distanceX == 0 || distanceY == 0 && distanceX == 1) {
-                    guesPlacable = false;
+                    guessPlaceable = false;
                     variants.remove(i);
                     break;
                 }
             }
 
-            if (guesPlacable) {
+            if (guessPlaceable) {
                 i++;
             }
         }

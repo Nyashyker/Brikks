@@ -603,6 +603,7 @@ public class ConsoleView extends View {
             case Color.BLUE -> Colors.ANSI_BLUE + "BL";
             case Color.BLACK -> Colors.ANSI_BLACK + "BK";
             case Color.DUELER -> Colors.ANSI_DUELER + "MB";
+            //noinspection UnnecessaryDefault
             default -> throw new InputMismatchException("Unexpected color");
         } + Colors.ANSI_RESET;
     }
@@ -616,6 +617,7 @@ public class ConsoleView extends View {
             case Color.BLUE -> Colors.ANSI_BG_BLUE + "bl";
             case Color.BLACK -> Colors.ANSI_BG_BLACK + "bk";
             case Color.DUELER -> Colors.ANSI_BG_DUELER + "mb";
+            //noinspection UnnecessaryDefault
             default -> throw new InputMismatchException("Unexpected color");
         } + Colors.ANSI_RESET;
     }

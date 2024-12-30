@@ -3,10 +3,9 @@ package brikks.essentials;
 import brikks.essentials.enums.*;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class Block {
-    public static byte LEN = 4;
+    public static final byte LEN = 4;
 
     protected final Position[] shape;
     protected final Color color;

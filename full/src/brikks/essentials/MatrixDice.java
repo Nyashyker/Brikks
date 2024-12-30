@@ -24,6 +24,6 @@ public class MatrixDice {
 
     @Override
     public String toString() {
-        return String.format("(%s, %s)", x.toString(), y.toString());
+        return String.format("(%s, %s)", x, y);
     }
 }

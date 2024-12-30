@@ -7,7 +7,6 @@ import brikks.save.*;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
 import brikks.view.*;
-import brikks.essentials.Loop;
 
 public class Brikks {
     public static final byte MAX_PLAYERS = 4;
