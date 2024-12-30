@@ -7,20 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="some-unused-parts-deleted">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/MakeDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/MakeDatabase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/Block.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/Loop.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/Loop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/MatrixDice.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/MatrixDice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/BonusScore.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/BonusScore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/DuelAsk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/Ranks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/Ranks.java" afterDir="false" />
-    </list>
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -101,7 +88,7 @@
       <workItem from="1735570951688" duration="1277000" />
       <workItem from="1735572235409" duration="100000" />
       <workItem from="1735572340653" duration="4235000" />
-      <workItem from="1735576584264" duration="4976000" />
+      <workItem from="1735576584264" duration="5201000" />
     </task>
     <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
       <option name="closed" value="true" />
@@ -207,7 +194,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735580594374</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="less-warnings">
+      <option name="closed" value="true" />
+      <created>1735581744694</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1735581744694</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -227,6 +222,7 @@
     <MESSAGE value="seems-fixed" />
     <MESSAGE value="yes/no-fix" />
     <MESSAGE value="some-unused-parts-deleted" />
-    <option name="LAST_COMMIT_MESSAGE" value="some-unused-parts-deleted" />
+    <MESSAGE value="less-warnings" />
+    <option name="LAST_COMMIT_MESSAGE" value="less-warnings" />
   </component>
 </project>
