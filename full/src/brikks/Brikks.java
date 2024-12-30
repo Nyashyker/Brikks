@@ -7,7 +7,7 @@ import brikks.save.*;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
 import brikks.view.*;
-import circle_loop.Loop;
+import brikks.essentials.Loop;
 
 public class Brikks {
     public static final byte MAX_PLAYERS = 4;
@@ -114,11 +114,7 @@ public class Brikks {
         this.save.startCountingTime();
 
         final RunsResults results;
-//        if (playerCount == 1) {
-//            results = this.run(players[0]);
-//        } else {
-            results = this.run(players, duelMode);
-//        }
+        results = this.run(players, duelMode);
 
         if (results.endGame()) {
             this.end(players, difficulty, duelMode, results.duelWinnerIndex());
@@ -177,22 +173,6 @@ public class Brikks {
 
             taken[i] = firstChoice;
             players[i].firstChoice(this.blocksTable.getBlock(firstChoice));
-        }
-    }
-
-    private RunsResults run(final Player player) {
-        while (true) {
-            this.save.updateDuration();
-            this.view.draw(player);
-
-            final TurnsResults result = player.turn(this.view, this.blocksTable, this.matrixDie.roll());
-
-            if (result.exit()) {
-                return new RunsResults(false, (byte) -1);
-            } else if (result.giveUp()) {
-                player.saveFinal();
-                return new RunsResults(true, (byte) -1);
-            }
         }
     }
 

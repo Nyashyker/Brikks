@@ -1,4 +1,4 @@
-package circle_loop;
+package brikks.essentials;
 
 import java.util.function.Supplier;
 
