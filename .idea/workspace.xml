@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="should-be-good">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/Brikks.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Brikks.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/essentials/PlacedBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/essentials/PlacedBlock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD1.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD2.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD3.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD4.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/BonusEnergyBoardD4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/logic/board/UsedBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/logic/board/UsedBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Nyashyker&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:Nyashyker/Brikks.git&quot;,
+    &quot;accountId&quot;: &quot;e890a826-e94f-4cd1-ae8e-8f098f45fb0c&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2qc631SzJnphpG6weOpHcFvutMm" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="false" id="Update" />
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Brikks.executor": "Debug",
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "full",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.completion",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Brikks" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="full" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="" />
+      <created>1734949314719</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1734949314719</updated>
+      <workItem from="1734949315488" duration="1420000" />
+      <workItem from="1735032316465" duration="21803000" />
+      <workItem from="1735128466610" duration="1422000" />
+      <workItem from="1735145561972" duration="13629000" />
+      <workItem from="1735169064329" duration="58000" />
+      <workItem from="1735169126826" duration="158000" />
+      <workItem from="1735169290651" duration="11063000" />
+      <workItem from="1735234018542" duration="23442000" />
+    </task>
+    <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
+      <option name="closed" value="true" />
+      <created>1735061814254</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1735061814254</updated>
+    </task>
+    <task id="LOCAL-00002" summary="whatever">
+      <option name="closed" value="true" />
+      <created>1735061843364</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1735061843364</updated>
+    </task>
+    <task id="LOCAL-00003" summary="All-blocks-can-be-checked-HERE">
+      <option name="closed" value="true" />
+      <created>1735179836971</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1735179836971</updated>
+    </task>
+    <task id="LOCAL-00004" summary="some-PlayerAsk-progress">
+      <option name="closed" value="true" />
+      <created>1735181232046</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1735181232046</updated>
+    </task>
+    <task id="LOCAL-00005" summary="I-am-gonna-break-the-draw">
+      <option name="closed" value="true" />
+      <created>1735252979829</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1735252979829</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Nope-all-works-just-fine">
+      <option name="closed" value="true" />
+      <created>1735254625238</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1735254625238</updated>
+    </task>
+    <task id="LOCAL-00007" summary="finishna-pr'ama">
+      <option name="closed" value="true" />
+      <created>1735256958517</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1735256958517</updated>
+    </task>
+    <task id="LOCAL-00008" summary="should-be-good">
+      <option name="closed" value="true" />
+      <created>1735259214944</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1735259214944</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="View-done--Player&amp;DuelAsks-still-remains" />
+    <MESSAGE value="whatever" />
+    <MESSAGE value="All-blocks-can-be-checked-HERE" />
+    <MESSAGE value="some-PlayerAsk-progress" />
+    <MESSAGE value="I-am-gonna-break-the-draw" />
+    <MESSAGE value="Nope-all-works-just-fine" />
+    <MESSAGE value="finishna-pr'ama" />
+    <MESSAGE value="should-be-good" />
+    <option name="LAST_COMMIT_MESSAGE" value="should-be-good" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/full/src/brikks/Brikks.java</url>
+          <line>83</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
