@@ -9,7 +9,7 @@ public record GameText(
         String menu,
         String[] menuVariants,
 
-        String liderboard,
+        String leaderboard,
 
         String askUseExistingPlayer,
 

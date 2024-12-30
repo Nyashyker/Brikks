@@ -3,7 +3,7 @@ package brikks.save;
 import brikks.Player;
 import brikks.essentials.enums.*;
 import brikks.save.container.LoadedGame;
-import brikks.save.container.PlayerLiderboard;
+import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
 
 // TODO: make it keep track of time
@@ -15,7 +15,7 @@ public abstract class Save {
 
     abstract public LoadedGame loadGame(final int id);
 
-    abstract public PlayerLiderboard[] liderboard();
+    abstract public PlayerLeaderboard[] leaderboard();
 
     abstract public PlayerSave getPlayerSave(final String name);
 

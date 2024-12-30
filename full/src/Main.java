@@ -160,7 +160,7 @@ public class Main {
         final String logo = "BRIKKS";
 
         final Brikks game = new Brikks(new ConsoleView(textUkr, logo), new EmptySave(), generateBlocksTable());
-        game.start();
+        game.menu();
     }
 
     public static Block[][] generateBlocksTable() {

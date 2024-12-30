@@ -47,7 +47,7 @@ public class Brikks {
             switch (this.view.menu()) {
                 case NEW_GAME -> this.start();
                 case LOAD -> this.load();
-                case LIDERBOARD -> this.liderboard();
+                case LEADERBOARD -> this.leaderboard();
                 case EXIT -> exit = true;
             }
         }
@@ -55,8 +55,8 @@ public class Brikks {
         this.view.exit();
     }
 
-    public void liderboard() {
-        this.view.liderboard(this.save.liderboard());
+    public void leaderboard() {
+        this.view.leaderboard(this.save.leaderboard());
     }
 
     public void start() {

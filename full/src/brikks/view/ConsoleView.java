@@ -51,19 +51,19 @@ public class ConsoleView extends View {
         return switch (this.askUserChoice(this.text.menu(), this.text.menuVariants(), false)) {
             case 1 -> Menu.NEW_GAME;
             case 2 -> Menu.LOAD;
-            case 3 -> Menu.LIDERBOARD;
+            case 3 -> Menu.LEADERBOARD;
             case 4 -> Menu.EXIT;
             default -> throw new InputMismatchException("Unexpected choice variant");
         };
     }
 
     @Override
-    public void liderboard(final PlayerLiderboard[] players) {
+    public void leaderboard(final PlayerLeaderboard[] players) {
         // TODO: players arrive from save already ordered decreasing
-        System.out.println(this.text.liderboard());
+        System.out.println(this.text.leaderboard());
         System.out.println();
 
-        for (final PlayerLiderboard player : players) {
+        for (final PlayerLeaderboard player : players) {
             System.out.printf("%s - (%s - %s) %s - %d",
                     player.name(), player.startDateTime(), player.endDateTime(), player.duration(), player.score());
         }

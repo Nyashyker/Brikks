@@ -3,7 +3,7 @@ package brikks.save;
 import brikks.Player;
 import brikks.essentials.enums.*;
 import brikks.save.container.LoadedGame;
-import brikks.save.container.PlayerLiderboard;
+import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
 
 public class EmptySave extends Save {
@@ -16,7 +16,7 @@ public class EmptySave extends Save {
     @Override
     public LoadedGame loadGame(final int id) { return null; }
     @Override
-    public PlayerLiderboard[] liderboard() { return new PlayerLiderboard[0]; }
+    public PlayerLeaderboard[] leaderboard() { return new PlayerLeaderboard[0]; }
     @Override
     public PlayerSave getPlayerSave(final String name) { return new EmptyPlayerSave(); }
     @Override
