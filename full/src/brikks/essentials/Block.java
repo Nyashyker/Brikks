@@ -31,7 +31,7 @@ public class Block {
 
         for (Position shape : this.shape) {
             if (shape.getX() < 0) {
-                maxDistance.setX((byte) (maxDistance.getX() + -shape.getX()));
+                maxDistance.setX((byte) (maxDistance.getX() - shape.getX()));
             } else if (shape.getX() > maxDistance.getX()) {
                 maxDistance.setX(shape.getX());
             }
@@ -59,12 +59,9 @@ public class Block {
         for (byte i = 0; i < shape.length; i++) {
             shape[i] = new Position((byte) -this.shape[i].getY(), (byte) (this.shape[i].getX() - (size.getX() - 1)));
         }
-        Arrays.sort(shape, new Comparator<Position>() {
-            @Override
-            public int compare(final Position relativePos1, final Position relativePos2) {
-                final byte y = (byte) (relativePos2.y - relativePos1.y);
-                return y == 0 ? relativePos1.x - relativePos2.x : y;
-            }
+        Arrays.sort(shape, (final Position relativePos1, final Position relativePos2) -> {
+            final byte y = (byte) (relativePos2.y - relativePos1.y);
+            return y == 0 ? relativePos1.x - relativePos2.x : y;
         });
 
         return new Block(shape, color);

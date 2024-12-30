@@ -62,19 +62,6 @@ public class Bombs {
         return score;
     }
 
-    public short calculateNextFinal() {
-        if (this.amount == 0) {
-            return 0;
-        }
-
-        short score = 0;
-        for (byte i = (byte) (Bombs.MAX_AMOUNT - this.amount - 1); i < Bombs.MAX_AMOUNT; i++) {
-            score += this.points[i];
-        }
-
-        return score;
-    }
-
 
     @Override
     public String toString() {
