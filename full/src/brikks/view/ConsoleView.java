@@ -99,8 +99,8 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public String askName() {
-        final String name = this.askUserString(this.text.askName(), true);
+    public String askName(final byte playerNumber) {
+        final String name = this.askUserString(String.format(this.text.askName(), playerNumber), true);
         return name.isEmpty() ? null : name;
     }
 
@@ -198,10 +198,8 @@ public class ConsoleView extends View {
             for (PlacedBlock placed : board.getBoard()) {
                 final String color = this.color2string(placed.getColor());
 
-                final Position start = placed.getPlace();
-                for (Position relativePos : placed.getBlock()) {
-                    final Position pos = start.add(relativePos);
-                    stringedBoard[pos.getY()][pos.getX()] = color;
+                for (Position shapePos : placed.getBlock()) {
+                    stringedBoard[shapePos.getY()][shapePos.getX()] = color;
                 }
             }
 

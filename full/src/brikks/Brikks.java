@@ -81,7 +81,7 @@ public class Brikks {
                 String name;
                 boolean nameDecided = false;
                 do {
-                    name = this.view.askName();
+                    name = this.view.askName((byte) (i + 1));
                     if (name == null) {
                         return;
                     }
@@ -158,7 +158,6 @@ public class Brikks {
         final ByteLoop looperRow = new ByteLoop(BlocksTable.WIDTH);
         final ByteLoop looperColumn = new ByteLoop(BlocksTable.HEIGHT);
         for (byte i = 0; i < players.length; i++) {
-            System.out.println(i);
             Position firstChoice = this.matrixDie.roll();
 
             // Ensure that there are no duplicates
@@ -233,6 +232,10 @@ public class Brikks {
                     if (duelMode) {
                         return new RunsResults(true, loop.backcast());
                     }
+                }
+
+                if (duelMode && result.duelBonus() > 0) {
+                    player.duelTurn(this.view, players[loop.forecast()], result.duelBonus());
                 }
             }
         } while (stillPlays);

@@ -14,7 +14,7 @@ public abstract class View implements PlayerAsk, DuelAsk {
     abstract public Level askDifficulty();
     abstract public boolean askDuel();
     abstract public byte askPlayerCount(final byte maxPlayers);
-    abstract public String askName();
+    abstract public String askName(final byte playerNumber);
 
 
     abstract public SavedGame askChoiceSave(final SavedGame[] variants);

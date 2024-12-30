@@ -8,6 +8,8 @@ import brikks.logic.*;
 import brikks.view.DuelAsk;
 import brikks.view.PlayerAsk;
 
+import java.time.LocalTime;
+
 public class Player implements Comparable<Player> {
     public final String name;
     private boolean plays;
@@ -107,8 +109,9 @@ public class Player implements Comparable<Player> {
             throw new IllegalArgumentException("Block cannot be null");
         }
 
-        // TODO: add some randomness or whatever
-        final PlacedBlock placed = new PlacedBlock(block, this.board.canBePlaced(block)[0]);
+        final Position[] variants = this.board.canBePlaced(block);
+        final byte index = (byte) (LocalTime.now().getNano() % variants.length);
+        final PlacedBlock placed = new PlacedBlock(block, variants[index]);
 
         this.board.place(placed);
     }
