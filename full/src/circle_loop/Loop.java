@@ -2,7 +2,7 @@ package circle_loop;
 
 import java.util.function.Supplier;
 
-public class ByteLoop {
+public class Loop {
     private byte MIN;
     private byte MAX;
     private byte STEP;
@@ -14,45 +14,20 @@ public class ByteLoop {
     private Supplier<Byte> toBack;
 
 
-    public ByteLoop(final byte max) {
-        this.MIN = 0;
-        this.MAX = max;
-
-        this.setPosition((byte) 0);
-
-        this.STEP = 1;
-        this.toMove = this::simpleAdd;
-        this.toBack = this::simpleSubtract;
+    public Loop(final byte max) {
+        this((byte) 0, (byte) 0, max, (byte) 1);
     }
 
-    public ByteLoop(final byte start, final byte max) {
-        this.MIN = 0;
-        this.MAX = max;
-
-        this.setPosition(start);
-
-        this.STEP = 1;
-        this.toMove = this::simpleAdd;
-        this.toBack = this::simpleSubtract;
+    public Loop(final byte start, final byte max) {
+        this(start, (byte) 0, max, (byte) 1);
     }
 
-    public ByteLoop(final byte start, final byte min, final byte max) {
-        this.MIN = min;
-        this.MAX = max;
-
-        this.setPosition(start);
-
-        this.STEP = 1;
-        this.toMove = this::simpleAdd;
-        this.toBack = this::simpleSubtract;
+    public Loop(final byte start, final byte min, final byte max) {
+        this(start, min, max, (byte) 1);
     }
 
-    public ByteLoop(final byte start, final byte min, final byte max, final byte step) {
-        this.MIN = min;
-        this.MAX = max;
-
-        this.setPosition(start);
-
+    public Loop(final byte start, final byte min, final byte max, final byte step) {
+        this.setRange(start, min, max);
         this.setStep(step);
     }
 
@@ -62,17 +37,18 @@ public class ByteLoop {
     }
 
     public void setRange(final byte start, final byte min, final byte max) {
-        if (min >= max) {
+        if (min > max) {
             throw new IllegalArgumentException("Minimum must be less than maximum");
         }
-        this.setPosition(start);
 
         this.MIN = min;
         this.MAX = max;
+
+        this.setPosition(start);
     }
 
     public void setPosition(final byte position) {
-        if (this.MIN > position || position >= this.MAX) {
+        if ((this.MIN > position || position >= this.MAX) && this.MIN != this.MAX) {
             throw new IllegalArgumentException("The start value must be in between min & max!");
         }
 

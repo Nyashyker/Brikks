@@ -61,7 +61,7 @@ public class Block {
         }
         Arrays.sort(shape, new Comparator<Position>() {
             @Override
-            public int compare(Position relativePos1, Position relativePos2) {
+            public int compare(final Position relativePos1, final Position relativePos2) {
                 final byte y = (byte) (relativePos2.y - relativePos1.y);
                 return y == 0 ? relativePos1.x - relativePos2.x : y;
             }

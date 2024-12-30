@@ -75,10 +75,6 @@ public class Player implements Comparable<Player> {
     }
 
 
-    public void stop() {
-        this.plays = false;
-    }
-
     public boolean isPlays() {
         return this.plays;
     }

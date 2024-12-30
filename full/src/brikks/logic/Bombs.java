@@ -42,13 +42,15 @@ public class Bombs {
 
 
     public boolean canUse() {
-        return this.amount == 0;
+        return this.amount > 0;
     }
 
     public void use() {
-        if (this.canUse()) {
-            this.amount--;
+        if (!this.canUse()) {
+            throw new IllegalCallerException("You supposed to check on availability of bombs!");
         }
+
+        this.amount--;
     }
 
     public short calculateFinal() {

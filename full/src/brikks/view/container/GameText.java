@@ -42,6 +42,7 @@ public record GameText(
 
         String askReroll,
 
+        String blockPosition,
         String askPlacingSpot,
 
         String askDoing,

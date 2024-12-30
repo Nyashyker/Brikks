@@ -5,10 +5,12 @@ import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.logic.*;
 import brikks.save.container.*;
-import brikks.view.container.GameText;
+import brikks.view.container.*;
 import brikks.view.enums.*;
 
-import java.util.*;
+import java.util.Scanner;
+import java.util.InputMismatchException;
+import java.util.Arrays;
 
 public class ConsoleView extends View {
     public final static Scanner keyboard = new Scanner(System.in);
@@ -336,7 +338,8 @@ public class ConsoleView extends View {
 
         final String[] stringedVariants = new String[variants.length];
         for (byte i = 0; i < variants.length; i++) {
-            stringedVariants[i] = String.format("%d  %d", variants[i].getX(), variants[i].getY());
+            stringedVariants[i] = String.format(this.text.blockPosition(),
+                    variants[i].getX() + 1, Board.HEIGHT - variants[i].getY());
         }
 
         final byte choice = this.askUserChoice(this.text.askPlacingSpot(), stringedVariants, true);
@@ -447,10 +450,7 @@ public class ConsoleView extends View {
 
 
     private void goToMainMenuOnTap() {
-        System.out.println(this.text.goToMainMenuOnTap() + " ");
-        if (keyboard.hasNextLine()) {
-            keyboard.nextLine();
-        }
+        System.out.println(this.text.goToMainMenuOnTap());
         keyboard.nextLine();
     }
 
@@ -649,7 +649,7 @@ public class ConsoleView extends View {
 
         byte choice = -1;
         while (choice == -1) {
-            System.out.printf(this.text.choiceInRange() + ": ", minimumChoice, maximumChoice);
+            System.out.printf(this.text.choiceInRange(), minimumChoice, maximumChoice);
             if (!keyboard.hasNextByte()) {
                 keyboard.nextLine();
                 continue;
@@ -661,13 +661,14 @@ public class ConsoleView extends View {
                 choice = -1;
             }
         }
+        keyboard.nextLine();
 
         return choice;
     }
 
     private boolean askUserChoice(final String message) {
         while (true) {
-            final String input = this.askUserString(message + "? ", false);
+            final String input = this.askUserString(message, false);
 
             if (LanguagesSupport.isTrue(input)) {
                 return true;
@@ -678,11 +679,9 @@ public class ConsoleView extends View {
     }
 
     private String askUserString(final String message, final boolean emptyAllowed) {
-        keyboard.nextLine();
-
         String input;
         do {
-            System.out.print(message + ": ");
+            System.out.print(message);
             input = keyboard.nextLine();
         } while (!emptyAllowed && input.isEmpty());
 
