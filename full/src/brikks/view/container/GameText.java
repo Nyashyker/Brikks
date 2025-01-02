@@ -46,8 +46,8 @@ public record GameText(
         String blockPosition,
         String askPlacingSpot,
 
-        String askDoing,
-        String[] doingVariants,
+        String askDeed,
+        String[] deedVariants,
 
         String askRotation,
 

@@ -350,17 +350,17 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public Doing askDoing(final Block block) {
+    public Deed askDeed(final Block block) {
         this.showBlock(block);
-        return switch (this.askUserChoice(this.text.askDoing(), this.text.doingVariants(), false)) {
-            case 1 -> Doing.BOMB;
-            case 2 -> Doing.ROTATE;
-            case 3 -> Doing.CHOICE;
-            case 4 -> Doing.PLACE;
-            case 5 -> Doing.GIVE_UP;
-            case 6 -> Doing.SAVE;
-            case 7 -> Doing.EXIT;
-            default -> throw new IllegalArgumentException("Unexpected value for doing");
+        return switch (this.askUserChoice(this.text.askDeed(), this.text.deedVariants(), false)) {
+            case 1 -> Deed.BOMB;
+            case 2 -> Deed.ROTATE;
+            case 3 -> Deed.CHOICE;
+            case 4 -> Deed.PLACE;
+            case 5 -> Deed.GIVE_UP;
+            case 6 -> Deed.SAVE;
+            case 7 -> Deed.EXIT;
+            default -> throw new IllegalArgumentException("Unexpected value for deed");
         };
     }
 
@@ -372,8 +372,8 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public Position askChoice(final BlocksTable variants) {
-        this.showBlocksTable(variants.getTable());
+    public Position askChoice(final Block[][] variants) {
+        this.showBlocksTable(variants);
         final byte choiceX = this.askUserNumber(this.text.askChoiceX(), (byte) 0, BlocksTable.WIDTH);
         if (choiceX == 0) {
             return null;

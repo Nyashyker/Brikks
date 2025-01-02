@@ -2,9 +2,7 @@ package brikks.save;
 
 import brikks.Player;
 import brikks.essentials.enums.*;
-import brikks.save.container.LoadedGame;
-import brikks.save.container.PlayerLeaderboard;
-import brikks.save.container.SavedGame;
+import brikks.save.container.*;
 
 public class EmptySave extends Save {
     public EmptySave() {}

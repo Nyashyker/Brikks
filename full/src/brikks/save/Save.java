@@ -2,9 +2,7 @@ package brikks.save;
 
 import brikks.Player;
 import brikks.essentials.enums.*;
-import brikks.save.container.LoadedGame;
-import brikks.save.container.PlayerLeaderboard;
-import brikks.save.container.SavedGame;
+import brikks.save.container.*;
 
 // TODO: make it keep track of time
 public abstract class Save {

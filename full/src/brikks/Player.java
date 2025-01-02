@@ -79,10 +79,6 @@ public class Player implements Comparable<Player> {
         return this.plays;
     }
 
-    public PlayerSave getSaver() {
-        return this.saver;
-    }
-
     public BonusScore getBonusScore() {
         return bonusScore;
     }
@@ -126,7 +122,7 @@ public class Player implements Comparable<Player> {
             final Position[] variants = this.board.canBePlaced(block);
             final boolean canGiveUp = variants.length == 0;
 
-            switch (user.askDoing(block)) {
+            switch (user.askDeed(block)) {
                 case BOMB -> {
                     if (this.bombs.canUse()) {
                         this.bombs.use();
@@ -158,7 +154,7 @@ public class Player implements Comparable<Player> {
                     final byte energyCost = 5;
                     if (this.energy.canSpend(energyCost)) {
                         this.energy.spend(energyCost);
-                        final Position choice = user.askChoice(blocks);
+                        final Position choice = user.askChoice(blocks.getTable());
                         if (choice == null) {
                             break;
                         }
