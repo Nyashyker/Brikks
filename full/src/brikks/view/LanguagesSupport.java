@@ -10,8 +10,8 @@ public class LanguagesSupport {
 
     public static boolean isFalse(final String message) {
         return switch (prepareMessage(message)) {
-            case "false", "f", "no", "n", "ні", "н", "0" -> false;
-            default -> true;
+            case "false", "f", "no", "n", "ні", "н", "0" -> true;
+            default -> false;
         };
     }
 

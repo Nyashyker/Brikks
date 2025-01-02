@@ -9,7 +9,7 @@ public record GameText(
         String menu,
         String[] menuVariants,
 
-        String liderboard,
+        String leaderboard,
 
         String askUseExistingPlayer,
 
@@ -24,6 +24,7 @@ public record GameText(
 
         String askChoiceSave,
 
+        String max,
         String bonusScore,
         String energy,
         String bombs,
@@ -42,10 +43,11 @@ public record GameText(
 
         String askReroll,
 
+        String blockPosition,
         String askPlacingSpot,
 
-        String askDoing,
-        String[] doingVariants,
+        String askDeed,
+        String[] deedVariants,
 
         String askRotation,
 

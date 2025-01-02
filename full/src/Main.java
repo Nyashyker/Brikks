@@ -11,14 +11,13 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        final GameText text;
+        final GameText textUkr;
         // Defining text
-        // TODO: translate from Ukrainian
         {
-            text = new GameText(
+            textUkr = new GameText(
                     "Назад",
                     "Уведіть будь-що, щоб перейти в головне меню.",
-                    "Оберіть (%d-%d)",
+                    "Оберіть (%d-%d): ",
                     "Уведіть число з указаного діапазону!",
                     "МЕНЮ",
                     new String[]{
@@ -28,7 +27,7 @@ public class Main {
                             "Вийти"
                     },
                     "ТАБЛИЦЯ ЛІДЕРІВ",
-                    "Гравець із таким ім'ям уже існує. Бажаєте використати його",
+                    "Гравець із таким ім'ям уже існує. Бажаєте використати його? ",
                     "Оберіть рівень складности:",
                     new String[]{
                             "Перший: 1 ОЕ дається навіть за накриття неправильним кольором",
@@ -36,12 +35,13 @@ public class Main {
                             "Третій: 1 ОЕ відбирається за накриття неправильним кольором",
                             "Четвертий: 2 ОЕ відберається за накриття неправильним кольором",
                     },
-                    "Хочете провести дуель",
+                    "Хочете провести дуель? ",
                     "Скільки гравців гратиме? (0 = назад)",
-                    "Оберіть ім'я гравцю (нічого = назад)",
+                    "Оберіть ім'я гравцю №%d (нічого = назад): ",
                     "Оберіть зебереження:",
-                    "Додаткові бали: %d (-> %d)",
-                    "Очки енергії: %d (+ДБ -> %d)",
+                    "НЕМА",
+                    "Додаткові бали: %d (-> %s)",
+                    "Очки енергії: %d (+ДБ -> %s)",
                     "Бомби: %d (= %d бал.)",
                     "\tГру завершено!!!",
                     "%s - %s - %d\n",
@@ -49,17 +49,18 @@ public class Main {
                             "Перший раз?",
                             "Ти можеш більше!",
                             "Молодець!",
-                            "А хтось наловчився!",
+                            "А хтось набив руку!",
                             "Насолоджуйся своїми здобутками!",
                             "Ти це бачив?",
-                            "Та ти вже певно професіонал!",
+                            "Та тобі треба в професіонали йти!",
                             "От хвалько!",
                             "МАЙСТЕР-БЛОКАЙСТЕР 2000!!!",
                     },
                     "Підсумки:",
                     "%s переміг %s\n",
                     "Вихід...",
-                    "Хочете перекинути кубик",
+                    "Хочете перекинути кубик? ",
+                    "стовпець=%d\tряд=%d",
                     "Де розмістити блок?:",
                     "Ваші дії:",
                     new String[] {
@@ -71,27 +72,97 @@ public class Main {
                             "Зберегтися",
                             "Вийти в головне меню",
                     },
-                    "Оберіть варіацію оберту блоку (0 = назад)",
-                    "Оберіть стовпець блоку (0 = назад)",
-                    "Оберіть ряд блоку (0 = назад)",
+                    "Оберіть варіацію оберту блоку:",
+                    "Оберіть стовпець блоку (0 = назад): ",
+                    "Оберіть ряд блоку (0 = назад): ",
                     "Цей блок немає куди ставити!",
                     "Бомб не залишилося!",
                     "Недостатньо енергії, щоб повернути болок",
                     "Недостатньо енергії, щоб замінити блок!",
-                    "Ще є куди ставити блок!!!",
+                    "Ану не тойво мені тут!!! Ще є куди ставити блок!",
                     "Для вас гра завершена.",
-                    "Оберіть місце для мініатюрного блоку на дошці опонента"
+                    "Оберіть місце для мініатюрного блоку на дошці опонента:"
             );
+        }
+        final GameText textAngl;
+        // Defining text
+        {
+            textAngl = new GameText(
+                    "Back",
+                    "Enter anything to go to the main menu.",
+                    "Choose (%d-%d)",
+                    "Enter a number from the specified range!",
+                    "MENU",
+                    new String[]{
+                            "New Game",
+                            "Load",
+                            "Leaderboard",
+                            "Exit"
+                    },
+                    "LEADERBOARD",
+                    "A player with this name already exists. Do you want to use it? ",
+                    "Choose difficulty level:",
+                    new String[]{
+                            "First: 1 EP is given even for covering with the wrong color",
+                            "Second: 2 EP is given for covering with the correct color (standard)",
+                            "Third: 1 EP is deducted for covering with the wrong color",
+                            "Fourth: 2 EP is deducted for covering with the wrong color",
+                    },
+                    "Do you want to duel? ",
+                    "How many players will play? (0 = back)",
+                    "Choose a name for player #%d (nothing = back): ",
+                    "Choose a save:",
+                    "NONE",
+                    "Additional points: %d (-> %s)",
+                    "Energy points: %d (+AP -> %s)",
+                    "Bombs: %d (= %d pts)",
+                    "\tGame over!!!",
+                    "%s - %s - %d\n",
+                    new String[]{
+                            "Your first time?",
+                            "You can do more!",
+                            "Well done!",
+                            "Someone has practiced!",
+                            "Enjoy your success!",
+                            "Have you seen this?",
+                            "You should be doing this professionally!",
+                            "You Bragger!",
+                            "Brikks-Master 2000!!!",
+                    },
+                    "Summary:",
+                    "%s defeated %s\n",
+                    "Exiting...",
+                    "Do you want to reroll the dice? ",
+                    "column=%\trow=%d",
+                    "Where to place the block?:",
+                    "Your actions:",
+                    new String[]{
+                            "Use a bomb",
+                            "Rotate the block",
+                            "Choose another block",
+                            "Place the block",
+                            "Give up",
+                            "Save",
+                            "Exit to the main menu",
+                    },
+                    "Choose block rotation variation:",
+                    "Choose block column (0 = back): ",
+                    "Choose block row (0 = back): ",
+                    "This block has nowhere to be placed!",
+                    "No bombs left!",
+                    "Not enough energy to rotate the block!",
+                    "Not enough energy to choose another block!",
+                    "What are you doing?! There's still a place to put the block!!!",
+                    "The game is over for you.",
+                    "Choose a spot for the miniblock on the opponent's board:"
+            );
+
         }
         // TODO: design normal logo
         final String logo = "BRIKKS";
 
-        /// !!! WARNING !!!
-        // There are some strange problems with Scanner.nextLine()
-        // I do not why, but it or going ahead, meanwhile I have not touched enter
-        // or asks again without no reason
-        final Brikks game = new Brikks(new ConsoleView(text, logo), new EmptySave(), generateBlocksTable());
-        game.start();
+        final Brikks game = new Brikks(new ConsoleView(textUkr, logo), new EmptySave(), generateBlocksTable());
+        game.menu();
     }
 
     public static Block[][] generateBlocksTable() {

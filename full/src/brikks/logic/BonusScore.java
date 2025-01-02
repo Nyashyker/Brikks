@@ -1,60 +1,43 @@
 package brikks.logic;
 
 public class BonusScore {
-    public static final byte MAXIMUM_SCALE = 15;
-    private final byte[] scallingRate;
+    public static final byte MAX_SCALE = 15;
+    private final byte[] scalingRate;
     private byte scale;
 
 
     public BonusScore() {
-        this(BonusScore.generateScalingRate(), (byte) 0);
+        this((byte) 0);
     }
 
-    public BonusScore(final byte[] scalingRate, final byte scale) {
-        if (scalingRate == null) {
-            throw new NullPointerException("Scaling rate cannot be null");
-        }
+    public BonusScore(final byte scale) {
         if (scale < 0) {
             throw new IllegalArgumentException("Scale cannot be negative");
         }
-        if (scale >= scalingRate.length) {
-            throw new IllegalArgumentException("Scale cannot be greater than the scaling rate");
+        if (scale >= BonusScore.MAX_SCALE) {
+            throw new IllegalArgumentException("scale must be < " + BonusScore.MAX_SCALE);
         }
 
-        this.scallingRate = scalingRate;
+        this.scalingRate = BonusScore.generateScalingRate();
         this.scale = scale;
     }
 
-    private static byte[] generateScalingRate() {
+    public static byte[] generateScalingRate() {
         byte[] bonusScore = new byte[]{0, 1, 3, 6, 10, 15, 21, 28, 36, 44, 51, 58, 64, 70, 75};
 
-        if (bonusScore.length != BonusScore.MAXIMUM_SCALE) {
-            throw new IllegalArgumentException("Generated scaling rate has to be" + BonusScore.MAXIMUM_SCALE + " long");
+        //noinspection ConstantValue
+        if (bonusScore.length != BonusScore.MAX_SCALE) {
+            throw new IllegalArgumentException("Generated scaling rate has to be" + BonusScore.MAX_SCALE + " long");
         }
 
         return bonusScore;
     }
 
 
-    public byte[] getScalingRate() {
-        return this.scallingRate;
-    }
-
     public byte getScale() {
         return this.scale;
     }
 
-    public byte get() {
-        return this.scallingRate[this.scale];
-    }
-
-    public byte getNext() {
-        if (this.scale == BonusScore.MAXIMUM_SCALE - 1) {
-            return -1;
-        }
-
-        return this.scallingRate[this.scale + 1];
-    }
 
     public void growByEnergy(final byte amount) {
         this.grow(amount);
@@ -75,7 +58,15 @@ public class BonusScore {
     }
 
     public short calculateFinal() {
-        return this.get();
+        return this.scalingRate[this.scale];
+    }
+
+    public short calculateNextFinal() {
+        if (this.scale == BonusScore.MAX_SCALE - 1) {
+            return -1;
+        }
+
+        return this.scalingRate[this.scale + 1];
     }
 
 
@@ -84,11 +75,11 @@ public class BonusScore {
             throw new IllegalArgumentException("You can not grow negatively");
         }
 
-        if (this.scale == BonusScore.MAXIMUM_SCALE - 1) {
+        if (this.scale == BonusScore.MAX_SCALE - 1) {
             return;
         }
-        if (this.scale + amount > BonusScore.MAXIMUM_SCALE - 1) {
-            amount = (byte) (BonusScore.MAXIMUM_SCALE - this.scale);
+        if (this.scale + amount > BonusScore.MAX_SCALE - 1) {
+            amount = (byte) (BonusScore.MAX_SCALE - this.scale);
         }
 
         this.scale += amount;

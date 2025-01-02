@@ -9,11 +9,11 @@ public interface PlayerAsk {
 
     Position askPlacingSpot(final Block block, final Position[] variants);
 
-    Doing askDoing(final Block block);
+    Deed askDeed(final Block block);
 
     byte askRotation(final Block[] variants);
 
-    Position askChoice(final BlocksTable variants);
+    Position askChoice(final Block[][] variants);
 
 
     void successPlace(final PlacedBlock placed);

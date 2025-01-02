@@ -5,31 +5,33 @@ import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.logic.*;
 import brikks.save.container.*;
-import brikks.view.container.GameText;
+import brikks.view.container.*;
 import brikks.view.enums.*;
 
-import java.util.*;
+import java.util.Scanner;
+import java.util.InputMismatchException;
+import java.util.Arrays;
 
 public class ConsoleView extends View {
-    public final static Scanner keyboard = new Scanner(System.in);
+    public static final Scanner keyboard = new Scanner(System.in);
 
     private static class Colors {
-        private final static String ANSI_RESET = "\u001B[0m";
-        private final static String ANSI_WHITE = "\u001B[37m";
-        private final static String ANSI_YELLOW = "\u001B[33m";
-        private final static String ANSI_GREEN = "\u001B[32m";
-        private final static String ANSI_RED = "\u001B[31m";
-        private final static String ANSI_BLUE = "\u001B[34m";
-        private final static String ANSI_BLACK = "\u001B[30m";
-        private final static String ANSI_DUELER = "\u001B[36m";
+        private static final String ANSI_RESET = "\u001B[0m";
+        private static final String ANSI_WHITE = "\u001B[37m";
+        private static final String ANSI_YELLOW = "\u001B[33m";
+        private static final String ANSI_GREEN = "\u001B[32m";
+        private static final String ANSI_RED = "\u001B[31m";
+        private static final String ANSI_BLUE = "\u001B[34m";
+        private static final String ANSI_BLACK = "\u001B[30m";
+        private static final String ANSI_DUELER = "\u001B[36m";
 
-        private final static String ANSI_BG_WHITE = "\u001B[47m";
-        private final static String ANSI_BG_YELLOW = "\u001B[43m";
-        private final static String ANSI_BG_GREEN = "\u001B[42m";
-        private final static String ANSI_BG_RED = "\u001B[41m";
-        private final static String ANSI_BG_BLUE = "\u001B[44m";
-        private final static String ANSI_BG_BLACK = "\u001B[40m";
-        private final static String ANSI_BG_DUELER = "\u001B[46m";
+        private static final String ANSI_BG_WHITE = "\u001B[47m";
+        private static final String ANSI_BG_YELLOW = "\u001B[43m";
+        private static final String ANSI_BG_GREEN = "\u001B[42m";
+        private static final String ANSI_BG_RED = "\u001B[41m";
+        private static final String ANSI_BG_BLUE = "\u001B[44m";
+        private static final String ANSI_BG_BLACK = "\u001B[40m";
+        private static final String ANSI_BG_DUELER = "\u001B[46m";
     }
 
     private final GameText text;
@@ -49,19 +51,19 @@ public class ConsoleView extends View {
         return switch (this.askUserChoice(this.text.menu(), this.text.menuVariants(), false)) {
             case 1 -> Menu.NEW_GAME;
             case 2 -> Menu.LOAD;
-            case 3 -> Menu.LIDERBOARD;
+            case 3 -> Menu.LEADERBOARD;
             case 4 -> Menu.EXIT;
             default -> throw new InputMismatchException("Unexpected choice variant");
         };
     }
 
     @Override
-    public void liderboard(final PlayerLiderboard[] players) {
+    public void leaderboard(final PlayerLeaderboard[] players) {
         // TODO: players arrive from save already ordered decreasing
-        System.out.println(this.text.liderboard());
+        System.out.println(this.text.leaderboard());
         System.out.println();
 
-        for (final PlayerLiderboard player : players) {
+        for (final PlayerLeaderboard player : players) {
             System.out.printf("%s - (%s - %s) %s - %d",
                     player.name(), player.startDateTime(), player.endDateTime(), player.duration(), player.score());
         }
@@ -99,8 +101,8 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public String askName() {
-        final String name = this.askUserString(this.text.askName(), true);
+    public String askName(final byte playerNumber) {
+        final String name = this.askUserString(String.format(this.text.askName(), playerNumber), true);
         return name.isEmpty() ? null : name;
     }
 
@@ -198,10 +200,8 @@ public class ConsoleView extends View {
             for (PlacedBlock placed : board.getBoard()) {
                 final String color = this.color2string(placed.getColor());
 
-                final Position start = placed.getPlace();
-                for (Position relativePos : placed.getBlock()) {
-                    final Position pos = start.add(relativePos);
-                    stringedBoard[pos.getY()][pos.getX()] = color;
+                for (Position shapePos : placed.getBlock()) {
+                    stringedBoard[shapePos.getY()][shapePos.getX()] = color;
                 }
             }
 
@@ -240,7 +240,8 @@ public class ConsoleView extends View {
 
             playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedBonusScore = String.format(this.text.bonusScore(),
-                    bonusScore.get(), bonusScore.getNext());
+                    bonusScore.calculateFinal(), bonusScore.calculateNextFinal() == -1 ?
+                            this.text.max() : bonusScore.calculateNextFinal() + "");
             playerScreen[index].append(stringedBonusScore);
             playerScreen[index].append(" ".repeat(center - stringedBonusScore.length() + side + 2));
             playerScreen[index++].append('|');
@@ -252,11 +253,13 @@ public class ConsoleView extends View {
 
             playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedEnergy = String.format(this.text.energy(),
-                    energy.getAvailable(), energy.getDistanceToNextBonus());
+                    energy.getAvailable(), energy.getDistanceToNextBonus() == -1 ?
+                            this.text.max() : energy.getDistanceToNextBonus() + "");
             playerScreen[index].append(stringedEnergy);
             playerScreen[index].append(" ".repeat(center - stringedEnergy.length() + side + 2));
             playerScreen[index++].append('|');
         }
+
         // BOMBS
         {
             final Bombs bombs = player.getBombs();
@@ -338,7 +341,8 @@ public class ConsoleView extends View {
 
         final String[] stringedVariants = new String[variants.length];
         for (byte i = 0; i < variants.length; i++) {
-            stringedVariants[i] = String.format("%d  %d", variants[i].getX(), variants[i].getY());
+            stringedVariants[i] = String.format(this.text.blockPosition(),
+                    variants[i].getX() + 1, Board.HEIGHT - variants[i].getY());
         }
 
         final byte choice = this.askUserChoice(this.text.askPlacingSpot(), stringedVariants, true);
@@ -346,17 +350,17 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public Doing askDoing(final Block block) {
+    public Deed askDeed(final Block block) {
         this.showBlock(block);
-        return switch (this.askUserChoice(this.text.askDoing(), this.text.doingVariants(), false)) {
-            case 1 -> Doing.BOMB;
-            case 2 -> Doing.ROTATE;
-            case 3 -> Doing.CHOICE;
-            case 4 -> Doing.PLACE;
-            case 5 -> Doing.GIVE_UP;
-            case 6 -> Doing.SAVE;
-            case 7 -> Doing.EXIT;
-            default -> throw new IllegalArgumentException("Unexpected value for doing");
+        return switch (this.askUserChoice(this.text.askDeed(), this.text.deedVariants(), false)) {
+            case 1 -> Deed.BOMB;
+            case 2 -> Deed.ROTATE;
+            case 3 -> Deed.CHOICE;
+            case 4 -> Deed.PLACE;
+            case 5 -> Deed.GIVE_UP;
+            case 6 -> Deed.SAVE;
+            case 7 -> Deed.EXIT;
+            default -> throw new IllegalArgumentException("Unexpected value for deed");
         };
     }
 
@@ -368,8 +372,8 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public Position askChoice(final BlocksTable variants) {
-        this.showBlocksTable(variants.getTable());
+    public Position askChoice(final Block[][] variants) {
+        this.showBlocksTable(variants);
         final byte choiceX = this.askUserNumber(this.text.askChoiceX(), (byte) 0, BlocksTable.WIDTH);
         if (choiceX == 0) {
             return null;
@@ -449,10 +453,7 @@ public class ConsoleView extends View {
 
 
     private void goToMainMenuOnTap() {
-        System.out.println(this.text.goToMainMenuOnTap() + " ");
-        if (keyboard.hasNextLine()) {
-            keyboard.nextLine();
-        }
+        System.out.println(this.text.goToMainMenuOnTap());
         keyboard.nextLine();
     }
 
@@ -605,6 +606,7 @@ public class ConsoleView extends View {
             case Color.BLUE -> Colors.ANSI_BLUE + "BL";
             case Color.BLACK -> Colors.ANSI_BLACK + "BK";
             case Color.DUELER -> Colors.ANSI_DUELER + "MB";
+            //noinspection UnnecessaryDefault
             default -> throw new InputMismatchException("Unexpected color");
         } + Colors.ANSI_RESET;
     }
@@ -618,6 +620,7 @@ public class ConsoleView extends View {
             case Color.BLUE -> Colors.ANSI_BG_BLUE + "bl";
             case Color.BLACK -> Colors.ANSI_BG_BLACK + "bk";
             case Color.DUELER -> Colors.ANSI_BG_DUELER + "mb";
+            //noinspection UnnecessaryDefault
             default -> throw new InputMismatchException("Unexpected color");
         } + Colors.ANSI_RESET;
     }
@@ -651,7 +654,7 @@ public class ConsoleView extends View {
 
         byte choice = -1;
         while (choice == -1) {
-            System.out.printf(this.text.choiceInRange() + ": ", minimumChoice, maximumChoice);
+            System.out.printf(this.text.choiceInRange(), minimumChoice, maximumChoice);
             if (!keyboard.hasNextByte()) {
                 keyboard.nextLine();
                 continue;
@@ -663,13 +666,14 @@ public class ConsoleView extends View {
                 choice = -1;
             }
         }
+        keyboard.nextLine();
 
         return choice;
     }
 
     private boolean askUserChoice(final String message) {
         while (true) {
-            final String input = this.askUserString(message + "? ", false);
+            final String input = this.askUserString(message, false);
 
             if (LanguagesSupport.isTrue(input)) {
                 return true;
@@ -680,11 +684,9 @@ public class ConsoleView extends View {
     }
 
     private String askUserString(final String message, final boolean emptyAllowed) {
-        keyboard.nextLine();
-
         String input;
         do {
-            System.out.print(message + ": ");
+            System.out.print(message);
             input = keyboard.nextLine();
         } while (!emptyAllowed && input.isEmpty());
 

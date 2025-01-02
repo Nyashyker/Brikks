@@ -8,6 +8,8 @@ import brikks.logic.*;
 import brikks.view.DuelAsk;
 import brikks.view.PlayerAsk;
 
+import java.time.LocalTime;
+
 public class Player implements Comparable<Player> {
     public final String name;
     private boolean plays;
@@ -73,16 +75,8 @@ public class Player implements Comparable<Player> {
     }
 
 
-    public void stop() {
-        this.plays = false;
-    }
-
     public boolean isPlays() {
         return this.plays;
-    }
-
-    public PlayerSave getSaver() {
-        return this.saver;
     }
 
     public BonusScore getBonusScore() {
@@ -107,8 +101,9 @@ public class Player implements Comparable<Player> {
             throw new IllegalArgumentException("Block cannot be null");
         }
 
-        // TODO: add some randomness or whatever
-        final PlacedBlock placed = new PlacedBlock(block, this.board.canBePlaced(block)[0]);
+        final Position[] variants = this.board.canBePlaced(block);
+        final byte index = (byte) (LocalTime.now().getNano() % variants.length);
+        final PlacedBlock placed = new PlacedBlock(block, variants[index]);
 
         this.board.place(placed);
     }
@@ -127,7 +122,7 @@ public class Player implements Comparable<Player> {
             final Position[] variants = this.board.canBePlaced(block);
             final boolean canGiveUp = variants.length == 0;
 
-            switch (user.askDoing(block)) {
+            switch (user.askDeed(block)) {
                 case BOMB -> {
                     if (this.bombs.canUse()) {
                         this.bombs.use();
@@ -159,7 +154,7 @@ public class Player implements Comparable<Player> {
                     final byte energyCost = 5;
                     if (this.energy.canSpend(energyCost)) {
                         this.energy.spend(energyCost);
-                        final Position choice = user.askChoice(blocks);
+                        final Position choice = user.askChoice(blocks.getTable());
                         if (choice == null) {
                             break;
                         }
@@ -210,7 +205,7 @@ public class Player implements Comparable<Player> {
 
     public boolean duelTurn(final DuelAsk user, final Player opponent, byte amount) {
         for (; amount > 0; amount--) {
-            final Position[] variants = this.board.canBePlaced();
+            final Position[] variants = this.board.canBePlacedDuel();
             if (variants.length == 0) {
                 return false;
             }

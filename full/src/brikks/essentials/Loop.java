@@ -1,8 +1,8 @@
-package circle_loop;
+package brikks.essentials;
 
 import java.util.function.Supplier;
 
-public class ByteLoop {
+public class Loop {
     private byte MIN;
     private byte MAX;
     private byte STEP;
@@ -14,65 +14,33 @@ public class ByteLoop {
     private Supplier<Byte> toBack;
 
 
-    public ByteLoop(final byte max) {
-        this.MIN = 0;
-        this.MAX = max;
-
-        this.setPosition((byte) 0);
-
-        this.STEP = 1;
-        this.toMove = this::simpleAdd;
-        this.toBack = this::simpleSubtract;
+    public Loop(final byte max) {
+        this((byte) 0, (byte) 0, max, (byte) 1);
     }
 
-    public ByteLoop(final byte start, final byte max) {
-        this.MIN = 0;
-        this.MAX = max;
-
-        this.setPosition(start);
-
-        this.STEP = 1;
-        this.toMove = this::simpleAdd;
-        this.toBack = this::simpleSubtract;
+    public Loop(final byte start, final byte max) {
+        this(start, (byte) 0, max, (byte) 1);
     }
 
-    public ByteLoop(final byte start, final byte min, final byte max) {
-        this.MIN = min;
-        this.MAX = max;
-
-        this.setPosition(start);
-
-        this.STEP = 1;
-        this.toMove = this::simpleAdd;
-        this.toBack = this::simpleSubtract;
-    }
-
-    public ByteLoop(final byte start, final byte min, final byte max, final byte step) {
-        this.MIN = min;
-        this.MAX = max;
-
-        this.setPosition(start);
-
+    public Loop(final byte start, final byte min, final byte max, final byte step) {
+        this.setRange(start, min, max);
         this.setStep(step);
     }
 
 
-    public void setRange(final byte min, final byte max) {
-        this.setRange(this.POINT, min, max);
-    }
-
     public void setRange(final byte start, final byte min, final byte max) {
-        if (min >= max) {
+        if (min > max) {
             throw new IllegalArgumentException("Minimum must be less than maximum");
         }
-        this.setPosition(start);
 
         this.MIN = min;
         this.MAX = max;
+
+        this.setPosition(start);
     }
 
     public void setPosition(final byte position) {
-        if (this.MIN > position || position >= this.MAX) {
+        if ((this.MIN > position || position >= this.MAX) && this.MIN != this.MAX) {
             throw new IllegalArgumentException("The start value must be in between min & max!");
         }
 
@@ -88,7 +56,10 @@ public class ByteLoop {
         if (step > 0) {
             this.STEP = step;
 
-            if (this.STEP > (this.MAX - this.MIN)) {
+            if (this.STEP == 1) {
+                this.toMove = this::simpleAdd;
+                this.toBack = this::simpleSubtract;
+            } else if (this.STEP > (this.MAX - this.MIN)) {
                 this.toMove = this::complexAdd;
                 this.toBack = this::complexSubtract;
             } else {
@@ -98,7 +69,10 @@ public class ByteLoop {
         } else {
             this.STEP = (byte) -step;
 
-            if (this.STEP > (this.MAX - this.MIN)) {
+            if (this.STEP == 1) {
+                this.toMove = this::simpleSubtract;
+                this.toBack = this::simpleAdd;
+            } else if (this.STEP > (this.MAX - this.MIN)) {
                 this.toMove = this::complexSubtract;
                 this.toBack = this::complexAdd;
             } else {
@@ -108,28 +82,6 @@ public class ByteLoop {
         }
     }
 
-
-    public byte getMinimum() {
-        return this.MIN;
-    }
-
-    public byte getMaximum() {
-        return this.MAX;
-    }
-
-    public byte getStep() {
-        return this.STEP;
-    }
-
-
-    public byte goBack() {
-        this.position = this.backcast();
-        return position;
-    }
-
-    public boolean loopedBack() {
-        return this.finishedLoop(this.position, this.backcast());
-    }
 
     public byte backcast() {
         return this.toBack.get();

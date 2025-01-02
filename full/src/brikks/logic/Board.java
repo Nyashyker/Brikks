@@ -5,7 +5,6 @@ import brikks.essentials.enums.*;
 import brikks.logic.board.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Board {
@@ -20,31 +19,27 @@ public class Board {
     private final BonusScore bonusScore;
     private final Energy energy;
 
-    private final BonusEnergyBoard bonusEnergy;
+    private final EnergyBonusBoard energyBonus;
     private final UsedBoard used;
 
 
     public Board(final BonusScore bonusScore, final Energy energy, final Level difficulty) {
-        if (bonusScore == null) {
-            throw new IllegalArgumentException("Bonus score cannot be null");
-        }
-        if (energy == null) {
-            throw new IllegalArgumentException("Energy score cannot be null");
-        }
-        if (difficulty == null) {
-            throw new IllegalArgumentException("Difficulty cannot be null");
-        }
-
-        this.placed = new ArrayList<>();
-
-        this.bonusScore = bonusScore;
-        this.energy = energy;
-
-        this.bonusEnergy = BonusEnergyBoard.create(difficulty, Board.WIDTH, Board.HEIGHT);
-        this.used = new UsedBoard(Board.WIDTH, Board.HEIGHT);
+        this(
+                bonusScore,
+                energy,
+                difficulty,
+                new ArrayList<>(),
+                EnergyBonusBoard.generateEnergyBonus(Board.WIDTH, Board.HEIGHT)
+        );
     }
 
-    public Board(final BonusScore bonusScore, final Energy energy, final Level difficulty, final PlacedBlock[] placed, final Color[][] bonusEnergyBoard) {
+    public Board(
+            final BonusScore bonusScore,
+            final Energy energy,
+            final Level difficulty,
+            final List<PlacedBlock> placed,
+            final Color[][] energyBonus
+    ) {
         if (bonusScore == null) {
             throw new IllegalArgumentException("Bonus score cannot be null");
         }
@@ -59,33 +54,33 @@ public class Board {
         }
         for (final PlacedBlock check : placed) {
             if (check == null) {
-                throw new IllegalArgumentException("PlacedBlock cannot be null");
+                throw new IllegalArgumentException("No empty blocks in the placed");
             }
         }
-        if (bonusEnergyBoard == null) {
+        if (energyBonus == null) {
             throw new IllegalArgumentException("Bonus energy board cannot be null");
         }
-        if (bonusEnergyBoard.length != Board.HEIGHT || bonusEnergyBoard[0].length != Board.WIDTH) {
+        if (energyBonus.length != Board.HEIGHT || energyBonus[0].length != Board.WIDTH) {
             throw new IllegalArgumentException("BonusEnergyBoard must have the same length as Board");
         }
 
 
-        this.placed = new ArrayList<>(Arrays.asList(placed));
+        this.placed = placed;
 
         this.bonusScore = bonusScore;
         this.energy = energy;
 
-        this.bonusEnergy = BonusEnergyBoard.create(difficulty, bonusEnergyBoard);
+        this.energyBonus = EnergyBonusBoard.create(difficulty, energyBonus);
         this.used = new UsedBoard(Board.WIDTH, Board.HEIGHT, placed);
     }
 
 
-    public PlacedBlock[] getBoard() {
-        return this.placed.toArray(PlacedBlock[]::new);
+    public List<PlacedBlock> getBoard() {
+        return this.placed;
     }
 
     public Color[][] getEnergyBonus() {
-        return this.bonusEnergy.bonusEnergy;
+        return this.energyBonus.bonusEnergy;
     }
 
     public byte getRowMultiplier(final byte y) {
@@ -97,10 +92,9 @@ public class Board {
     }
 
 
-    public Position[] canBePlaced() {
+    public Position[] canBePlacedDuel() {
         List<Position> variants = this.used.canBePlaced(Board.duelBlock);
 
-        // TODO: mozxe, zberigaty okremo?
         List<Position> placedMiniblock = new ArrayList<>();
         for (final PlacedBlock placed : this.placed) {
             if (placed.getColor() == Color.DUELER) {
@@ -109,20 +103,20 @@ public class Board {
         }
 
         for (byte i = 0; i < variants.size(); ) {
-            boolean guesPlacable = true;
+            boolean guessPlaceable = true;
 
             for (final Position check : placedMiniblock) {
                 final byte distanceY = (byte) (Math.abs(variants.get(i).getY() - check.getY()));
                 final byte distanceX = (byte) (Math.abs(variants.get(i).getX() - check.getX()));
 
                 if (distanceY == 1 && distanceX == 0 || distanceY == 0 && distanceX == 1) {
-                    guesPlacable = false;
+                    guessPlaceable = false;
                     variants.remove(i);
                     break;
                 }
             }
 
-            if (guesPlacable) {
+            if (guessPlaceable) {
                 i++;
             }
         }
@@ -138,7 +132,7 @@ public class Board {
         this.used.place(block);
         this.placed.add(block);
 
-        return (byte) (this.energy.grow(this.bonusEnergy.place(block)) + this.bonusScore.growByBoard(this.used.rowsFilled(block)));
+        return (byte) (this.energy.grow(this.energyBonus.place(block)) + this.bonusScore.growByBoard(this.used.rowsFilled(block)));
     }
 
     public void opponentsPlace(final Position position) {

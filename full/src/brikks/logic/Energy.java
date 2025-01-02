@@ -1,7 +1,7 @@
 package brikks.logic;
 
 public class Energy {
-    public static final byte MAXIMUM = 28;
+    public static final byte MAX_POSITION = 28;
 
     private final boolean[] bonuses;
     private byte position;
@@ -11,11 +11,19 @@ public class Energy {
 
 
     public Energy(final BonusScore bonusScore, final byte playerCount) {
-        this(bonusScore, Energy.generateBonuses(), Energy.calculateStartingPosition(playerCount), Energy.calculateStartingAvailable(playerCount));
+        this(
+                bonusScore,
+                Energy.calculateStartingPosition(playerCount),
+                Energy.calculateStartingAvailable(playerCount)
+        );
     }
 
-    public Energy(final BonusScore bonusScore, final boolean[] bonuses, final byte position, final byte available) {
-        this.bonuses = bonuses;
+    public Energy(final BonusScore bonusScore, final byte position, final byte available) {
+        if (position > Energy.MAX_POSITION) {
+            throw new IllegalArgumentException("position must be < " + Energy.MAX_POSITION);
+        }
+
+        this.bonuses = Energy.generateBonuses();
         this.position = position;
         this.available = available;
 
@@ -23,12 +31,12 @@ public class Energy {
     }
 
     public static boolean[] generateBonuses() {
-        boolean[] bonuses = new boolean[Energy.MAXIMUM];
-        for (byte i = 0; i < Energy.MAXIMUM; i++) {
+        boolean[] bonuses = new boolean[Energy.MAX_POSITION];
+        for (byte i = 0; i < Energy.MAX_POSITION; i++) {
             bonuses[i] = false;
         }
 
-        for (byte i = 6; i < Energy.MAXIMUM; i += 3) {
+        for (byte i = 6; i < Energy.MAX_POSITION; i += 3) {
             bonuses[i] = true;
         }
 
@@ -62,10 +70,6 @@ public class Energy {
     }
 
 
-    public boolean[] getBonuses() {
-        return this.bonuses;
-    }
-
     public byte getPosition() {
         return this.position;
     }
@@ -75,13 +79,13 @@ public class Energy {
     }
 
     public byte getDistanceToNextBonus() {
-        if (this.position == Energy.MAXIMUM - 1) {
+        if (this.position == Energy.MAX_POSITION - 1) {
             return -1;
         }
 
         byte distance = 0;
 
-        for (byte i = (byte) (this.position + 1); i < Energy.MAXIMUM; i++) {
+        for (byte i = (byte) (this.position + 1); i < Energy.MAX_POSITION; i++) {
             if (this.bonuses[i]) {
                 break;
             } else {
@@ -106,16 +110,27 @@ public class Energy {
     }
 
     public byte grow(byte amount) {
+        // Negative grow possible
         if (amount < 0) {
-            this.shorten((byte) -amount);
+            this.position += amount;
+            if (this.position < 0) {
+                this.position = 0;
+            }
+
+            this.available += amount;
+            if (this.available < 0) {
+                this.available = 0;
+            }
+
             return 0;
         }
 
-        if (this.position == Energy.MAXIMUM - 1) {
+        // Positive grow
+        if (this.position + 1 == Energy.MAX_POSITION) {
             return 0;
         }
-        if (this.position + amount > Energy.MAXIMUM - 1) {
-            amount = (byte) (Energy.MAXIMUM - this.position);
+        if (this.position + amount >= Energy.MAX_POSITION) {
+            amount = (byte) (Energy.MAX_POSITION - this.position);
         }
 
         this.available += amount;
@@ -134,22 +149,5 @@ public class Energy {
 
     public short calculateFinal() {
         return (short) (this.available / 2);
-    }
-
-
-    private void shorten(final byte amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("The amount has to be greater than zero");
-        }
-
-        this.position -= amount;
-        if (this.position < 0) {
-            this.position = 0;
-        }
-
-        this.available -= amount;
-        if (this.available < 0) {
-            this.available = 0;
-        }
     }
 }

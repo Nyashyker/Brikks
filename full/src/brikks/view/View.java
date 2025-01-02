@@ -7,14 +7,14 @@ import brikks.view.enums.*;
 
 public abstract class View implements PlayerAsk, DuelAsk {
     abstract public Menu menu();
-    abstract public void liderboard(final PlayerLiderboard[] players);
+    abstract public void leaderboard(final PlayerLeaderboard[] players);
 
 
     abstract public boolean askUseExistingPlayer(final String name);
     abstract public Level askDifficulty();
     abstract public boolean askDuel();
     abstract public byte askPlayerCount(final byte maxPlayers);
-    abstract public String askName();
+    abstract public String askName(final byte playerNumber);
 
 
     abstract public SavedGame askChoiceSave(final SavedGame[] variants);
