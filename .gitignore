@@ -2,7 +2,6 @@
 .idea/tasks.xml
 .idea/dictionaries/
 .idea/shelf/
-.idea/libraries/
 
 /out/
 build/
@@ -14,5 +13,3 @@ target/
 *.key
 *.pem
 .env
-
-/db/
