@@ -5,6 +5,7 @@ import brikks.save.*;
 import brikks.view.*;
 import brikks.view.container.GameText;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +13,25 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            final DatabaseConnection db = new DatabaseConnection(
-                    "jdbc:postgresql:file:db/brikks",
-                    "postgres",
-                    "Student_1234"
-            );
+        try (
+                final DatabaseConnection db = new DatabaseConnection(
+                        "jdbc:postgresql://localhost:5432/brikks",
+                        "postgres",
+                        "Student_1234"
+                )
+        ) {
 
-            db.write("CREATE TABLE IF NOT EXISTS players (name VARCHAR(3), score INTEGER)");
-            db.write("INSERT INTO players (player_name, top_score) VALUES ('Lars', 9001)");
+            db.write("DROP TABLE IF EXISTS players");
+            db.write("CREATE TABLE IF NOT EXISTS players (name VARCHAR(16), score INTEGER)");
+            db.write("INSERT INTO players (name, score) VALUES ('Lars', 9001)");
 
-            System.out.println(db.read("SELECT player_name, top_score FROM players"));
+            final ResultSet rs = db.read("SELECT name, score FROM players");
+            while (rs.next()) {
+                String name = rs.getString(1);
+                int score = rs.getInt(2);
+
+                System.out.println(name + " " + score);
+            }
 
         } catch (SQLException e) {
             System.out.println("Помилочка");

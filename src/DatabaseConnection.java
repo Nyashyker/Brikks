@@ -1,9 +1,6 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
-public class DatabaseConnection {
+public class DatabaseConnection implements AutoCloseable {
     private final Connection connection;
     private final Statement stmt;
 
@@ -20,11 +17,17 @@ public class DatabaseConnection {
         this.stmt.executeUpdate(command);
     }
 
-    public String read(final String command) throws SQLException {
+    public ResultSet read(final String command) throws SQLException {
         if (this.connection.isClosed()) {
             return null;
         }
 
-        return this.stmt.executeQuery(command).toString();
+        return this.stmt.executeQuery(command);
+    }
+
+    @Override
+    public void close() throws SQLException {
+        this.stmt.close();
+        this.connection.close();
     }
 }
