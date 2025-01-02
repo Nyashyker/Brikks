@@ -6,9 +6,11 @@ import java.sql.SQLException;
 public class MakeDatabase {
     public static void main(String[] args) {
         try (
-                Connection con = DriverManager.getConnection("jdbc:postgresql:file:db/brikks",
+                Connection con = DriverManager.getConnection(
+                        "jdbc:postgresql:file:db/brikks",
                         "postgres",
-                        "Student_1234");
+                        "Student_1234"
+                );
                 Statement stmt = con.createStatement()
         ) {
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS players (name VARCHAR(3), score INTEGER)");
