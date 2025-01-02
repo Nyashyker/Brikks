@@ -7,16 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="essentials+logic--design__and__1player-bug-fix">
+    <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="DCD-updated">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/PlayerSave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/PlayerSave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/Save.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/Save.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/PlayerAsk.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/PlayerAsk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/enums/Doing.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/enums/Deed.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +93,7 @@
       <workItem from="1735576584264" duration="5201000" />
       <workItem from="1735581888229" duration="334000" />
       <workItem from="1735585474399" duration="247000" />
-      <workItem from="1735817824743" duration="17945000" />
+      <workItem from="1735817824743" duration="20312000" />
     </task>
     <task id="LOCAL-00001" summary="View-done--Player&amp;DuelAsks-still-remains">
       <option name="closed" value="true" />
@@ -239,7 +231,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735829744409</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="DCD-updated">
+      <option name="closed" value="true" />
+      <created>1735836344230</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1735836344230</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -263,6 +263,7 @@
     <MESSAGE value="fix-translate" />
     <MESSAGE value="lEAderboard" />
     <MESSAGE value="essentials+logic--design__and__1player-bug-fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="essentials+logic--design__and__1player-bug-fix" />
+    <MESSAGE value="DCD-updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="DCD-updated" />
   </component>
 </project>
