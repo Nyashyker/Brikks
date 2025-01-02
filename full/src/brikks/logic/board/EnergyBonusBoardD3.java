@@ -3,22 +3,9 @@ package brikks.logic.board;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 
-public class BonusEnergyBoardD1 extends BonusEnergyBoard {
-    private static final Level difficulty = Level.ONE;
-
-
-    public BonusEnergyBoardD1(final byte width, final byte height) {
-        super(width, height);
-    }
-
-    public BonusEnergyBoardD1(final Color[][] bonusEnergy) {
-        super(bonusEnergy);
-    }
-
-
-    @Override
-    public Level getDifficulty() {
-        return difficulty;
+public class EnergyBonusBoardD3 extends EnergyBonusBoard {
+    public EnergyBonusBoardD3(final Color[][] energyBonus) {
+        super(energyBonus);
     }
 
 
@@ -27,14 +14,12 @@ public class BonusEnergyBoardD1 extends BonusEnergyBoard {
         byte bonusPoints = 0;
 
         for (final Position shapePos : block.getBlock()) {
-            this.validatePosition(shapePos);
-
             final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getX()];
             if (point != null) {
                 if (point == block.getColor()) {
                     bonusPoints += 2;
                 } else {
-                    bonusPoints += 1;
+                    bonusPoints -= 1;
                 }
             }
         }

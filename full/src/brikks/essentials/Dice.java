@@ -3,7 +3,7 @@ package brikks.essentials;
 import java.util.Random;
 
 public class Dice {
-    private final static Random rand = new Random();
+    private static final Random rand = new Random();
     public final byte sides;
     private byte value;
 
@@ -27,6 +27,7 @@ public class Dice {
     public void cheat(final byte value) {
         this.value = value;
     }
+
 
     @Override
     public String toString() {

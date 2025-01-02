@@ -24,6 +24,7 @@ public record GameText(
 
         String askChoiceSave,
 
+        String max,
         String bonusScore,
         String energy,
         String bombs,

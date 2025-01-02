@@ -4,11 +4,6 @@ public class PlacedBlock extends Block {
     protected final Position position;
 
 
-    public PlacedBlock(final Block block) {
-        super(block);
-        this.position = new Position();
-    }
-
     public PlacedBlock(final Block block, final Position position) {
         super(block);
         this.position = position;
@@ -30,9 +25,6 @@ public class PlacedBlock extends Block {
         return this.position;
     }
 
-    public void setPlace(final Position position) {
-        this.position.set(position);
-    }
 
     @Override
     public String toString() {

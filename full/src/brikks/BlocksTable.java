@@ -3,8 +3,8 @@ package brikks;
 import brikks.essentials.*;
 
 public class BlocksTable {
-    public final static byte HEIGHT = 6;
-    public final static byte WIDTH = 4;
+    public static final byte HEIGHT = 6;
+    public static final byte WIDTH = 4;
 
     private final Block[][] blocks;
 

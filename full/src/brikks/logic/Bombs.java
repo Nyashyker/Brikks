@@ -1,22 +1,25 @@
 package brikks.logic;
 
 public class Bombs {
-    public final static byte MAX_AMOUNT = 3;
+    public static final byte MAX_AMOUNT = 3;
 
     private final byte[] points;
     private byte amount;
 
 
     public Bombs() {
-        this(Bombs.generatePoints(), (byte) 3);
+        this(Bombs.MAX_AMOUNT);
     }
 
-    public Bombs(byte[] points, byte amount) {
+    public Bombs(final byte amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("Amount must be a positive number");
         }
+        if (amount > Bombs.MAX_AMOUNT) {
+            throw new IllegalArgumentException("Amount must be <= " + Bombs.MAX_AMOUNT);
+        }
 
-        this.points = points;
+        this.points = Bombs.generatePoints();
         this.amount = amount;
     }
 
@@ -34,10 +37,6 @@ public class Bombs {
 
     public byte get() {
         return this.amount;
-    }
-
-    public byte[] getPoints() {
-        return this.points;
     }
 
 

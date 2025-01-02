@@ -185,7 +185,7 @@ public class Brikks {
             loop.setPosition(loopingLoop.goForward());
 
             boolean first = players.length != 1;
-            for (; !loop.loopedForward(); loop.goForward()) {
+            for (; players.length == 1 || !loop.loopedForward(); loop.goForward()) {
                 final Player player = players[loop.current()];
 
                 if (!player.isPlays()) {
@@ -201,7 +201,7 @@ public class Brikks {
                     result = player.turn(this.view, this.blocksTable, this.matrixDie);
                     first = false;
                 } else {
-                    result = player.turn(this.view, this.blocksTable, new Position(this.matrixDie.get()));
+                    result = player.turn(this.view, this.blocksTable, this.matrixDie.get());
                 }
 
                 if (result.exit()) {

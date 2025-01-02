@@ -12,13 +12,6 @@ public class UsedBoard {
 
 
     public UsedBoard(final byte width, final byte height) {
-        if (width <= 0) {
-            throw new IllegalArgumentException("width must be greater than 0");
-        }
-        if (height <= 0) {
-            throw new IllegalArgumentException("height must be greater than 0");
-        }
-
         boolean[][] used = new boolean[height][width];
         for (int y = 0; y < height; ++y) {
             used[y] = new boolean[width];
@@ -32,12 +25,8 @@ public class UsedBoard {
         this.used = used;
     }
 
-    public UsedBoard(final byte width, final byte height, final PlacedBlock[] placed) {
+    public UsedBoard(final byte width, final byte height, final List<PlacedBlock> placed) {
         this(width, height);
-
-        if (placed == null) {
-            throw new IllegalArgumentException("placed must not be null");
-        }
 
         for (final PlacedBlock block : placed) {
             this.place(block);

@@ -13,25 +13,25 @@ import java.util.InputMismatchException;
 import java.util.Arrays;
 
 public class ConsoleView extends View {
-    public final static Scanner keyboard = new Scanner(System.in);
+    public static final Scanner keyboard = new Scanner(System.in);
 
     private static class Colors {
-        private final static String ANSI_RESET = "\u001B[0m";
-        private final static String ANSI_WHITE = "\u001B[37m";
-        private final static String ANSI_YELLOW = "\u001B[33m";
-        private final static String ANSI_GREEN = "\u001B[32m";
-        private final static String ANSI_RED = "\u001B[31m";
-        private final static String ANSI_BLUE = "\u001B[34m";
-        private final static String ANSI_BLACK = "\u001B[30m";
-        private final static String ANSI_DUELER = "\u001B[36m";
+        private static final String ANSI_RESET = "\u001B[0m";
+        private static final String ANSI_WHITE = "\u001B[37m";
+        private static final String ANSI_YELLOW = "\u001B[33m";
+        private static final String ANSI_GREEN = "\u001B[32m";
+        private static final String ANSI_RED = "\u001B[31m";
+        private static final String ANSI_BLUE = "\u001B[34m";
+        private static final String ANSI_BLACK = "\u001B[30m";
+        private static final String ANSI_DUELER = "\u001B[36m";
 
-        private final static String ANSI_BG_WHITE = "\u001B[47m";
-        private final static String ANSI_BG_YELLOW = "\u001B[43m";
-        private final static String ANSI_BG_GREEN = "\u001B[42m";
-        private final static String ANSI_BG_RED = "\u001B[41m";
-        private final static String ANSI_BG_BLUE = "\u001B[44m";
-        private final static String ANSI_BG_BLACK = "\u001B[40m";
-        private final static String ANSI_BG_DUELER = "\u001B[46m";
+        private static final String ANSI_BG_WHITE = "\u001B[47m";
+        private static final String ANSI_BG_YELLOW = "\u001B[43m";
+        private static final String ANSI_BG_GREEN = "\u001B[42m";
+        private static final String ANSI_BG_RED = "\u001B[41m";
+        private static final String ANSI_BG_BLUE = "\u001B[44m";
+        private static final String ANSI_BG_BLACK = "\u001B[40m";
+        private static final String ANSI_BG_DUELER = "\u001B[46m";
     }
 
     private final GameText text;
@@ -240,7 +240,8 @@ public class ConsoleView extends View {
 
             playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedBonusScore = String.format(this.text.bonusScore(),
-                    bonusScore.get(), bonusScore.getNext());
+                    bonusScore.calculateFinal(), bonusScore.calculateNextFinal() == -1 ?
+                            this.text.max() : bonusScore.calculateNextFinal() + "");
             playerScreen[index].append(stringedBonusScore);
             playerScreen[index].append(" ".repeat(center - stringedBonusScore.length() + side + 2));
             playerScreen[index++].append('|');
@@ -252,11 +253,13 @@ public class ConsoleView extends View {
 
             playerScreen[index].append('|').append(" ".repeat(side - 2));
             final String stringedEnergy = String.format(this.text.energy(),
-                    energy.getAvailable(), energy.getDistanceToNextBonus());
+                    energy.getAvailable(), energy.getDistanceToNextBonus() == -1 ?
+                            this.text.max() : energy.getDistanceToNextBonus() + "");
             playerScreen[index].append(stringedEnergy);
             playerScreen[index].append(" ".repeat(center - stringedEnergy.length() + side + 2));
             playerScreen[index++].append('|');
         }
+
         // BOMBS
         {
             final Bombs bombs = player.getBombs();

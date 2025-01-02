@@ -209,7 +209,7 @@ public class Player implements Comparable<Player> {
 
     public boolean duelTurn(final DuelAsk user, final Player opponent, byte amount) {
         for (; amount > 0; amount--) {
-            final Position[] variants = this.board.canBePlaced();
+            final Position[] variants = this.board.canBePlacedDuel();
             if (variants.length == 0) {
                 return false;
             }
