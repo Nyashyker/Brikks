@@ -8,15 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ac27462b-f7fd-4c21-bed4-e12dbe09f3bd" name="Changes" comment="essentials+logic--design__and__1player-bug-fix">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/EmptySave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/PlayerSave.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/PlayerSave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/save/Save.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/save/Save.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/ConsoleView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/PlayerAsk.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/PlayerAsk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/container/GameText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/full/src/brikks/view/enums/Doing.java" beforeDir="false" afterPath="$PROJECT_DIR$/full/src/brikks/view/enums/Deed.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +59,7 @@
     "Application.Main.executor": "Run",
     "JavaMethodFindUsagesOptions.isSearchForBaseMethod": "false",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "full",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -244,6 +237,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="View-done--Player&amp;DuelAsks-still-remains" />
