@@ -1,26 +1,18 @@
 package brikks.save;
 
-import brikks.Player;
-import brikks.essentials.*;
-import brikks.logic.*;
 
-public class EmptyPlayerSave extends PlayerSave {
+import brikks.Player;
+
+
+public class EmptyPlayerSave implements PlayerSave {
     public EmptyPlayerSave() {}
 
     @Override
-    public void save(final Board board) {}
+    public void save(Player player, byte playerOrder) {}
+
     @Override
-    public void save(final Bombs bombs) {}
+    public void update(Player player) {}
+
     @Override
-    public void save(final BonusScore bonusScore) {}
-    @Override
-    public void save(final Energy energy) {}
-    @Override
-    public void save(final short finalScore) {}
-    @Override
-    public void save(final MatrixDice matrixDie) {}
-    @Override
-    public void save(final Player player) {}
-    @Override
-    public void save(final Position matrixDie) {}
+    public void save(short score) {}
 }

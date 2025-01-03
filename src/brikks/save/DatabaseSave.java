@@ -1,70 +1,102 @@
 package brikks.save;
 
-import brikks.Player;
-import brikks.essentials.enums.Level;
-import brikks.save.container.LoadedGame;
-import brikks.save.container.PlayerLeaderboard;
-import brikks.save.container.SavedGame;
+import brikks.essentials.enums.*;
+import brikks.essentials.*;
+import brikks.logic.*;
+import brikks.save.container.*;
+
+import java.time.LocalTime;
+
+public class DatabaseSave implements Save {
+    private final DatabaseConnection dbc;
+    /*TODO: assign in start-save or load*/
+    private int ID;
+    /*TODO: assign in start-save or load*/
+    private LocalTime lastDurationUpdate;
 
 
-public class DatabaseSave extends Save {
+    public DatabaseSave(final DatabaseConnection dbc) {
+        this.dbc = dbc;
+    }
+
+
+    ///        Recreate the database
+    private void save(final byte tableWidth, final byte tableHeight) {
+        // TODO: implement
+    }
+
+    public void recreateDB(final byte tableWidth, final byte tableHeight) {
+        // TODO: implement
+    }
+
+
+    ///        First save
+    // SAVED_BOARDS
+    private void save(final int saveID, final Board board) {
+        // TODO: implement
+    }
+
+    // SAVE_GAMES
+    private void save(final int saveID, final byte turn, final Position choice, final MatrixDice matrixDie) {
+        // TODO: implement
+    }
+
+
     @Override
     public boolean playerExists(String name) {
+        // TODO: implement
         return false;
     }
 
+    /*TODO: call on start*/
     @Override
-    public SavedGame[] savedGames() {
-        return new SavedGame[0];
-    }
-
-    @Override
-    public LoadedGame loadGame(int id) {
+    public PlayerSave[] save(final String[] name, final Level difficulty, final boolean duel) {
+        // TODO: implement
         return null;
     }
 
     @Override
-    public PlayerLeaderboard[] leaderboard() {
-        return new PlayerLeaderboard[0];
+    public void save(final byte turn, final Position choice, final MatrixDice matrixDie) {
+        // TODO: implement
     }
 
-    @Override
-    public PlayerSave getPlayerSave(String name) {
-        return null;
-    }
 
-    @Override
-    public void save(Level difficulty) {
-
-    }
-
-    @Override
-    public void save(boolean duel) {
-
-    }
-
-    @Override
-    public void save(Player player) {
-
-    }
-
-    @Override
-    public void saveStartDateTime() {
-
-    }
-
-    @Override
-    public void saveEndDateTime() {
-
-    }
-
-    @Override
-    public void startCountingTime() {
-
-    }
-
+    ///        Update
+    /*TODO: call on exit or end game*/
     @Override
     public void updateDuration() {
+        // TODO: implement
+    }
 
+    @Override
+    public void update(final byte turn, final Position choice, final MatrixDice matrixDie) {
+        // TODO: implement
+    }
+
+
+    ///        Load
+    @Override
+    public PlayerLeaderboard[] leaderboard() {
+        // TODO: implement
+        return null;
+    }
+
+    @Override
+    public SavedGame[] load() {
+        // TODO: implement
+        return null;
+    }
+
+    @Override
+    public LoadedGame load(final int ID) {
+        // TODO: implement
+        return null;
+    }
+
+
+    ///        End game
+    @Override
+    public void dropSave() {
+        // TODO: implement
     }
 }

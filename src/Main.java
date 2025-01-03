@@ -1,23 +1,15 @@
-import brikks.essentials.enums.Color;
-import brikks.essentials.Block;
-import brikks.essentials.Position;
-import brikks.save.DatabaseConnection;
-import brikks.save.container.PlayerLeaderboard;
-import brikks.view.container.GameText;
-import brikks.Brikks;
-import brikks.BlocksTable;
-import brikks.save.EmptySave;
-import brikks.view.ConsoleView;
+import brikks.essentials.enums.*;
+import brikks.essentials.*;
+import brikks.save.*;
+import brikks.view.container.*;
+import brikks.*;
+import brikks.view.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 
 public class Main {
