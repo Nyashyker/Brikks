@@ -1,14 +1,18 @@
-import brikks.essentials.*;
-import brikks.essentials.enums.*;
-import brikks.*;
-import brikks.save.*;
-import brikks.view.*;
+import brikks.essentials.enums.Color;
+import brikks.essentials.Block;
+import brikks.essentials.Position;
+import brikks.save.DatabaseConnection;
 import brikks.view.container.GameText;
+import brikks.Brikks;
+import brikks.BlocksTable;
+import brikks.save.EmptySave;
+import brikks.view.ConsoleView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Main {
@@ -21,11 +25,11 @@ public class Main {
                 )
         ) {
 
-            db.write("DROP TABLE IF EXISTS players");
-            db.write("CREATE TABLE IF NOT EXISTS players (name VARCHAR(16), score INTEGER)");
-            db.write("INSERT INTO players (name, score) VALUES ('Lars', 9001)");
+            db.executeUpdate("DROP TABLE IF EXISTS players");
+            db.executeUpdate("CREATE TABLE IF NOT EXISTS players (name VARCHAR(16), score INTEGER)");
+            db.executeUpdate("INSERT INTO players (name, score) VALUES ('Lars', 9001)");
 
-            final ResultSet rs = db.read("SELECT name, score FROM players");
+            final ResultSet rs = db.executeQuery("SELECT name, score FROM players");
             while (rs.next()) {
                 String name = rs.getString(1);
                 int score = rs.getInt(2);

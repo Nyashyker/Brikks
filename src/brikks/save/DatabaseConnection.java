@@ -1,29 +1,31 @@
-import java.sql.*;
+package brikks.save;
+
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+
 
 public class DatabaseConnection implements AutoCloseable {
     private final Connection connection;
     private final Statement stmt;
+
 
     public DatabaseConnection(final String url, final String user, final String password) throws SQLException {
         this.connection = DriverManager.getConnection(url, user, password);
         this.stmt = this.connection.createStatement();
     }
 
-    public void write(final String command) throws SQLException {
-        if (this.connection.isClosed()) {
-            return;
-        }
 
-        this.stmt.executeUpdate(command);
+    public void executeUpdate(final String sql) throws SQLException {
+        this.stmt.executeUpdate(sql);
     }
 
-    public ResultSet read(final String command) throws SQLException {
-        if (this.connection.isClosed()) {
-            return null;
-        }
-
-        return this.stmt.executeQuery(command);
+    public ResultSet executeQuery(final String sql) throws SQLException {
+        return this.stmt.executeQuery(sql);
     }
+
 
     @Override
     public void close() throws SQLException {

@@ -67,5 +67,6 @@ public abstract class EnergyBonusBoard {
     }
 
 
+    // TODO: clear the space after block overlapped
     abstract public byte place(PlacedBlock block);
 }
