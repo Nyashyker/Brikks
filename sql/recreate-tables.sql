@@ -54,7 +54,7 @@ CREATE TABLE players
 
 CREATE TABLE saved_players_games
 (
-    save_id      SERIAL
+    save_id      INT
         CONSTRAINT pk_save_player_id PRIMARY KEY,
     plays        BOOLEAN
         CONSTRAINT nn_plays NOT NULL,
