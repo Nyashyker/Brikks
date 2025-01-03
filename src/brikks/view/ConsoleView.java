@@ -64,7 +64,7 @@ public class ConsoleView extends View {
         System.out.println();
 
         for (final PlayerLeaderboard player : players) {
-            System.out.printf("%s - (%s - %s) %s - %d",
+            System.out.printf("%s - (%s - %s) %s - %d\n",
                     player.name(), player.startDateTime(), player.endDateTime(), player.duration(), player.score());
         }
         System.out.println();

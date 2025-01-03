@@ -2,6 +2,7 @@ import brikks.essentials.enums.Color;
 import brikks.essentials.Block;
 import brikks.essentials.Position;
 import brikks.save.DatabaseConnection;
+import brikks.save.container.PlayerLeaderboard;
 import brikks.view.container.GameText;
 import brikks.Brikks;
 import brikks.BlocksTable;
@@ -14,33 +15,144 @@ import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 
 public class Main {
     public static void main(String[] args) {
-        try (
-                final DatabaseConnection db = new DatabaseConnection(
-                        "jdbc:postgresql://localhost:5432/brikks",
-                        "postgres",
-                        "Student_1234"
-                )
-        ) {
+        final PlayerLeaderboard[] pll = new PlayerLeaderboard[] {
+                new PlayerLeaderboard("ALI",
+                LocalDateTime.of(2024, 12, 15, 16, 14, 3),
+                LocalDateTime.of(2024, 12, 15, 16, 24, 33),
+                Duration.of(630, ChronoUnit.SECONDS),
+                        (byte) 100),
+                new PlayerLeaderboard("RADOSTIN",
+                        LocalDateTime.of(2024, 12, 1, 11, 50, 16),
+                        LocalDateTime.of(2024, 12, 1, 12, 5, 48),
+                        Duration.of(932, ChronoUnit.SECONDS),
+                        (byte) 99),
+                new PlayerLeaderboard("BRENA",
+                        LocalDateTime.of(2024, 12, 11, 12, 51, 4),
+                        LocalDateTime.of(2024, 12, 11, 13, 0, 20),
+                        Duration.of(556, ChronoUnit.SECONDS),
+                        (byte) 98),
+                new PlayerLeaderboard("ILLIA",
+                        LocalDateTime.of(2024, 11, 12, 14, 40, 11),
+                        LocalDateTime.of(2024, 11, 12, 14, 48, 53),
+                        Duration.of(522, ChronoUnit.SECONDS),
+                        (byte) 97),
+                new PlayerLeaderboard("IVAN",
+                        LocalDateTime.of(2024, 11, 16, 13, 17, 19),
+                        LocalDateTime.of(2024, 11, 16, 13, 32, 52),
+                        Duration.of(1053, ChronoUnit.SECONDS),
+                        (byte) 96),
+        };
 
-            db.executeUpdate("DROP TABLE IF EXISTS players");
-            db.executeUpdate("CREATE TABLE IF NOT EXISTS players (name VARCHAR(16), score INTEGER)");
-            db.executeUpdate("INSERT INTO players (name, score) VALUES ('Lars', 9001)");
-
-            final ResultSet rs = db.executeQuery("SELECT name, score FROM players");
-            while (rs.next()) {
-                String name = rs.getString(1);
-                int score = rs.getInt(2);
-
-                System.out.println(name + " " + score);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Помилочка");
-            System.out.println(e.getMessage());
+        final GameText textUkr;
+        // Defining text
+        {
+            textUkr = new GameText(
+                    "Назад",
+                    "Уведіть будь-що, щоб перейти в головне меню.",
+                    "Оберіть (%d-%d): ",
+                    "Уведіть число з указаного діапазону!",
+                    "МЕНЮ",
+                    new String[]{
+                            "Нова гра",
+                            "Завантажити",
+                            "Таблиця лідерів",
+                            "Вийти"
+                    },
+                    "ТАБЛИЦЯ ЛІДЕРІВ",
+                    "Гравець із таким ім'ям уже існує. Бажаєте використати його? ",
+                    "Оберіть рівень складности:",
+                    new String[]{
+                            "Перший: 1 ОЕ дається навіть за накриття неправильним кольором",
+                            "Другий: 2 ОЕ дається за накриття правильним кольором (стандартний)",
+                            "Третій: 1 ОЕ відбирається за накриття неправильним кольором",
+                            "Четвертий: 2 ОЕ відберається за накриття неправильним кольором",
+                    },
+                    "Хочете провести дуель? ",
+                    "Скільки гравців гратиме? (0 = назад)",
+                    "Оберіть ім'я гравцю №%d (нічого = назад): ",
+                    "Оберіть зебереження:",
+                    "НЕМА",
+                    "Додаткові бали: %d (-> %s)",
+                    "Очки енергії: %d (+ДБ -> %s)",
+                    "Бомби: %d (= %d бал.)",
+                    "\tГру завершено!!!",
+                    "%s - %s - %d\n",
+                    new String[]{
+                            "Перший раз?",
+                            "Ти можеш більше!",
+                            "Молодець!",
+                            "А хтось набив руку!",
+                            "Насолоджуйся своїми здобутками!",
+                            "Ти це бачив?",
+                            "Та тобі треба в професіонали йти!",
+                            "От хвалько!",
+                            "МАЙСТЕР-БЛОКАЙСТЕР 2000!!!",
+                    },
+                    "Підсумки:",
+                    "%s переміг %s\n",
+                    "Вихід...",
+                    "Хочете перекинути кубик? ",
+                    "стовпець=%d\tряд=%d",
+                    "Де розмістити блок?:",
+                    "Ваші дії:",
+                    new String[]{
+                            "Вористати бомбу",
+                            "Повернути блок",
+                            "Замінити блок",
+                            "Поставити блок",
+                            "Здатися",
+                            "Зберегтися",
+                            "Вийти в головне меню",
+                    },
+                    "Оберіть варіацію оберту блоку:",
+                    "Оберіть стовпець блоку (0 = назад): ",
+                    "Оберіть ряд блоку (0 = назад): ",
+                    "Цей блок немає куди ставити!",
+                    "Бомб не залишилося!",
+                    "Недостатньо енергії, щоб повернути болок",
+                    "Недостатньо енергії, щоб замінити блок!",
+                    "Ану не тойво мені тут!!! Ще є куди ставити блок!",
+                    "Для вас гра завершена.",
+                    "Оберіть місце для мініатюрного блоку на дошці опонента:"
+            );
         }
+
+        final ConsoleView cv = new ConsoleView(textUkr, "BRIKKS");
+        cv.leaderboard(pll);
+    }
+
+        public static void runDB() {
+            try (
+                    final DatabaseConnection db = new DatabaseConnection(
+                            "jdbc:postgresql://localhost:5432/brikks",
+                            "postgres",
+                            "Student_1234"
+                    )
+            ) {
+
+                db.executeUpdate("DROP TABLE IF EXISTS players");
+                db.executeUpdate("CREATE TABLE IF NOT EXISTS players (name VARCHAR(16), score INTEGER)");
+                db.executeUpdate("INSERT INTO players (name, score) VALUES ('Lars', 9001)");
+
+                final ResultSet rs = db.executeQuery("SELECT name, score FROM players");
+                while (rs.next()) {
+                    String name = rs.getString(1);
+                    int score = rs.getInt(2);
+
+                    System.out.println(name + " " + score);
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Помилочка");
+                System.out.println(e.getMessage());
+            }
     }
 
     private static void runGame() {
