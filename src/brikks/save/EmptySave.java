@@ -14,10 +14,6 @@ public class EmptySave implements Save {
         return new PlayerSave[0];
     }
     @Override
-    public void save(final byte turn, final Position choice, final MatrixDice matrixDie) {}
-    @Override
-    public void updateDuration() {}
-    @Override
     public void update(final byte turn, final Position choice, final MatrixDice matrixDie) {}
     @Override
     public PlayerLeaderboard[] leaderboard() { return new PlayerLeaderboard[0]; }

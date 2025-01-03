@@ -8,7 +8,8 @@ import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
 import brikks.view.*;
 
-public class Brikks {
+
+public class Brikks implements GameSave {
     public static final byte MAX_PLAYERS = 4;
 
 
@@ -17,6 +18,9 @@ public class Brikks {
 
     private final Save save;
     private final View view;
+
+    private Player[] players;
+    private byte turn;
 
 
     public Brikks(View view, Save save, Block[][] blocksTable) {
@@ -38,6 +42,9 @@ public class Brikks {
 
         this.save = save;
         this.view = view;
+
+        this.players = null;
+        this.turn = -1;
     }
 
 
@@ -60,7 +67,6 @@ public class Brikks {
     }
 
     public void start() {
-        // Creating the players
         final byte playerCount = this.view.askPlayerCount(Brikks.MAX_PLAYERS);
         if (playerCount == 0) {
             return;
@@ -70,89 +76,67 @@ public class Brikks {
         if (difficulty == null) {
             return;
         }
-        this.save.save(difficulty);
 
-        final Player[] players = new Player[playerCount];
-        {
-            final String[] name$s = new String[playerCount];
-
-            for (byte i = 0; i < playerCount; i++) {
-                String name;
-                boolean nameDecided = false;
-                do {
-                    name = this.view.askName((byte) (i + 1));
-                    if (name == null) {
-                        return;
-                    }
-
-                    final boolean nameExists = this.save.playerExists(name);
-                    if (!nameExists) {
-                        nameDecided = true;
-                    } else if (this.view.askUseExistingPlayer(name)) {
-                        nameDecided = true;
-                    }
-                } while (!nameDecided);
-
-                players[i] = new Player(this.save.getPlayerSave(name), name, (byte) name$s.length, difficulty);
-            }
-        }
-
-        this.firstChoice(players);
-
-        // Activating duel mode
         final boolean duelMode;
         if (playerCount == 2) {
             duelMode = this.view.askDuel();
         } else {
             duelMode = false;
         }
-        this.save.save(duelMode);
 
-        // Run the game
-        this.save.saveStartDateTime();
-        this.save.startCountingTime();
 
-        final RunsResults results;
-        results = this.run(players, duelMode);
+        final String[] names = new String[playerCount];
+        for (byte i = 0; i < playerCount; i++) {
+            String name;
+            do {
+                name = this.view.askName((byte) (i + 1));
+                if (name == null) {
+                    return;
+                }
+            } while (this.save.playerExists(name) && !this.view.askUseExistingPlayer(name));
 
-        if (results.endGame()) {
-            this.end(players, difficulty, duelMode, results.duelWinnerIndex());
+            names[i] = name;
         }
+
+        // Save
+        final PlayerSave[] playerSaves = this.save.save(names, difficulty, duelMode);
+        for (byte i = 0; i < playerCount; i++) {
+            this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
+        }
+        // TODO: maybe call in the creator of Player?
+        this.firstChoice();
+
+        this.launch(difficulty, duelMode);
     }
 
     public void load() {
-        final Player[] players;
         final Level difficulty;
         final boolean duelMode;
         {
-            final SavedGame[] variants = this.save.savedGames();
+            final SavedGame[] variants = this.save.load();
             final SavedGame choice = this.view.askChoiceSave(variants);
             if (choice == null) {
                 return;
             }
 
-            final LoadedGame loaded = this.save.loadGame(choice.ID());
+            final LoadedGame loaded = this.save.load(choice.ID());
 
-            players = loaded.players();
+            this.players = loaded.players();
             this.matrixDie.cheat(loaded.matrixDie());
             difficulty = loaded.difficulty();
             duelMode = loaded.duel();
         }
 
-        this.save.startCountingTime();
-        final RunsResults results = this.run(players, duelMode);
-        if (results.endGame()) {
-            this.end(players, difficulty, duelMode, results.duelWinnerIndex());
-        }
+        this.launch(difficulty, duelMode);
     }
 
 
-    private void firstChoice(final Player[] players) {
-        final Position[] taken = new Position[players.length];
+    private void firstChoice() {
+        final Position[] taken = new Position[this.players.length];
 
         final Loop looperRow = new Loop(BlocksTable.WIDTH);
         final Loop looperColumn = new Loop(BlocksTable.HEIGHT);
-        for (byte i = 0; i < players.length; i++) {
+        for (byte i = 0; i < this.players.length; i++) {
             Position firstChoice = this.matrixDie.roll();
 
             // Ensure that there are no duplicates
@@ -171,38 +155,50 @@ public class Brikks {
             } while (guessTaken);
 
             taken[i] = firstChoice;
-            players[i].firstChoice(this.blocksTable.getBlock(firstChoice));
+            this.players[i].firstChoice(this.blocksTable.getBlock(firstChoice));
         }
     }
 
-    private RunsResults run(final Player[] players, final boolean duelMode) {
-        final Loop loopingLoop = new Loop((byte) players.length);
-        final Loop loop = new Loop((byte) players.length);
+    private void launch(final Level difficulty, final boolean duelMode) {
+        final RunsResults results = this.run(duelMode);
+        if (results.endGame()) {
+            this.end(difficulty, duelMode, results.duelWinnerIndex());
+        }
+
+        this.players = null;
+        this.turn = -1;
+    }
+
+    private RunsResults run(final boolean duelMode) {
+        final Loop loopingLoop = new Loop((byte) this.players.length);
+        final Loop loop = new Loop((byte) this.players.length);
 
         boolean stillPlays;
         do {
             stillPlays = false;
             loop.setPosition(loopingLoop.goForward());
 
-            boolean first = players.length != 1;
-            for (; players.length == 1 || !loop.loopedForward(); loop.goForward()) {
-                final Player player = players[loop.current()];
+            boolean first = this.players.length != 1;
+            for (; this.players.length == 1 || !loop.loopedForward(); loop.goForward()) {
+                this.turn = loop.current();
+                final Player player = this.players[this.turn];
 
                 if (!player.isPlays()) {
                     continue;
                 }
 
                 stillPlays = true;
-                this.save.updateDuration();
                 this.view.draw(player);
 
+                player.setDuration();
                 final TurnsResults result;
                 if (first) {
-                    result = player.turn(this.view, this.blocksTable, this.matrixDie);
+                    result = player.turn(this.view, this, this.blocksTable, this.matrixDie);
                     first = false;
                 } else {
-                    result = player.turn(this.view, this.blocksTable, this.matrixDie.get());
+                    result = player.turn(this.view, this, this.blocksTable, this.matrixDie.get());
                 }
+                player.updateDuration();
 
                 if (result.exit()) {
                     return new RunsResults(false, (byte) -1);
@@ -214,8 +210,8 @@ public class Brikks {
                 }
 
                 if (duelMode && result.duelBonus() > 0) {
-                    if (!player.duelTurn(this.view, players[loop.forecast()], result.duelBonus())) {
-                        return new RunsResults(true, loop.current());
+                    if (!player.duelTurn(this.view, this.players[loop.forecast()], result.duelBonus())) {
+                        return new RunsResults(true, this.turn);
                     }
                 }
             }
@@ -224,19 +220,29 @@ public class Brikks {
         return new RunsResults(true, (byte) -1);
     }
 
-    private void end(final Player[] players, final Level difficulty, final boolean duelMode, final byte winnerIndex) {
-        this.save.saveEndDateTime();
-        for (final Player player : players) {
+    private void end(final Level difficulty, final boolean duelMode, final byte winnerIndex) {
+        for (final Player player : this.players) {
             player.saveFinal();
         }
 
-        if (players.length == 1) {
-            this.view.endSolo(players[0].name, players[0].calculateFinal(), difficulty);
+        if (this.players.length == 1) {
+            this.view.endSolo(this.players[0].name, this.players[0].calculateFinal(), difficulty);
         } else if (duelMode) {
             final Loop loop = new Loop(winnerIndex, (byte) 2);
-            this.view.endDuel(players[loop.current()].name, players[loop.forecast()].name);
+            this.view.endDuel(this.players[loop.current()].name, this.players[loop.forecast()].name);
         } else {
-            this.view.endStandard(players);
+            this.view.endStandard(this.players);
+        }
+
+        this.save.dropSave();
+    }
+
+
+    @Override
+    public void save(final Position choice) {
+        this.save.update(this.turn, choice, this.matrixDie);
+        for (final Player player : this.players) {
+            player.save();
         }
     }
 }

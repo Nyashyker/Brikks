@@ -5,14 +5,11 @@ import brikks.essentials.*;
 import brikks.logic.*;
 import brikks.save.container.*;
 
-import java.time.LocalTime;
 
 public class DatabaseSave implements Save {
     private final DatabaseConnection dbc;
     /*TODO: assign in start-save or load*/
     private int ID;
-    /*TODO: assign in start-save or load*/
-    private LocalTime lastDurationUpdate;
 
 
     public DatabaseSave(final DatabaseConnection dbc) {
@@ -55,19 +52,8 @@ public class DatabaseSave implements Save {
         return null;
     }
 
-    @Override
-    public void save(final byte turn, final Position choice, final MatrixDice matrixDie) {
-        // TODO: implement
-    }
-
 
     ///        Update
-    /*TODO: call on exit or end game*/
-    @Override
-    public void updateDuration() {
-        // TODO: implement
-    }
-
     @Override
     public void update(final byte turn, final Position choice, final MatrixDice matrixDie) {
         // TODO: implement

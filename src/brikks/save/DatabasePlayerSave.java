@@ -4,10 +4,13 @@ package brikks.save;
 import brikks.Player;
 import brikks.logic.*;
 
+import java.time.LocalTime;
+
 
 public class DatabasePlayerSave implements PlayerSave {
     private final DatabaseConnection dbc;
     private final int ID;
+    private LocalTime lastDurationUpdate;
 
 
     public DatabasePlayerSave(final DatabaseConnection dbc, final int ID) {
@@ -24,6 +27,14 @@ public class DatabasePlayerSave implements PlayerSave {
     }
 
     ///		Update
+    @Override
+    public void setDuration() {
+        this.lastDurationUpdate = LocalTime.now();
+    }
+    @Override
+    public void updateDuration() {
+        // TODO: implement
+    }
     @Override
     public void update(final Player player) {
         // TODO: implement

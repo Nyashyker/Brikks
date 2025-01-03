@@ -10,6 +10,7 @@ import brikks.view.PlayerAsk;
 
 import java.time.LocalTime;
 
+
 public class Player implements Comparable<Player> {
     public final String name;
     private boolean plays;
@@ -108,15 +109,15 @@ public class Player implements Comparable<Player> {
         this.board.place(placed);
     }
 
-    public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final MatrixDice matrixDie) {
+    public TurnsResults turn(final PlayerAsk user, final GameSave gameSave, final BlocksTable blocks, final MatrixDice matrixDie) {
         if (user.askReroll(blocks.getBlock(matrixDie.get()))) {
             matrixDie.roll();
         }
 
-        return this.turn(user, blocks, matrixDie.get());
+        return this.turn(user, gameSave, blocks, matrixDie.get());
     }
 
-    public TurnsResults turn(final PlayerAsk user, final BlocksTable blocks, final Position roll) {
+    public TurnsResults turn(final PlayerAsk user, final GameSave gameSave, final BlocksTable blocks, final Position roll) {
         while (true) {
             final Block block = blocks.getBlock(roll);
             final Position[] variants = this.board.canBePlaced(block);
@@ -192,8 +193,7 @@ public class Player implements Comparable<Player> {
                 }
 
                 case SAVE -> {
-                    this.save();
-                    this.saver.save(roll);
+                    gameSave.save(roll);
                 }
 
                 case EXIT -> {
@@ -226,11 +226,19 @@ public class Player implements Comparable<Player> {
     }
 
     public void save() {
-        this.saver.save(this);
+        this.saver.update(this);
     }
 
     public void saveFinal() {
         this.saver.save(this.calculateFinal());
+    }
+
+    public void setDuration() {
+        this.saver.setDuration();
+    }
+
+    public void updateDuration() {
+        this.saver.updateDuration();
     }
 
     @Override
