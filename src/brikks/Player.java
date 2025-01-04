@@ -225,7 +225,11 @@ public class Player implements Comparable<Player> {
         );
     }
 
-    public void save() {
+    public void save(final byte order) {
+        this.saver.save(this, order);
+    }
+
+    public void update() {
         this.saver.update(this);
     }
 

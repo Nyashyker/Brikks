@@ -21,6 +21,7 @@ public class Brikks implements GameSave {
 
     private Player[] players;
     private byte turn;
+    private boolean firstSave;
 
 
     public Brikks(View view, Save save, Block[][] blocksTable) {
@@ -45,6 +46,7 @@ public class Brikks implements GameSave {
 
         this.players = null;
         this.turn = -1;
+        this.firstSave = true;
     }
 
 
@@ -106,6 +108,7 @@ public class Brikks implements GameSave {
         // TODO: maybe call in the creator of Player?
         this.firstChoice();
 
+        this.firstSave = true;
         this.launch(difficulty, duelMode);
     }
 
@@ -127,6 +130,7 @@ public class Brikks implements GameSave {
             duelMode = loaded.duel();
         }
 
+        this.firstSave = false;
         this.launch(difficulty, duelMode);
     }
 
@@ -241,8 +245,13 @@ public class Brikks implements GameSave {
     @Override
     public void save(final Position choice) {
         this.save.update(this.turn, choice, this.matrixDie);
-        for (final Player player : this.players) {
-            player.save();
+        for (byte i = 0; i < this.players.length; i++) {
+            if (firstSave) {
+                this.players[i].save(i);
+            } else {
+                this.players[i].update();
+            }
         }
+        this.firstSave = false;
     }
 }
