@@ -14,7 +14,8 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-        runDB();
+//        runDB();
+        runGame();
     }
 
     public static void runDB() {
@@ -124,7 +125,7 @@ public class Main {
             textAngl = new GameText(
                     "Back",
                     "Enter anything to go to the main menu.",
-                    "Choose (%d-%d)",
+                    "Choose (%d-%d): ",
                     "Enter a number from the specified range!",
                     "MENU",
                     new String[]{
@@ -167,7 +168,7 @@ public class Main {
                     "%s defeated %s\n",
                     "Exiting...",
                     "Do you want to reroll the dice? ",
-                    "column=%\trow=%d",
+                    "column=%d\trow=%d",
                     "Where to place the block?:",
                     "Your actions:",
                     new String[]{
@@ -240,7 +241,7 @@ public class Main {
                     "%s победен %s\n",
                     "Излезане...",
                     "Искате ли да хвърлите зарчето отново?",
-                    "колона=%\tред=%d",
+                    "колона=%d\tред=%d",
                     "Къде искате да поставите блока?:",
                     "Вашите действия:",
                     new String[]{

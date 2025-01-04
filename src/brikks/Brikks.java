@@ -101,6 +101,7 @@ public class Brikks implements GameSave {
         }
 
         // Save
+        this.players = new Player[playerCount];
         final PlayerSave[] playerSaves = this.save.save(names, difficulty, duelMode);
         for (byte i = 0; i < playerCount; i++) {
             this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
