@@ -2,6 +2,7 @@ package brikks.save;
 
 
 import brikks.Player;
+import brikks.logic.Board;
 
 import java.time.LocalTime;
 
@@ -19,6 +20,11 @@ public class DatabasePlayerSave implements PlayerSave {
 
 
     ///        First save
+    // SAVED_BOARDS
+    private void save(final int saveID, final Board board) {
+        // TODO: implement
+    }
+
     @Override
     // SAVED_PLAYERS_GAMES
     public void save(final Player player, final byte playerOrder) {

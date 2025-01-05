@@ -22,6 +22,7 @@ public class Main {
     }
 
     public static void runDB() {
+        final Save es = new EmptySave();
         try (
                 final DatabaseConnection db = new DatabaseConnection(
                         "jdbc:postgresql://localhost:5432/brikks",
@@ -30,7 +31,7 @@ public class Main {
                 )
         ) {
 
-            final DatabaseSave dbs = new DatabaseSave(db);
+            final DatabaseSave dbs = new DatabaseSave(db, es);
             dbs.dropDB();
             dbs.recreateDB(
                     BlocksTable.WIDTH,
@@ -44,14 +45,14 @@ public class Main {
                     (byte) (Color.values().length - 1),
                     (byte) 191
             );
-            ResultSet rs = db.executeQuery("SELECT * FROM blocks WHERE block>="+(BlocksTable.WIDTH*BlocksTable.HEIGHT)+" AND table_column IS NULL;");
-
-            while (rs.next()) {
-                int i = rs.getInt(1);
-                int y = rs.getInt(3);
-                int x = rs.getInt(2);
-                System.out.println(i+":\ty="+y+" x="+x);
-            }
+//            ResultSet rs = db.executeQuery("SELECT * FROM blocks;");
+//
+//            while (rs.next()) {
+//                int i = rs.getInt(1);
+//                int y = rs.getInt(3);
+//                int x = rs.getInt(2);
+//                System.out.println(i+":\ty="+y+" x="+x);
+//            }
             System.out.println("use");
 
         } catch (SQLException e) {

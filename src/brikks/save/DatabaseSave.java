@@ -1,9 +1,7 @@
 package brikks.save;
 
-import brikks.essentials.MatrixDice;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
-import brikks.logic.Board;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
@@ -12,13 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class DatabaseSave implements Save {
+public class DatabaseSave extends Save {
     private final DatabaseConnection dbc;
     /*TODO: assign in start-save or load*/
     private int ID;
 
 
-    public DatabaseSave(final DatabaseConnection dbc) {
+    public DatabaseSave(final DatabaseConnection dbc, final Save backupSaver) {
+        super(backupSaver);
         this.dbc = dbc;
     }
 
@@ -58,11 +57,10 @@ public class DatabaseSave implements Save {
             final byte maxEnergyBonus,
             final byte maxPossibleScore
     ) throws SQLException {
-        // Creating all the tables
         this.dbc.executeUpdate(String.format("""
                 CREATE TABLE IF NOT EXISTS saved_games
                 (
-                    save_id     SERIAL
+                    save_id     INT
                         CONSTRAINT pk_save_save_id PRIMARY KEY,
                     turn        SMALLINT
                         CONSTRAINT nn_turn NOT NULL
@@ -111,7 +109,7 @@ public class DatabaseSave implements Save {
         this.dbc.executeUpdate(String.format("""
                 CREATE TABLE IF NOT EXISTS saved_players_games
                 (
-                    save_id      INT
+                    save_id      SERIAL
                         CONSTRAINT pk_save_player_id PRIMARY KEY,
                     plays        BOOLEAN
                         CONSTRAINT nn_plays NOT NULL,
@@ -197,54 +195,142 @@ public class DatabaseSave implements Save {
         }
     }
 
+
     ///        First save
-    // SAVED_BOARDS
-    private void save(final int saveID, final Board board) {
-        // TODO: implement
+    @Override
+    public boolean playerExists(final String name) {
+        if (this.fail) {
+            return this.backup.playerExists(name);
+        }
+
+        try {
+            final ResultSet player = this.dbc.executeQuery(String.format("SELECT * FROM players WHERE name='%s';",
+                    name));
+            return player.next();
+        } catch (SQLException _e) {
+            this.fail = true;
+            return this.backup.playerExists(name);
+        }
     }
 
-    // SAVE_GAMES
-    private void save(final int saveID, final byte turn, final Position choice, final MatrixDice matrixDie) {
-        // TODO: implement
+    private int getGeneratedID(final String sql) throws SQLException {
+        this.dbc.executeUpdate(sql);
+        final ResultSet getID = this.dbc.getGeneratedKeys();
+        if (getID.next()) {
+            return getID.getInt(1);
+        } else {
+            throw new SQLException("ID did not generate");
+        }
     }
-
 
     @Override
-    public boolean playerExists(String name) {
-        // TODO: implement
-        return false;
+    public PlayerSave[] save(final String[] names, final Level difficulty, final boolean duel) {
+        if (this.fail) {
+            return this.backup.save(names, difficulty, duel);
+        }
+
+        final PlayerSave[] saves = new PlayerSave[names.length];
+        try {
+            this.ID = this.getGeneratedID(String.format("""
+                    INSERT INTO games (start_dt, end_dt, difficulty, duel)
+                    VALUES (NOW(), NULL, %d, %s);
+                    """, difficulty.ordinal(), duel ? "TRUE" : "FALSE"));
+
+            for (byte i = 0; i < saves.length; i++) {
+                final int ID;
+                if (this.playerExists(names[i])) {
+                    // TODO: do something about problematic symbols in the name
+                    final ResultSet getID = this.dbc.executeQuery(
+                            String.format("SELECT player_id FROM players WHERE name='%s';", names[i])
+                    );
+                    if (getID.next()) {
+                        ID = getID.getInt(1);
+                    } else {
+                        throw new SQLException("No ID found for existing player");
+                    }
+                } else {
+                    // TODO: do something about problematic symbols in the name
+                    ID = this.getGeneratedID(
+                            String.format("INSERT INTO players (name) VALUES ('%s');", names[i])
+                    );
+                }
+
+                saves[i] = new DatabasePlayerSave(this.dbc, ID);
+            }
+
+        } catch (SQLException _e) {
+            this.fail = true;
+            return this.backup.save(names, difficulty, duel);
+        }
+
+        return saves;
     }
 
-    /*TODO: call on start*/
     @Override
-    public PlayerSave[] save(final String[] name, final Level difficulty, final boolean duel) {
-        // TODO: implement
-        return null;
+    public void save(final byte turn, final Position choice, final Position matrixDie) {
+        if (this.fail) {
+            this.backup.save(turn, choice, matrixDie);
+            return;
+        }
+
+        try {
+            this.dbc.executeUpdate(String.format("""
+                    INSERT INTO saved_games (save_id, turn, roll_column, roll_row, die_column, die_row)
+                    VALUES (%d, %d, %d, %d, %d, %d);
+                    UPDATE games SET save_id=%d WHERE game_id=%d;
+                    """, this.ID, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID, this.ID));
+        } catch (SQLException _e) {
+            this.fail = true;
+            this.backup.save(turn, choice, matrixDie);
+        }
     }
 
 
     ///        Update
     @Override
-    public void update(final byte turn, final Position choice, final MatrixDice matrixDie) {
-        // TODO: implement
+    public void update(final byte turn, final Position choice, final Position matrixDie) {
+        if (this.fail) {
+            this.backup.update(turn, choice, matrixDie);
+            return;
+        }
+
+        try {
+            this.dbc.executeUpdate(String.format("""
+                    UPDATE saved_games
+                    SET turn=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
+                    WHERE save_id=%d;
+                    """, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID));
+        } catch (SQLException _e) {
+            this.fail = true;
+            this.backup.update(turn, choice, matrixDie);
+        }
     }
 
 
     ///        Load
     @Override
     public PlayerLeaderboard[] leaderboard() {
+        if (this.fail) {
+            return this.backup.leaderboard();
+        }
         // TODO: implement
         return null;
     }
 
     @Override
     public SavedGame[] load() {
+        if (this.fail) {
+            return this.backup.load();
+        }
         // TODO: implement
         return null;
     }
 
     @Override
     public LoadedGame load(final int ID) {
+        if (this.fail) {
+            return this.backup.load(ID);
+        }
         // TODO: implement
         return null;
     }
@@ -253,6 +339,23 @@ public class DatabaseSave implements Save {
     ///        End game
     @Override
     public void dropSave() {
-        // TODO: implement
+        if (this.fail) {
+            this.backup.dropSave();
+            return;
+        }
+
+        try {
+            this.dbc.executeUpdate(
+                    String.format("""
+                            DELETE FROM saved_games WHERE save_id=%d;
+                            DELETE FROM saved_players_games WHERE save_id IN
+                            (SELECT save_id FROM players_games WHERE game_id=%d);
+                            """, this.ID, this.ID)
+            );
+            // Respective parts of SAVED_BOARDS are deleted automatically with SAVED_PLAYERS_GAMES
+        } catch (SQLException _e) {
+            this.fail = true;
+            this.backup.dropSave();
+        }
     }
 }

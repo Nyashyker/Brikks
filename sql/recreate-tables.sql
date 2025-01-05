@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS players
 
 CREATE TABLE IF NOT EXISTS saved_players_games
 (
-    save_id      INT
+    save_id      SERIAL
         CONSTRAINT pk_save_player_id PRIMARY KEY,
     plays        BOOLEAN
         CONSTRAINT nn_plays NOT NULL,
@@ -121,3 +121,19 @@ CREATE TABLE IF NOT EXISTS players_games
         CONSTRAINT ch_score CHECK ( score >= 0 AND score <= 191 ),
     CONSTRAINT pk_player_game PRIMARY KEY (game_id, player_id)
 );
+
+
+INSERT INTO players (name) VALUES ('testuval''nyk');
+INSERT INTO games (start_dt, end_dt, difficulty, duel, save_id)
+VALUES (NOW(), NULL, 0, TRUE, NULL);
+INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
+VALUES (1,FALSE, 0, 0, 0, 0, 0);
+INSERT INTO players_games (game_id, player_id, save_id, duration, score)
+VALUES (1, 1, 1, TO_DATE('2025-01-05 12:00', 'YYYY-MM-DD HH:MI')-NOW(), NULL);
+INSERT INTO saved_boards (save_id, x, y, energy_bonus, block)
+VALUES (1, 0, 0, 1, 24);
+SELECT * FROM saved_players_games;
+DELETE FROM saved_players_games WHERE save_id IN (SELECT save_id FROM players_games WHERE game_id = 1);
+SELECT * FROM saved_boards;
+SELECT * FROM players_games;
+UPDATE games

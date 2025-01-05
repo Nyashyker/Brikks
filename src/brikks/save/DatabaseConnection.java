@@ -22,6 +22,10 @@ public class DatabaseConnection implements AutoCloseable {
         this.stmt.executeUpdate(sql);
     }
 
+    public ResultSet getGeneratedKeys() throws SQLException {
+        return this.stmt.getGeneratedKeys();
+    }
+
     public ResultSet executeQuery(final String sql) throws SQLException {
         return this.stmt.executeQuery(sql);
     }

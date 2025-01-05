@@ -1,12 +1,17 @@
 package brikks;
 
-import brikks.container.*;
-import brikks.essentials.*;
-import brikks.essentials.enums.*;
-import brikks.save.*;
+import brikks.container.RunsResults;
+import brikks.container.TurnsResults;
+import brikks.essentials.Block;
+import brikks.essentials.Loop;
+import brikks.essentials.MatrixDice;
+import brikks.essentials.Position;
+import brikks.essentials.enums.Level;
+import brikks.save.PlayerSave;
+import brikks.save.Save;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
-import brikks.view.*;
+import brikks.view.View;
 
 
 public class Brikks implements GameSave {
@@ -16,7 +21,7 @@ public class Brikks implements GameSave {
     private final BlocksTable blocksTable;
     private final MatrixDice matrixDie;
 
-    private final Save save;
+    private final Save saver;
     private final View view;
 
     private Player[] players;
@@ -24,11 +29,11 @@ public class Brikks implements GameSave {
     private boolean firstSave;
 
 
-    public Brikks(View view, Save save, Block[][] blocksTable) {
+    public Brikks(View view, Save saver, Block[][] blocksTable) {
         if (view == null) {
             throw new IllegalArgumentException("view cannot be null");
         }
-        if (save == null) {
+        if (saver == null) {
             throw new IllegalArgumentException("save cannot be null");
         }
         if (blocksTable == null) {
@@ -41,7 +46,7 @@ public class Brikks implements GameSave {
         this.blocksTable = new BlocksTable(blocksTable);
         this.matrixDie = new MatrixDice(BlocksTable.WIDTH, BlocksTable.HEIGHT);
 
-        this.save = save;
+        this.saver = saver;
         this.view = view;
 
         this.players = null;
@@ -65,7 +70,7 @@ public class Brikks implements GameSave {
     }
 
     public void leaderboard() {
-        this.view.leaderboard(this.save.leaderboard());
+        this.view.leaderboard(this.saver.leaderboard());
     }
 
     public void start() {
@@ -95,14 +100,14 @@ public class Brikks implements GameSave {
                 if (name == null) {
                     return;
                 }
-            } while (this.save.playerExists(name) && !this.view.askUseExistingPlayer(name));
+            } while (this.saver.playerExists(name) && !this.view.askUseExistingPlayer(name));
 
             names[i] = name;
         }
 
         // Save
         this.players = new Player[playerCount];
-        final PlayerSave[] playerSaves = this.save.save(names, difficulty, duelMode);
+        final PlayerSave[] playerSaves = this.saver.save(names, difficulty, duelMode);
         for (byte i = 0; i < playerCount; i++) {
             this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
         }
@@ -117,13 +122,13 @@ public class Brikks implements GameSave {
         final Level difficulty;
         final boolean duelMode;
         {
-            final SavedGame[] variants = this.save.load();
+            final SavedGame[] variants = this.saver.load();
             final SavedGame choice = this.view.askChoiceSave(variants);
             if (choice == null) {
                 return;
             }
 
-            final LoadedGame loaded = this.save.load(choice.ID());
+            final LoadedGame loaded = this.saver.load(choice.ID());
 
             this.players = loaded.players();
             this.matrixDie.cheat(loaded.matrixDie());
@@ -239,20 +244,23 @@ public class Brikks implements GameSave {
             this.view.endStandard(this.players);
         }
 
-        this.save.dropSave();
+        this.saver.dropSave();
     }
 
 
     @Override
     public void save(final Position choice) {
-        this.save.update(this.turn, choice, this.matrixDie);
-        for (byte i = 0; i < this.players.length; i++) {
-            if (firstSave) {
+        if (this.firstSave) {
+            this.saver.save(this.turn, choice, this.matrixDie.get());
+            for (byte i = 0; i < this.players.length; i++) {
                 this.players[i].save(i);
-            } else {
-                this.players[i].update();
+            }
+            this.firstSave = false;
+        } else {
+            this.saver.update(this.turn, choice, this.matrixDie.get());
+            for (final Player player : this.players) {
+                player.update();
             }
         }
-        this.firstSave = false;
     }
 }

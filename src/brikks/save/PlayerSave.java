@@ -4,7 +4,6 @@ import brikks.Player;
 
 public interface PlayerSave {
     ///        First save
-    // TODO: !!! USE !!!
     void save(final Player player, final byte playerOrder);
     ///        Update
     void setDuration();

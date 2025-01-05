@@ -105,6 +105,8 @@ public class ConsoleView extends View {
         String name;
         do {
             name = this.askUserString(String.format(this.text.askName(), playerNumber), true);
+            name = name.replace("\\", "\\\\");
+            // TODO: protect problematic symbols
             if (name.length() > View.MAX_NAME_LEN) {
                 System.out.printf(this.text.nameToLong(), View.MAX_NAME_LEN);
             }

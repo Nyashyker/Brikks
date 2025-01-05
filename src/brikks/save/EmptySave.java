@@ -4,17 +4,17 @@ import brikks.essentials.enums.*;
 import brikks.essentials.*;
 import brikks.save.container.*;
 
-public class EmptySave implements Save {
-    public EmptySave() {}
+public class EmptySave extends Save {
+    public EmptySave() { super(null); }
 
     @Override
-    public boolean playerExists(String name) { return false; }
+    public boolean playerExists(final String name) { return false; }
     @Override
-    public PlayerSave[] save(final String[] name, final Level difficulty, final boolean duel) {
-        return new PlayerSave[0];
-    }
+    public PlayerSave[] save(final String[] names, final Level difficulty, final boolean duel) { return new PlayerSave[0]; }
     @Override
-    public void update(final byte turn, final Position choice, final MatrixDice matrixDie) {}
+    public void save(final byte turn, final Position choice, final Position matrixDie) {}
+    @Override
+    public void update(final byte turn, final Position choice, final Position matrixDie) {}
     @Override
     public PlayerLeaderboard[] leaderboard() { return new PlayerLeaderboard[0]; }
     @Override
