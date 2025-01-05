@@ -136,4 +136,3 @@ SELECT * FROM saved_players_games;
 DELETE FROM saved_players_games WHERE save_id IN (SELECT save_id FROM players_games WHERE game_id = 1);
 SELECT * FROM saved_boards;
 SELECT * FROM players_games;
-UPDATE games
