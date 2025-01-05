@@ -1,5 +1,8 @@
 import brikks.essentials.enums.*;
 import brikks.essentials.*;
+import brikks.logic.Bombs;
+import brikks.logic.BonusScore;
+import brikks.logic.Energy;
 import brikks.save.*;
 import brikks.view.container.*;
 import brikks.*;
@@ -29,8 +32,19 @@ public class Main {
 
             final DatabaseSave dbs = new DatabaseSave(db);
             dbs.dropDB();
-            dbs.recreateDB(BlocksTable.WIDTH, BlocksTable.HEIGHT, Brikks.MAX_PLAYERS, View.MAX_NAME_LEN);
-            ResultSet rs = db.executeQuery("SELECT * FROM blocks WHERE block="+(BlocksTable.WIDTH*BlocksTable.HEIGHT)+";");
+            dbs.recreateDB(
+                    BlocksTable.WIDTH,
+                    BlocksTable.HEIGHT,
+                    Brikks.MAX_PLAYERS,
+                    (byte) Level.values().length,
+                    View.MAX_NAME_LEN,
+                    Bombs.MAX_AMOUNT,
+                    Energy.MAX_POSITION,
+                    BonusScore.MAX_SCALE,
+                    (byte) (Color.values().length - 1),
+                    (byte) 191
+            );
+            ResultSet rs = db.executeQuery("SELECT * FROM blocks WHERE block>="+(BlocksTable.WIDTH*BlocksTable.HEIGHT)+" AND table_column IS NULL;");
 
             while (rs.next()) {
                 int i = rs.getInt(1);
