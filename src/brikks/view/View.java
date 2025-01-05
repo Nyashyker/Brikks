@@ -6,6 +6,8 @@ import brikks.save.container.*;
 import brikks.view.enums.*;
 
 public abstract class View implements PlayerAsk, DuelAsk {
+    public final static byte MAX_NAME_LEN = 37;
+
     abstract public Menu menu();
     abstract public void leaderboard(final PlayerLeaderboard[] players);
 

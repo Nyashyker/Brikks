@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS players;
 DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS saved_games;
 
-CREATE TABLE saved_games
+CREATE TABLE IF NOT EXISTS saved_games
 (
     save_id     SERIAL
         CONSTRAINT pk_save_save_id PRIMARY KEY,
@@ -27,7 +27,7 @@ CREATE TABLE saved_games
         CONSTRAINT ch_die_row CHECK ( die_row >= 0 AND die_row < 6 )
 );
 
-CREATE TABLE games
+CREATE TABLE IF NOT EXISTS games
 (
     game_id    SERIAL
         CONSTRAINT pk_game_id PRIMARY KEY,
@@ -44,7 +44,7 @@ CREATE TABLE games
             ON DELETE SET NULL
 );
 
-CREATE TABLE players
+CREATE TABLE IF NOT EXISTS players
 (
     player_id SERIAL
         CONSTRAINT pk_player_id PRIMARY KEY,
@@ -52,7 +52,7 @@ CREATE TABLE players
         CONSTRAINT nn_name NOT NULL
 );
 
-CREATE TABLE saved_players_games
+CREATE TABLE IF NOT EXISTS saved_players_games
 (
     save_id      INT
         CONSTRAINT pk_save_player_id PRIMARY KEY,
@@ -75,18 +75,18 @@ CREATE TABLE saved_players_games
         CONSTRAINT ch_player_order CHECK ( player_order >= 0 AND player_order < 4 )
 );
 
-CREATE TABLE blocks
+CREATE TABLE IF NOT EXISTS blocks
 (
     block        SMALLSERIAL
         CONSTRAINT pk_block PRIMARY KEY
-        CONSTRAINT ch_block CHECK ( block >= 0 AND block < 25 ),
+        CONSTRAINT ch_block CHECK ( block > 0 AND block <= 25 ),
     table_column SMALLINT
         CONSTRAINT ch_table_column CHECK ( table_column >= 0 AND table_column < 4 ),
     table_row    SMALLINT
         CONSTRAINT ch_table_row CHECK ( table_row >= 0 AND table_row < 6 )
 );
 
-CREATE TABLE saved_boards
+CREATE TABLE IF NOT EXISTS saved_boards
 (
     save_id      INT
         CONSTRAINT fk_save_id REFERENCES saved_players_games (save_id)
@@ -105,7 +105,7 @@ CREATE TABLE saved_boards
     CONSTRAINT pk_save_cell PRIMARY KEY (save_id, x, y)
 );
 
-CREATE TABLE players_games
+CREATE TABLE IF NOT EXISTS players_games
 (
     game_id   INT
         CONSTRAINT fk_game_id REFERENCES games (game_id)

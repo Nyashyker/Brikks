@@ -21,6 +21,7 @@ public record GameText(
         String askPlayerCount,
 
         String askName,
+        String nameToLong,
 
         String askChoiceSave,
 

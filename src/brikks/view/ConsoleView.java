@@ -102,7 +102,13 @@ public class ConsoleView extends View {
 
     @Override
     public String askName(final byte playerNumber) {
-        final String name = this.askUserString(String.format(this.text.askName(), playerNumber), true);
+        String name;
+        do {
+            name = this.askUserString(String.format(this.text.askName(), playerNumber), true);
+            if (name.length() > View.MAX_NAME_LEN) {
+                System.out.printf(this.text.nameToLong(), View.MAX_NAME_LEN);
+            }
+        } while (name.length() > View.MAX_NAME_LEN);
         return name.isEmpty() ? null : name;
     }
 

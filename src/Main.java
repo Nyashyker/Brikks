@@ -14,8 +14,8 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-//        runDB();
-        runGame();
+        runDB();
+//        runGame();
     }
 
     public static void runDB() {
@@ -27,17 +27,18 @@ public class Main {
                 )
         ) {
 
-            db.executeUpdate("DROP TABLE IF EXISTS players");
-            db.executeUpdate("CREATE TABLE IF NOT EXISTS players (name VARCHAR(16), score INTEGER)");
-            db.executeUpdate("INSERT INTO players (name, score) VALUES ('Lars', 9001)");
+            final DatabaseSave dbs = new DatabaseSave(db);
+            dbs.dropDB();
+            dbs.recreateDB(BlocksTable.WIDTH, BlocksTable.HEIGHT, Brikks.MAX_PLAYERS, View.MAX_NAME_LEN);
+            ResultSet rs = db.executeQuery("SELECT * FROM blocks WHERE block="+(BlocksTable.WIDTH*BlocksTable.HEIGHT)+";");
 
-            final ResultSet rs = db.executeQuery("SELECT name, score FROM players");
             while (rs.next()) {
-                String name = rs.getString(1);
-                int score = rs.getInt(2);
-
-                System.out.println(name + " " + score);
+                int i = rs.getInt(1);
+                int y = rs.getInt(3);
+                int x = rs.getInt(2);
+                System.out.println(i+":\ty="+y+" x="+x);
             }
+            System.out.println("use");
 
         } catch (SQLException e) {
             System.out.println("Помилочка");
@@ -73,6 +74,7 @@ public class Main {
                     "Хочете провести дуель? ",
                     "Скільки гравців гратиме? (0 = назад)",
                     "Оберіть ім'я гравцю №%d (нічого = назад): ",
+                    "Ім'я занадто довге! Вкладіться в %d",
                     "Оберіть зебереження:",
                     "НЕМА",
                     "Додаткові бали: %d (-> %s)",
@@ -146,6 +148,7 @@ public class Main {
                     "Do you want to duel? ",
                     "How many players will play? (0 = back)",
                     "Choose a name for player #%d (nothing = back): ",
+                    "The name is too long! Use %d at most",
                     "Choose a save:",
                     "NONE",
                     "Additional points: %d (-> %s)",
@@ -219,6 +222,7 @@ public class Main {
                     "Искате ли дуел?",
                     "Колко играчи? (0 = назад): ",
                     "Изберете име #%d (нищо = назад): ",
+                    "Името е прекалено дълго! Използвайте %d най-много",
                     "Избете запазване: ",
                     "НЯМА",
                     "Допълнителни точки: %d (-> %s)",
