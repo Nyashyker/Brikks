@@ -1,16 +1,27 @@
 package brikks.view;
 
-import brikks.*;
-import brikks.essentials.*;
-import brikks.essentials.enums.*;
-import brikks.logic.*;
-import brikks.save.container.*;
-import brikks.view.container.*;
-import brikks.view.enums.*;
+import brikks.BlocksTable;
+import brikks.Player;
+import brikks.essentials.Block;
+import brikks.essentials.PlacedBlock;
+import brikks.essentials.Position;
+import brikks.essentials.enums.Color;
+import brikks.essentials.enums.Level;
+import brikks.logic.Board;
+import brikks.logic.Bombs;
+import brikks.logic.BonusScore;
+import brikks.logic.Energy;
+import brikks.save.container.PlayerLeaderboard;
+import brikks.save.container.SavedGame;
+import brikks.view.container.GameText;
+import brikks.view.enums.Deed;
+import brikks.view.enums.Menu;
 
-import java.util.Scanner;
-import java.util.InputMismatchException;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
 
 public class ConsoleView extends View {
     public static final Scanner keyboard = new Scanner(System.in);
@@ -58,14 +69,16 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public void leaderboard(final PlayerLeaderboard[] players) {
-        // TODO: players arrive from save already ordered decreasing
+    public void leaderboard(final List<PlayerLeaderboard> players) {
         System.out.println(this.text.leaderboard());
         System.out.println();
 
+        final DateTimeFormatter start = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        final DateTimeFormatter end = DateTimeFormatter.ofPattern("dd-MM HH:mm");
+        final DateTimeFormatter duration = DateTimeFormatter.ofPattern("D HH:mm:ss");
         for (final PlayerLeaderboard player : players) {
             System.out.printf("%s - (%s - %s) %s - %d\n",
-                    player.name(), player.startDateTime(), player.endDateTime(), player.duration(), player.score());
+                    player.name(), player.startDateTime().format(start), player.endDateTime().format(end), player.duration().format(duration), player.score());
         }
         System.out.println();
 
@@ -116,22 +129,22 @@ public class ConsoleView extends View {
 
 
     @Override
-    public SavedGame askChoiceSave(final SavedGame[] variants) {
-        final String[] textedVariants = new String[variants.length];
+    public SavedGame askChoiceSave(final List<SavedGame> variants) {
+        final String[] textedVariants = new String[variants.size()];
 
         for (byte i = 0; i < textedVariants.length; i++) {
             final StringBuilder played = new StringBuilder();
-            for (final String name : variants[i].playerNames()) {
+            for (final String name : variants.get(i).playerNames()) {
                 played.append(name);
                 played.append(", ");
             }
             played.delete(played.length() - 2, played.length());
 
-            textedVariants[i] = String.format("%s: %s", variants[i].startTime(), played);
+            textedVariants[i] = String.format("%s: %s", variants.get(i).startTime(), played);
         }
 
         final byte choice = this.askUserChoice(this.text.askChoiceSave(), textedVariants, true);
-        return choice == 0 ? null : variants[choice];
+        return choice == 0 ? null : variants.get(choice - 1);
     }
 
 

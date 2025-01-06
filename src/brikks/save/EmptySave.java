@@ -4,6 +4,9 @@ import brikks.essentials.enums.*;
 import brikks.essentials.*;
 import brikks.save.container.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EmptySave extends Save {
     public EmptySave() { super(null); }
 
@@ -16,9 +19,9 @@ public class EmptySave extends Save {
     @Override
     public void update(final byte turn, final Position choice, final Position matrixDie) {}
     @Override
-    public PlayerLeaderboard[] leaderboard() { return new PlayerLeaderboard[0]; }
+    public List<PlayerLeaderboard> leaderboard() { return new ArrayList<>(); }
     @Override
-    public SavedGame[] load() { return new SavedGame[0]; }
+    public List<SavedGame> load() { return new ArrayList<>(); }
     @Override
     public LoadedGame load(final int ID) { return null; }
     @Override

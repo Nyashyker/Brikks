@@ -5,9 +5,13 @@ import brikks.essentials.enums.Level;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
+import brikks.view.View;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DatabaseSave extends Save {
@@ -55,7 +59,7 @@ public class DatabaseSave extends Save {
             final byte maxEnergy,
             final byte maxBonusScore,
             final byte maxEnergyBonus,
-            final byte maxPossibleScore
+            final short maxPossibleScore
     ) throws SQLException {
         this.dbc.executeUpdate(String.format("""
                 CREATE TABLE IF NOT EXISTS saved_games
@@ -309,21 +313,81 @@ public class DatabaseSave extends Save {
 
     ///        Load
     @Override
-    public PlayerLeaderboard[] leaderboard() {
+    public List<PlayerLeaderboard> leaderboard() {
         if (this.fail) {
             return this.backup.leaderboard();
         }
-        // TODO: implement
-        return null;
+
+        final List<PlayerLeaderboard> leaderboard = new ArrayList<>(View.LEADERBOARD_COUNT);
+        try {
+            final ResultSet board = this.dbc.executeQuery(String.format("""
+                    SELECT p.name, g.start_dt, g.end_dt, (TO_DATE('1970-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') + pg.duration) AS "duration", pg.score
+                    FROM players_games pg
+                    INNER JOIN games g on g.game_id = pg.game_id
+                    INNER JOIN players p on p.player_id = pg.player_id
+                    WHERE g.duel IS FALSE
+                    ORDER BY pg.score DESC
+                    LIMIT %d;
+                    """, View.LEADERBOARD_COUNT));
+
+            for (byte i = 0; board.next(); i++) {
+                final String name = board.getString("name");
+                final LocalDateTime startDT = board.getTimestamp("start_dt").toLocalDateTime();
+                final LocalDateTime endDT = board.getTimestamp("end_dt").toLocalDateTime();
+
+                final LocalDateTime duration = board.getTimestamp("duration").toLocalDateTime();
+
+                final short score = board.getShort("score");
+
+                leaderboard.add(new PlayerLeaderboard(name, startDT, endDT, duration, score));
+            }
+        } catch (SQLException _e) {
+            this.fail = true;
+            return this.backup.leaderboard();
+        }
+
+        return leaderboard;
     }
 
     @Override
-    public SavedGame[] load() {
+    public List<SavedGame> load() {
         if (this.fail) {
             return this.backup.load();
         }
-        // TODO: implement
-        return null;
+
+        final List<SavedGame> saved = new ArrayList<>();
+        try {
+            final ResultSet variants = this.dbc.executeQuery(
+                    "SELECT g.game_id, g.start_dt FROM games g WHERE g.end_dt IS NULL ORDER BY g.start_dt DESC;"
+            );
+            while (variants.next()) {
+                final int ID = variants.getInt("game_id");
+                final ResultSet variant = this.dbc.executeQuery(
+                        String.format("""
+                                SELECT p.name
+                                FROM saved_players_games spg
+                                INNER JOIN players_games pg ON spg.save_id = pg.save_id
+                                INNER JOIN players p ON p.player_id = pg.player_id
+                                WHERE pg.game_id=%d
+                                ORDER BY spg.player_order ASC;
+                                """, ID)
+                );
+
+                final List<String> names = new ArrayList<>(4);
+                while (variant.next()) {
+                    names.add(variant.getString("name"));
+                }
+
+                final LocalDateTime start = variants.getTimestamp("start_dt").toLocalDateTime();
+
+                saved.add(new SavedGame(ID, names, start));
+            }
+        } catch (SQLException _e) {
+            this.fail = true;
+            return this.backup.load();
+        }
+
+        return saved;
     }
 
     @Override

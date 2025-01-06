@@ -13,6 +13,8 @@ import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
 import brikks.view.View;
 
+import java.util.List;
+
 
 public class Brikks implements GameSave {
     public static final byte MAX_PLAYERS = 4;
@@ -122,7 +124,7 @@ public class Brikks implements GameSave {
         final Level difficulty;
         final boolean duelMode;
         {
-            final SavedGame[] variants = this.saver.load();
+            final List<SavedGame> variants = this.saver.load();
             final SavedGame choice = this.view.askChoiceSave(variants);
             if (choice == null) {
                 return;

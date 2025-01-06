@@ -4,6 +4,8 @@ import brikks.essentials.enums.*;
 import brikks.essentials.*;
 import brikks.save.container.*;
 
+import java.util.List;
+
 
 public abstract class Save {
     protected final Save backup;
@@ -23,8 +25,8 @@ public abstract class Save {
     ///        Update
     abstract public void update(final byte turn, final Position choice, final Position matrixDie);
     ///        Load
-    abstract public PlayerLeaderboard[] leaderboard();
-    abstract public SavedGame[] load();
+    abstract public List<PlayerLeaderboard> leaderboard();
+    abstract public List<SavedGame> load();
     abstract public LoadedGame load(final int ID);
     ///        End game
     abstract public void dropSave();
