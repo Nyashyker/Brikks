@@ -1,5 +1,6 @@
 package brikks.save;
 
+import brikks.BlocksTable;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
 import brikks.save.container.LoadedGame;
@@ -48,7 +49,7 @@ public class EmptySave extends Save {
     }
 
     @Override
-    public LoadedGame load(final int ID) {
+    public LoadedGame load(final int ID, final BlocksTable blocksTable) {
         return null;
     }
 

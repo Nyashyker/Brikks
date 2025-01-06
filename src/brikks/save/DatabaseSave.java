@@ -1,7 +1,10 @@
 package brikks.save;
 
+import brikks.BlocksTable;
 import brikks.Brikks;
 import brikks.Player;
+import brikks.essentials.Block;
+import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
 import brikks.logic.Bombs;
@@ -396,9 +399,9 @@ public class DatabaseSave extends Save {
     }
 
     @Override
-    public LoadedGame load(final int ID) {
+    public LoadedGame load(final int ID, final BlocksTable blocksTable) {
         if (this.fail) {
-            return this.backup.load(ID);
+            return this.backup.load(ID, blocksTable);
         }
 
         this.ID = ID;
@@ -413,7 +416,23 @@ public class DatabaseSave extends Save {
                     INNER JOIN players p ON p.player_id = pg.player_id
                     WHERE pg.game_id=%d
                     ORDER BY spg.player_order DESC;
-                    """, this.ID));
+                    """, this.ID)
+            );
+
+            final Level difficulty;
+            final boolean duelMode;
+            {
+                final ResultSet gameSaved = this.dbc.executeQuery(
+                        String.format("SELECT g.difficulty, g.duel FROM games g WHERE g.game_id=%d;",
+                                this.ID)
+                );
+                if (!gameSaved.next()) {
+                    throw new SQLException("No game");
+                }
+
+                difficulty = Level.values()[gameSaved.getByte("difficulty")];
+                duelMode = gameSaved.getBoolean("duel");
+            }
 
             while (playerSaved.next()) {
                 final int playerID = playerSaved.getInt("save_id");
@@ -425,12 +444,35 @@ public class DatabaseSave extends Save {
                 final byte energyAvailable = playerSaved.getByte("energy_left");
                 final Energy energy = new Energy(bonusScore, energyPosition, energyAvailable);
                 final Bombs bombs = new Bombs(playerSaved.getByte("bombs"));
+
+                final ResultSet boardSaved = this.dbc.executeQuery(
+                        String.format("""
+                                SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
+                                FROM saved_boards sb
+                                LEFT OUTER JOIN blocks b on b.block = sb.block
+                                WHERE sb.save_id=%d
+                                ORDER BY sb.y DESC;
+                                """, playerID)
+                );
+
+                final List<PlacedBlock> placedBlocks = new ArrayList<>();
+                while (boardSaved.next()) {
+                    final byte x = boardSaved.getByte("x");
+                    final byte y = boardSaved.getByte("y");
+
+                    final byte blockRow = boardSaved.getByte("table_row");
+                    final byte blockColumn = boardSaved.getByte("table_column");
+                    final Block block;
+                    if (boardSaved.getByte("block") == 25) {
+                        block = blocksTable.getBlock(new Position(blockRow, blockColumn));
+                    }
+                }
             }
 
 
         } catch (SQLException _e) {
             this.fail = true;
-            return this.backup.load(ID);
+            return this.backup.load(ID, blocksTable);
         }
         // TODO: implement
         return null;

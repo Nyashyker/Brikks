@@ -152,9 +152,9 @@ FROM games g
 WHERE g.end_dt IS NULL;
 
 UPDATE saved_players_games SET player_order=2 WHERE player_order=0;
-SELECT pg.save_id, p.name, spg.plays, spg.energy, spg.energy_left, spg.bombs, spg.bonus_score
-FROM saved_players_games spg
-INNER JOIN players_games pg ON spg.save_id = pg.save_id
-INNER JOIN players p ON p.player_id = pg.player_id
-WHERE pg.game_id=1
-ORDER BY spg.player_order DESC;
+
+SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
+FROM saved_boards sb
+LEFT OUTER JOIN blocks b on b.block = sb.block
+WHERE sb.save_id=1
+ORDER BY sb.y DESC;

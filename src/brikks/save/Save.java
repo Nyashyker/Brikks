@@ -1,5 +1,6 @@
 package brikks.save;
 
+import brikks.BlocksTable;
 import brikks.essentials.enums.*;
 import brikks.essentials.*;
 import brikks.save.container.*;
@@ -27,7 +28,7 @@ public abstract class Save {
     ///        Load
     abstract public List<PlayerLeaderboard> leaderboard();
     abstract public List<SavedGame> load();
-    abstract public LoadedGame load(final int ID);
+    abstract public LoadedGame load(final int ID, final BlocksTable blocksTable);
     ///        End game
     abstract public void dropSave();
 }

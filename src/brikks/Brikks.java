@@ -130,7 +130,7 @@ public class Brikks implements GameSave {
                 return;
             }
 
-            final LoadedGame loaded = this.saver.load(choice.ID());
+            final LoadedGame loaded = this.saver.load(choice.ID(), this.blocksTable);
 
             this.players = loaded.players();
             this.matrixDie.cheat(loaded.matrixDie());
