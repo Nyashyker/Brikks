@@ -220,6 +220,7 @@ public class Brikks implements GameSave {
         }
         final Loop loop = new Loop((byte) this.players.length);
 
+        // TODO: give player his saved choice
         boolean stillPlays;
         do {
             stillPlays = false;
