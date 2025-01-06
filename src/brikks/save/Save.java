@@ -13,7 +13,7 @@ public abstract class Save {
     protected boolean fail;
 
 
-    protected Save(Save backup) {
+    protected Save(final Save backup) {
         this.backup = backup;
         this.fail = false;
     }

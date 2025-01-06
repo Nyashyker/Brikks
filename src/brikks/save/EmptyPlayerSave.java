@@ -4,7 +4,7 @@ package brikks.save;
 import brikks.Player;
 
 
-public class EmptyPlayerSave implements PlayerSave {
+public class EmptyPlayerSave extends PlayerSave {
     public EmptyPlayerSave() {}
 
     @Override

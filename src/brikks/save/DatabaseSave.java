@@ -240,8 +240,9 @@ public class DatabaseSave extends Save {
 
     @Override
     public PlayerSave[] save(final String[] names, final Level difficulty, final boolean duel) {
+        final PlayerSave[] backupPlayerSaves = this.backup.save(names, difficulty, duel);
         if (this.fail) {
-            return this.backup.save(names, difficulty, duel);
+            return backupPlayerSaves;
         }
 
         final PlayerSave[] saves = new PlayerSave[names.length];
@@ -270,12 +271,12 @@ public class DatabaseSave extends Save {
                     );
                 }
 
-                saves[i] = new DatabasePlayerSave(this.dbc, ID);
+                saves[i] = new DatabasePlayerSave(this.dbc, ID, backupPlayerSaves[i]);
             }
 
         } catch (SQLException _e) {
             this.fail = true;
-            return this.backup.save(names, difficulty, duel);
+            return backupPlayerSaves;
         }
 
         return saves;
@@ -341,7 +342,7 @@ public class DatabaseSave extends Save {
                     LIMIT %d;
                     """, View.LEADERBOARD_COUNT));
 
-            for (byte i = 0; board.next(); i++) {
+            while (board.next()) {
                 final String name = board.getString("name");
                 final LocalDateTime startDT = board.getTimestamp("start_dt").toLocalDateTime();
                 final LocalDateTime endDT = board.getTimestamp("end_dt").toLocalDateTime();
@@ -403,6 +404,15 @@ public class DatabaseSave extends Save {
 
     @Override
     public LoadedGame load(final int ID, final BlocksTable blocksTable) {
+        final LoadedGame backupLoadedGame = this.backup.load(ID, blocksTable);
+        final PlayerSave[] backupPlayerSaves;
+        {
+            final Player[] players = backupLoadedGame.players();
+            backupPlayerSaves = new PlayerSave[players.length];
+            for (byte i = 0; i < players.length; i++) {
+                backupPlayerSaves[i] = players[i].getSaver();
+            }
+        }
         if (this.fail) {
             return this.backup.load(ID, blocksTable);
         }
@@ -437,6 +447,7 @@ public class DatabaseSave extends Save {
                 duelMode = gameSaved.getBoolean("duel");
             }
 
+            byte i = 0;
             while (playerSaved.next()) {
                 final int playerID = playerSaved.getInt("save_id");
                 final String name = playerSaved.getString("name");
@@ -485,7 +496,7 @@ public class DatabaseSave extends Save {
 
                 final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
 
-                players.add(new Player(new DatabasePlayerSave(this.dbc, playerID), name, plays, board, energy, bombs, bonusScore));
+                players.add(new Player(new DatabasePlayerSave(this.dbc, playerID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
             }
 
             final ResultSet stateSaved = this.dbc.executeQuery(
@@ -513,7 +524,7 @@ public class DatabaseSave extends Save {
 
         } catch (SQLException _e) {
             this.fail = true;
-            return this.backup.load(ID, blocksTable);
+            return backupLoadedGame;
         }
 
         return game;

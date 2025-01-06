@@ -2,13 +2,23 @@ package brikks.save;
 
 import brikks.Player;
 
-public interface PlayerSave {
+public abstract class PlayerSave {
+    protected final PlayerSave backup;
+    protected boolean fail;
+
+
+    protected PlayerSave(final PlayerSave backup) {
+        this.backup = backup;
+        this.fail = false;
+    }
+
+
     ///        First save
-    void save(final Player player, final byte playerOrder);
+    abstract public void save(final Player player, final byte playerOrder);
     ///        Update
-    void setDuration();
-    void updateDuration();
-    void update(final Player player);
+    abstract public void setDuration();
+    abstract public void updateDuration();
+    abstract public void update(final Player player);
     ///        End game
-    void save(final short score);
+    abstract public void save(final short score);
 }

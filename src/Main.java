@@ -1,10 +1,6 @@
 import brikks.essentials.enums.*;
 import brikks.essentials.*;
-import brikks.logic.Bombs;
-import brikks.logic.BonusScore;
-import brikks.logic.Energy;
 import brikks.save.*;
-import brikks.save.container.PlayerLeaderboard;
 import brikks.view.container.*;
 import brikks.*;
 import brikks.view.*;
@@ -12,117 +8,12 @@ import brikks.view.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
 public class Main {
     public static void main(String[] args) {
-        runDB();
-//        runGame();
-    }
-
-    public static void runDB() {
-        final GameText textUkr;
-        // Defining text
-        {
-            textUkr = new GameText(
-                    "Назад",
-                    "Уведіть будь-що, щоб перейти в головне меню.",
-                    "Оберіть (%d-%d): ",
-                    "Уведіть число з указаного діапазону!",
-                    "МЕНЮ",
-                    new String[]{
-                            "Нова гра",
-                            "Завантажити",
-                            "Таблиця лідерів",
-                            "Вийти"
-                    },
-                    "ТАБЛИЦЯ ЛІДЕРІВ",
-                    "Гравець із таким ім'ям уже існує. Бажаєте використати його? ",
-                    "Оберіть рівень складности:",
-                    new String[]{
-                            "Перший: 1 ОЕ дається навіть за накриття неправильним кольором",
-                            "Другий: 2 ОЕ дається за накриття правильним кольором (стандартний)",
-                            "Третій: 1 ОЕ відбирається за накриття неправильним кольором",
-                            "Четвертий: 2 ОЕ відберається за накриття неправильним кольором",
-                    },
-                    "Хочете провести дуель? ",
-                    "Скільки гравців гратиме? (0 = назад)",
-                    "Оберіть ім'я гравцю №%d (нічого = назад): ",
-                    "Ім'я занадто довге! Вкладіться в %d",
-                    "Оберіть зебереження:",
-                    "НЕМА",
-                    "Додаткові бали: %d (-> %s)",
-                    "Очки енергії: %d (+ДБ -> %s)",
-                    "Бомби: %d (= %d бал.)",
-                    "\tГру завершено!!!",
-                    "%s - %s - %d\n",
-                    new String[]{
-                            "Перший раз?",
-                            "Ти можеш більше!",
-                            "Молодець!",
-                            "А хтось набив руку!",
-                            "Насолоджуйся своїми здобутками!",
-                            "Ти це бачив?",
-                            "Та тобі треба в професіонали йти!",
-                            "От хвалько!",
-                            "МАЙСТЕР-БЛОКАЙСТЕР 2000!!!",
-                    },
-                    "Підсумки:",
-                    "%s переміг %s\n",
-                    "Вихід...",
-                    "Хочете перекинути кубик? ",
-                    "стовпець=%d\tряд=%d",
-                    "Де розмістити блок?:",
-                    "Ваші дії:",
-                    new String[]{
-                            "Вористати бомбу",
-                            "Повернути блок",
-                            "Замінити блок",
-                            "Поставити блок",
-                            "Здатися",
-                            "Зберегтися",
-                            "Вийти в головне меню",
-                    },
-                    "Оберіть варіацію оберту блоку:",
-                    "Оберіть стовпець блоку (0 = назад): ",
-                    "Оберіть ряд блоку (0 = назад): ",
-                    "Цей блок немає куди ставити!",
-                    "Бомб не залишилося!",
-                    "Недостатньо енергії, щоб повернути болок",
-                    "Недостатньо енергії, щоб замінити блок!",
-                    "Ану не тойво мені тут!!! Ще є куди ставити блок!",
-                    "Для вас гра завершена.",
-                    "Оберіть місце для мініатюрного блоку на дошці опонента:"
-            );
-        }
-        final Save es = new EmptySave();
-        try (
-                final DatabaseConnection db = new DatabaseConnection(
-                        "jdbc:postgresql://localhost:5432/brikks",
-                        "postgres",
-                        "Student_1234"
-                )
-        ) {
-
-            final DatabaseSave dbs = new DatabaseSave(db, es);
-            dbs.dropDB();
-            dbs.recreateDB(BlocksTable.WIDTH, BlocksTable.HEIGHT, Brikks.MAX_PLAYERS, (byte) Level.values().length, View.MAX_NAME_LEN, Bombs.MAX_AMOUNT, Energy.MAX_POSITION, BonusScore.MAX_SCALE, (byte) (Color.values().length - 1), (short) 191);
-//            ResultSet rs = db.executeQuery("SELECT * FROM blocks;");
-//
-//            while (rs.next()) {
-//                int i = rs.getInt(1);
-//                int y = rs.getInt(3);
-//                int x = rs.getInt(2);
-//                System.out.println(i+":\ty="+y+" x="+x);
-//            }
-            System.out.println("use");
-
-        } catch (SQLException e) {
-            System.out.println("Помилочка");
-            System.out.println(e.getMessage());
-        }
+        runGame();
     }
 
     private static void runGame() {
@@ -352,8 +243,20 @@ public class Main {
         // TODO: design normal logo
         final String logo = "BRIKKS";
 
-        final Brikks game = new Brikks(new ConsoleView(textUkr, logo), new EmptySave(), generateBlocksTable());
-        game.menu();
+        final Save backupSave = new EmptySave();
+        try (
+                final DatabaseConnection connection = new DatabaseConnection(
+                        "jdbc:postgresql://localhost:5432/brikks",
+                        "postgres",
+                        "Student_1234"
+                )
+        ) {
+            final Brikks game = new Brikks(new ConsoleView(textUkr, logo), new DatabaseSave(connection, backupSave), generateBlocksTable());
+            game.menu();
+        } catch (SQLException e) {
+            System.out.println("Ти тут помилка!");
+            System.out.println(e.getMessage());
+        }
     }
 
     public static Block[][] generateBlocksTable() {

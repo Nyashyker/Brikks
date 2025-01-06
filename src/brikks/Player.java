@@ -110,6 +110,10 @@ public class Player implements Comparable<Player> {
         return this.board;
     }
 
+    public PlayerSave getSaver() {
+        return this.saver;
+    }
+
 
     public void firstChoice(final Block block) {
         if (block == null) {
