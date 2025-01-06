@@ -169,7 +169,7 @@ public class Player implements Comparable<Player> {
 
                 case PLACE -> {
                     if (!canGiveUp) {
-                        final Position choice = user.askPlacingSpot(block, variants);
+                        final Position choice = user.askPlacingSpot(this, block, variants);
                         if (choice == null) {
                             break;
                         }

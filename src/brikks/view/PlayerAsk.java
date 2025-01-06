@@ -1,13 +1,14 @@
 package brikks.view;
 
 import brikks.BlocksTable;
+import brikks.Player;
 import brikks.essentials.*;
 import brikks.view.enums.*;
 
 public interface PlayerAsk {
     boolean askReroll(final Block block);
 
-    Position askPlacingSpot(final Block block, final Position[] variants);
+    Position askPlacingSpot(final Player player, final Block block, final Position[] variants);
 
     Deed askDeed(final Block block);
 

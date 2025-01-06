@@ -357,7 +357,8 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public Position askPlacingSpot(final Block block, final Position[] variants) {
+    public Position askPlacingSpot(final Player player, final Block block, final Position[] variants) {
+        this.draw(player);
         this.showBlock(block);
 
         final String[] stringedVariants = new String[variants.length];

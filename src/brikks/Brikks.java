@@ -181,6 +181,26 @@ public class Brikks implements GameSave {
         this.turn = -1;
     }
 
+    private RunsResults runSolo() {
+        final Player player = this.players[0];
+
+        do {
+            this.view.draw(player);
+
+            player.setDuration();
+            final TurnsResults result = player.turn(this.view, this, this.blocksTable, this.matrixDie.roll());
+            player.updateDuration();
+
+            if (result.exit()) {
+                return new RunsResults(false, (byte) -1);
+            } else if (result.giveUp()) {
+                player.saveFinal();
+            }
+        } while (player.isPlays());
+
+        return new RunsResults(true, (byte) -1);
+    }
+
     private RunsResults run(final boolean duelMode) {
         final Loop loopingLoop = new Loop((byte) this.players.length);
         final Loop loop = new Loop((byte) this.players.length);
