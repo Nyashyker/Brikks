@@ -6,7 +6,9 @@ import brikks.Player;
 import brikks.essentials.Block;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
+import brikks.essentials.enums.Color;
 import brikks.essentials.enums.Level;
+import brikks.logic.Board;
 import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
@@ -168,6 +170,7 @@ public class DatabaseSave extends Save {
                         CONSTRAINT nn_energy_bonus NOT NULL
                         CONSTRAINT ch_energy_bonus CHECK ( energy_bonus >= 0 AND energy_bonus < %d ),
                     block        SMALLINT
+                        CONSTRAINT nn_block NOT NULL
                         CONSTRAINT fk_block REFERENCES blocks (block)
                             ON DELETE RESTRICT
                         CONSTRAINT ch_block CHECK ( block >= 0 AND block < %d ),
@@ -455,27 +458,65 @@ public class DatabaseSave extends Save {
                                 """, playerID)
                 );
 
+                final Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
+                for (byte y = 0; y < energyBonus.length; y++) {
+                    energyBonus[y] = new Color[Board.WIDTH];
+                }
+
                 final List<PlacedBlock> placedBlocks = new ArrayList<>();
                 while (boardSaved.next()) {
                     final byte x = boardSaved.getByte("x");
                     final byte y = boardSaved.getByte("y");
 
+                    final Color color = Color.values()[boardSaved.getByte("energy_bonus")];
+                    energyBonus[y][x] = color;
+
                     final byte blockRow = boardSaved.getByte("table_row");
                     final byte blockColumn = boardSaved.getByte("table_column");
                     final Block block;
-                    if (boardSaved.getByte("block") == 25) {
+                    if (boardSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
+                        block = Board.duelBlock;
+                    } else {
                         block = blocksTable.getBlock(new Position(blockRow, blockColumn));
                     }
+
+                    placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
                 }
+
+                final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
+
+                players.add(new Player(new DatabasePlayerSave(this.dbc, playerID), name, plays, board, energy, bombs, bonusScore));
             }
 
+            final ResultSet stateSaved = this.dbc.executeQuery(
+                    String.format("""
+                            SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
+                            FROM saved_games sg
+                            WHERE sg.save_id=%d;
+                            """, this.ID)
+            );
+
+            final byte turn = stateSaved.getByte("turn");
+            final byte dieRow = stateSaved.getByte("die_row");
+            final byte dieColumn = stateSaved.getByte("die_column");
+            final byte rollX = stateSaved.getByte("roll_row");
+            final byte rollY = stateSaved.getByte("roll_column");
+
+            game = new LoadedGame(
+                    players.toArray(Player[]::new),
+                    new Position(dieRow, dieColumn),
+                    turn,
+                    new Position(rollX, rollY),
+                    difficulty,
+                    duelMode
+            );
 
         } catch (SQLException _e) {
             this.fail = true;
             return this.backup.load(ID, blocksTable);
         }
-        // TODO: implement
-        return null;
+
+        return game;
     }
 
 

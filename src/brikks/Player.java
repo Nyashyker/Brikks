@@ -1,10 +1,16 @@
 package brikks;
 
 import brikks.container.TurnsResults;
+import brikks.essentials.Block;
+import brikks.essentials.MatrixDice;
+import brikks.essentials.PlacedBlock;
+import brikks.essentials.Position;
+import brikks.essentials.enums.Level;
+import brikks.logic.Board;
+import brikks.logic.Bombs;
+import brikks.logic.BonusScore;
+import brikks.logic.Energy;
 import brikks.save.PlayerSave;
-import brikks.essentials.*;
-import brikks.essentials.enums.*;
-import brikks.logic.*;
 import brikks.view.DuelAsk;
 import brikks.view.PlayerAsk;
 
@@ -45,7 +51,15 @@ public class Player implements Comparable<Player> {
         this.board = new Board(this.bonusScore, this.energy, difficulty);
     }
 
-    public Player(final PlayerSave saver, final String name, final boolean plays, final Board board, final Energy energy, final Bombs bombs, BonusScore bonusScore) {
+    public Player(
+            final PlayerSave saver,
+            final String name,
+            final boolean plays,
+            final Board board,
+            final Energy energy,
+            final Bombs bombs,
+            BonusScore bonusScore
+    ) {
         if (saver == null) {
             throw new IllegalArgumentException("Saver cannot be null");
         }

@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS saved_boards
         CONSTRAINT nn_energy_bonus NOT NULL
         CONSTRAINT ch_energy_bonus CHECK ( energy_bonus >= 0 AND energy_bonus < 6 ),
     block        SMALLINT
+        CONSTRAINT nn_block NOT NULL
         CONSTRAINT fk_block REFERENCES blocks (block)
             ON DELETE RESTRICT
         CONSTRAINT ch_block CHECK ( block >= 0 AND block < 25 ),
@@ -158,3 +159,7 @@ FROM saved_boards sb
 LEFT OUTER JOIN blocks b on b.block = sb.block
 WHERE sb.save_id=1
 ORDER BY sb.y DESC;
+
+SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
+FROM saved_games sg
+WHERE sg.save_id=1;

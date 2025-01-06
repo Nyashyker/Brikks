@@ -18,8 +18,8 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-//        runDB();
-        runGame();
+        runDB();
+//        runGame();
     }
 
     public static void runDB() {
