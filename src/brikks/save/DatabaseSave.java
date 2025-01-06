@@ -1,5 +1,7 @@
 package brikks.save;
 
+import brikks.Brikks;
+import brikks.Player;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
 import brikks.save.container.LoadedGame;
@@ -393,6 +395,36 @@ public class DatabaseSave extends Save {
     @Override
     public LoadedGame load(final int ID) {
         if (this.fail) {
+            return this.backup.load(ID);
+        }
+
+        this.ID = ID;
+
+        final LoadedGame game;
+        try {
+            final List<Player> players = new ArrayList<>(Brikks.MAX_PLAYERS);
+            final ResultSet playerSaved = this.dbc.executeQuery(String.format("""
+                    SELECT pg.save_id, p.name, spg.plays, spg.energy, spg.energy_left, spg.bombs, spg.bonus_score
+                    FROM saved_players_games spg
+                    INNER JOIN players_games pg ON spg.save_id = pg.save_id
+                    INNER JOIN players p ON p.player_id = pg.player_id
+                    WHERE pg.game_id=%d
+                    ORDER BY spg.player_order DESC;
+                    """, this.ID));
+
+            while (playerSaved.next()) {
+                final int playerID = playerSaved.getInt("save_id");
+                final String name = playerSaved.getString("name");
+                final boolean plays = playerSaved.getBoolean("plays");
+                final byte energyPosition = playerSaved.getByte("energy");
+                final byte energyAvailable = playerSaved.getByte("energy_left");
+                final byte bombs = playerSaved.getByte("bombs");
+                final byte bonusScoreScale = playerSaved.getByte("bonus_score");
+            }
+
+
+        } catch (SQLException _e) {
+            this.fail = true;
             return this.backup.load(ID);
         }
         // TODO: implement
