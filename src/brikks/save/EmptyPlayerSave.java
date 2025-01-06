@@ -5,7 +5,7 @@ import brikks.Player;
 
 
 public class EmptyPlayerSave extends PlayerSave {
-    public EmptyPlayerSave() {}
+    public EmptyPlayerSave() { super(null); }
 
     @Override
     public void save(Player player, byte playerOrder) {}

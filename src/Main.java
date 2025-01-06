@@ -1,14 +1,23 @@
-import brikks.essentials.enums.*;
-import brikks.essentials.*;
-import brikks.save.*;
-import brikks.view.container.*;
-import brikks.*;
-import brikks.view.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import brikks.BlocksTable;
+import brikks.Brikks;
+import brikks.essentials.Block;
+import brikks.essentials.Position;
+import brikks.essentials.enums.Color;
+import brikks.essentials.enums.Level;
+import brikks.logic.Bombs;
+import brikks.logic.BonusScore;
+import brikks.logic.Energy;
+import brikks.save.DatabaseConnection;
+import brikks.save.DatabaseSave;
+import brikks.save.EmptySave;
+import brikks.save.Save;
+import brikks.view.ConsoleView;
+import brikks.view.View;
+import brikks.view.container.GameText;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
@@ -251,7 +260,20 @@ public class Main {
                         "Student_1234"
                 )
         ) {
-            final Brikks game = new Brikks(new ConsoleView(textUkr, logo), new DatabaseSave(connection, backupSave), generateBlocksTable());
+            final DatabaseSave save = new DatabaseSave(connection, backupSave);
+            save.recreateDB(BlocksTable.WIDTH,
+                    BlocksTable.HEIGHT,
+                    Brikks.MAX_PLAYERS,
+                    (byte) Level.values().length,
+                    View.MAX_NAME_LEN,
+                    Bombs.MAX_AMOUNT,
+                    Energy.MAX_POSITION,
+                    BonusScore.MAX_SCALE,
+                    (byte) (Color.values().length - 1),
+                    (short) 191
+            );
+
+            final Brikks game = new Brikks(new ConsoleView(textUkr, logo), save, generateBlocksTable());
             game.menu();
         } catch (SQLException e) {
             System.out.println("Ти тут помилка!");
