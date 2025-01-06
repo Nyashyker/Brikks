@@ -4,6 +4,9 @@ import brikks.Brikks;
 import brikks.Player;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
+import brikks.logic.Bombs;
+import brikks.logic.BonusScore;
+import brikks.logic.Energy;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
@@ -416,10 +419,12 @@ public class DatabaseSave extends Save {
                 final int playerID = playerSaved.getInt("save_id");
                 final String name = playerSaved.getString("name");
                 final boolean plays = playerSaved.getBoolean("plays");
+
+                final BonusScore bonusScore = new BonusScore(playerSaved.getByte("bonus_score"));
                 final byte energyPosition = playerSaved.getByte("energy");
                 final byte energyAvailable = playerSaved.getByte("energy_left");
-                final byte bombs = playerSaved.getByte("bombs");
-                final byte bonusScoreScale = playerSaved.getByte("bonus_score");
+                final Energy energy = new Energy(bonusScore, energyPosition, energyAvailable);
+                final Bombs bombs = new Bombs(playerSaved.getByte("bombs"));
             }
 
 
