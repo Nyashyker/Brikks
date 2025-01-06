@@ -113,16 +113,17 @@ public class Brikks implements GameSave {
         for (byte i = 0; i < playerCount; i++) {
             this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
         }
-        // TODO: maybe call in the creator of Player?
         this.firstChoice();
 
         this.firstSave = true;
-        this.launch(difficulty, duelMode);
+        this.launch(difficulty, duelMode, (byte) 0, this.matrixDie.roll());
     }
 
     public void load() {
         final Level difficulty;
         final boolean duelMode;
+        final byte turn;
+        final Position turnChoice;
         {
             final List<SavedGame> variants = this.saver.load();
             final SavedGame choice = this.view.askChoiceSave(variants);
@@ -136,10 +137,12 @@ public class Brikks implements GameSave {
             this.matrixDie.cheat(loaded.matrixDie());
             difficulty = loaded.difficulty();
             duelMode = loaded.duel();
+            turn = loaded.turn();
+            turnChoice = loaded.choice();
         }
 
         this.firstSave = false;
-        this.launch(difficulty, duelMode);
+        this.launch(difficulty, duelMode, turn, turnChoice);
     }
 
 
@@ -171,12 +174,12 @@ public class Brikks implements GameSave {
         }
     }
 
-    private void launch(final Level difficulty, final boolean duelMode) {
+    private void launch(final Level difficulty, final boolean duelMode, final byte turn, final Position turnChoice) {
         final RunsResults results;
         if (this.players.length == 1) {
-            results = this.runSolo();
+            results = this.runSolo(turnChoice);
         } else {
-            results = this.run(duelMode);
+            results = this.run(duelMode, turn, turnChoice);
         }
         if (results.endGame()) {
             this.end(difficulty, duelMode, results.duelWinnerIndex());
@@ -186,14 +189,14 @@ public class Brikks implements GameSave {
         this.turn = -1;
     }
 
-    private RunsResults runSolo() {
+    private RunsResults runSolo(Position choice) {
         final Player player = this.players[0];
 
         do {
             this.view.draw(player);
 
             player.setDuration();
-            final TurnsResults result = player.turn(this.view, this, this.blocksTable, this.matrixDie.roll());
+            final TurnsResults result = player.turn(this.view, this, this.blocksTable, choice);
             player.updateDuration();
 
             if (result.exit()) {
@@ -202,13 +205,19 @@ public class Brikks implements GameSave {
                 player.saveFinal();
                 break;
             }
+
+            choice = this.matrixDie.roll();
         } while (player.isPlays());
 
         return new RunsResults(true, (byte) -1);
     }
 
-    private RunsResults run(final boolean duelMode) {
-        final Loop loopingLoop = new Loop((byte) this.players.length);
+    private RunsResults run(final boolean duelMode, final byte turn, Position choice) {
+        final Loop loopingLoop;
+        {
+            final Loop startLoopingLoop = new Loop(turn, (byte) this.players.length);
+            loopingLoop = new Loop(startLoopingLoop.backcast(), (byte) this.players.length);
+        }
         final Loop loop = new Loop((byte) this.players.length);
 
         boolean stillPlays;
@@ -231,11 +240,10 @@ public class Brikks implements GameSave {
                 player.setDuration();
                 final TurnsResults result;
                 if (first) {
-                    this.matrixDie.roll();
                     result = player.turn(this.view, this, this.blocksTable, this.matrixDie);
                     first = false;
                 } else {
-                    result = player.turn(this.view, this, this.blocksTable, this.matrixDie.get());
+                    result = player.turn(this.view, this, this.blocksTable, choice);
                 }
                 player.updateDuration();
 
@@ -254,6 +262,8 @@ public class Brikks implements GameSave {
                     }
                 }
             }
+
+            choice = this.matrixDie.roll();
         } while (stillPlays);
 
         return new RunsResults(true, (byte) -1);

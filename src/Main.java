@@ -352,7 +352,7 @@ public class Main {
         // TODO: design normal logo
         final String logo = "BRIKKS";
 
-        final Brikks game = new Brikks(new ConsoleView(textAngl, logo), new EmptySave(), generateBlocksTable());
+        final Brikks game = new Brikks(new ConsoleView(textUkr, logo), new EmptySave(), generateBlocksTable());
         game.menu();
     }
 
