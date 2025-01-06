@@ -172,7 +172,12 @@ public class Brikks implements GameSave {
     }
 
     private void launch(final Level difficulty, final boolean duelMode) {
-        final RunsResults results = this.run(duelMode);
+        final RunsResults results;
+        if (this.players.length == 1) {
+            results = this.runSolo();
+        } else {
+            results = this.run(duelMode);
+        }
         if (results.endGame()) {
             this.end(difficulty, duelMode, results.duelWinnerIndex());
         }
@@ -195,6 +200,7 @@ public class Brikks implements GameSave {
                 return new RunsResults(false, (byte) -1);
             } else if (result.giveUp()) {
                 player.saveFinal();
+                break;
             }
         } while (player.isPlays());
 
@@ -225,6 +231,7 @@ public class Brikks implements GameSave {
                 player.setDuration();
                 final TurnsResults result;
                 if (first) {
+                    this.matrixDie.roll();
                     result = player.turn(this.view, this, this.blocksTable, this.matrixDie);
                     first = false;
                 } else {
