@@ -573,13 +573,13 @@ public class ConsoleView extends View {
         }
 
         // Converting Block to stringed 2D array
+        // but upside down
+        // (because of the way it then converts in the string)
         {
             final String color = this.color2string(block.getColor());
-            final Position start = new Position((byte) 0, (byte) (blockSize.getY() - 1));
 
-            for (final Position relativePos : block.getBlock()) {
-                final Position shape = start.add(relativePos);
-                blockTable[shape.getY()][shape.getX()] = color;
+            for (final Position shape : block.getBlock()) {
+                blockTable[-shape.getY()][shape.getX()] = color;
             }
         }
 

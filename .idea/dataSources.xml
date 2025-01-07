@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Brikks" uuid="b12760a1-96af-48c6-9a74-30fa527812fd">
+    <data-source source="LOCAL" name="Brikks" uuid="aafbae3b-5423-4b91-87bc-55aeff6c2299">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <remarks>Write Brikks - read Tetris</remarks>

@@ -68,9 +68,11 @@ public class DatabasePlayerSave extends PlayerSave {
             this.dbc.executeUpdate(sql);
             saveBoard(this.ID, player.getBoard());
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             this.fail = true;
             this.backup.save(player, playerOrder);
         }
+        System.out.println("Gravc'a zbereglo");
     }
 
 
@@ -83,6 +85,7 @@ public class DatabasePlayerSave extends PlayerSave {
         }
 
         this.lastDurationUpdate = LocalTime.now();
+        System.out.println("Tajmer ustanovleno");
     }
 
     @Override
@@ -102,10 +105,14 @@ public class DatabasePlayerSave extends PlayerSave {
 
         try {
             this.dbc.executeUpdate(sql);
+            System.out.println("Promizxok zberezxeno");
         } catch (SQLException e) {
+            System.out.println("Pomylocxka: zberegty tryvalist'");
+            System.out.println(e.getMessage());
             this.fail = true;
             this.backup.updateDuration();
         }
+        System.out.println("Tajmer skynuto");
     }
 
     @Override
@@ -127,9 +134,12 @@ public class DatabasePlayerSave extends PlayerSave {
         try {
             this.dbc.executeUpdate(sql);
         } catch (SQLException e) {
+            System.out.println("Pomylocxka v onovlenni gravc'a");
+            System.out.println(e.getMessage());
             this.fail = true;
             this.backup.update(player);
         }
+        System.out.println("Gravc'a onovyly");
     }
 
 

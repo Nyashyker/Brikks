@@ -321,6 +321,7 @@ public class Brikks implements GameSave {
 
     @Override
     public void save(final Position choice) {
+        System.out.println("Zberigajemo");
         if (this.firstSave) {
             this.saver.save(this.turn, choice, this.matrixDie.get());
             for (byte i = 0; i < this.players.length; i++) {

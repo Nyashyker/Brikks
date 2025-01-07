@@ -163,3 +163,7 @@ ORDER BY sb.y DESC;
 SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
 FROM saved_games sg
 WHERE sg.save_id=1;
+
+SELECT player_id FROM players WHERE name='%s';
+SELECT * FROM players;
+SELECT * FROM games;

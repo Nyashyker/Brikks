@@ -261,6 +261,7 @@ public class Main {
                 )
         ) {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
+            save.dropDB();
             save.recreateDB(BlocksTable.WIDTH,
                     BlocksTable.HEIGHT,
                     Brikks.MAX_PLAYERS,
@@ -272,6 +273,7 @@ public class Main {
                     (byte) (Color.values().length - 1),
                     (short) 191
             );
+
 
             final Brikks game = new Brikks(new ConsoleView(textUkr, logo), save, generateBlocksTable());
             game.menu();

@@ -26,7 +26,6 @@ import java.util.List;
 
 public class DatabaseSave extends Save {
     private final DatabaseConnection dbc;
-    /*TODO: assign in start-save or load*/
     private int ID;
 
 
@@ -230,6 +229,7 @@ public class DatabaseSave extends Save {
 
     private int getGeneratedID(final String sql) throws SQLException {
         this.dbc.executeUpdate(sql);
+        // TODO: this embeded methdot does not work
         final ResultSet getID = this.dbc.getGeneratedKeys();
         if (getID.next()) {
             return getID.getInt(1);
@@ -447,56 +447,58 @@ public class DatabaseSave extends Save {
                 duelMode = gameSaved.getBoolean("duel");
             }
 
-            byte i = 0;
-            while (playerSaved.next()) {
-                final int playerID = playerSaved.getInt("save_id");
-                final String name = playerSaved.getString("name");
-                final boolean plays = playerSaved.getBoolean("plays");
+            {
+                byte i = 0;
+                while (playerSaved.next()) {
+                    final int playerID = playerSaved.getInt("save_id");
+                    final String name = playerSaved.getString("name");
+                    final boolean plays = playerSaved.getBoolean("plays");
 
-                final BonusScore bonusScore = new BonusScore(playerSaved.getByte("bonus_score"));
-                final byte energyPosition = playerSaved.getByte("energy");
-                final byte energyAvailable = playerSaved.getByte("energy_left");
-                final Energy energy = new Energy(bonusScore, energyPosition, energyAvailable);
-                final Bombs bombs = new Bombs(playerSaved.getByte("bombs"));
+                    final BonusScore bonusScore = new BonusScore(playerSaved.getByte("bonus_score"));
+                    final byte energyPosition = playerSaved.getByte("energy");
+                    final byte energyAvailable = playerSaved.getByte("energy_left");
+                    final Energy energy = new Energy(bonusScore, energyPosition, energyAvailable);
+                    final Bombs bombs = new Bombs(playerSaved.getByte("bombs"));
 
-                final ResultSet boardSaved = this.dbc.executeQuery(
-                        String.format("""
-                                SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
-                                FROM saved_boards sb
-                                LEFT OUTER JOIN blocks b on b.block = sb.block
-                                WHERE sb.save_id=%d
-                                ORDER BY sb.y DESC;
-                                """, playerID)
-                );
+                    final ResultSet boardSaved = this.dbc.executeQuery(
+                            String.format("""
+                                    SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
+                                    FROM saved_boards sb
+                                    LEFT OUTER JOIN blocks b on b.block = sb.block
+                                    WHERE sb.save_id=%d
+                                    ORDER BY sb.y DESC;
+                                    """, playerID)
+                    );
 
-                final Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
-                for (byte y = 0; y < energyBonus.length; y++) {
-                    energyBonus[y] = new Color[Board.WIDTH];
-                }
-
-                final List<PlacedBlock> placedBlocks = new ArrayList<>();
-                while (boardSaved.next()) {
-                    final byte x = boardSaved.getByte("x");
-                    final byte y = boardSaved.getByte("y");
-
-                    final Color color = Color.values()[boardSaved.getByte("energy_bonus")];
-                    energyBonus[y][x] = color;
-
-                    final byte blockRow = boardSaved.getByte("table_row");
-                    final byte blockColumn = boardSaved.getByte("table_column");
-                    final Block block;
-                    if (boardSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
-                        block = Board.duelBlock;
-                    } else {
-                        block = blocksTable.getBlock(new Position(blockRow, blockColumn));
+                    final Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
+                    for (byte y = 0; y < energyBonus.length; y++) {
+                        energyBonus[y] = new Color[Board.WIDTH];
                     }
 
-                    placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+                    final List<PlacedBlock> placedBlocks = new ArrayList<>();
+                    while (boardSaved.next()) {
+                        final byte x = boardSaved.getByte("x");
+                        final byte y = boardSaved.getByte("y");
+
+                        final Color color = Color.values()[boardSaved.getByte("energy_bonus")];
+                        energyBonus[y][x] = color;
+
+                        final byte blockRow = boardSaved.getByte("table_row");
+                        final byte blockColumn = boardSaved.getByte("table_column");
+                        final Block block;
+                        if (boardSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
+                            block = Board.duelBlock;
+                        } else {
+                            block = blocksTable.getBlock(new Position(blockRow, blockColumn));
+                        }
+
+                        placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+                    }
+
+                    final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
+
+                    players.add(new Player(new DatabasePlayerSave(this.dbc, playerID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
                 }
-
-                final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
-
-                players.add(new Player(new DatabasePlayerSave(this.dbc, playerID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
             }
 
             final ResultSet stateSaved = this.dbc.executeQuery(
