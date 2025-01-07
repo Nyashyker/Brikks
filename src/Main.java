@@ -275,7 +275,7 @@ public class Main {
             );
 
 
-            final Brikks game = new Brikks(new ConsoleView(textUkr, logo), save, generateBlocksTable());
+            final Brikks game = new Brikks(new ConsoleView(textAngl, logo), save, generateBlocksTable());
             game.menu();
         } catch (SQLException e) {
             System.out.println("Ти тут помилка!");

@@ -116,7 +116,7 @@ public class Brikks implements GameSave {
         this.firstChoice();
 
         this.firstSave = true;
-        this.turn = 0;
+        this.turn = (byte) (playerCount - 1);
         this.launch(difficulty, duelMode);
     }
 
@@ -297,7 +297,7 @@ public class Brikks implements GameSave {
                     }
                 }
             }
-        } while (stillPlays);
+        } while (!stillPlays);
 
         return new RunsResults(true, (byte) -1);
     }
