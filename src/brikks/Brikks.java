@@ -73,6 +73,7 @@ public class Brikks implements GameSave {
 
     public void leaderboard() {
         this.view.leaderboard(this.saver.leaderboard());
+        // TODO: there should be search by name (player), game mode (solo, duel, or standard) ect
     }
 
     public void start() {
@@ -251,6 +252,7 @@ public class Brikks implements GameSave {
     }
 
     private RunsResults run(final boolean duelMode) {
+        // TODO: fix
         final Loop loopingLoop = new Loop(this.turn, (byte) this.players.length);
         final Loop loop = new Loop((byte) this.players.length);
 

@@ -169,7 +169,6 @@ public class DatabaseSave extends Save {
                         CONSTRAINT nn_energy_bonus NOT NULL
                         CONSTRAINT ch_energy_bonus CHECK ( energy_bonus >= 0 AND energy_bonus < %d ),
                     block        SMALLINT
-                        CONSTRAINT nn_block NOT NULL
                         CONSTRAINT fk_block REFERENCES blocks (block)
                             ON DELETE RESTRICT
                         CONSTRAINT ch_block CHECK ( block >= 0 AND block < %d ),
@@ -218,6 +217,7 @@ public class DatabaseSave extends Save {
         }
 
         try {
+            // TODO: do something about problematic symbols in the name
             final ResultSet player = this.dbc.executeQuery(String.format("SELECT * FROM players WHERE name='%s';",
                     name));
             return player.next();
@@ -229,7 +229,7 @@ public class DatabaseSave extends Save {
 
     private int getGeneratedID(final String sql) throws SQLException {
         this.dbc.executeUpdate(sql);
-        // TODO: this embeded methdot does not work
+        // TODO: this embeded methdot does not work - fix
         final ResultSet getID = this.dbc.getGeneratedKeys();
         if (getID.next()) {
             return getID.getInt(1);
@@ -343,6 +343,7 @@ public class DatabaseSave extends Save {
                     """, View.LEADERBOARD_COUNT));
 
             while (board.next()) {
+                // TODO: do something about problematic symbols in the name
                 final String name = board.getString("name");
                 final LocalDateTime startDT = board.getTimestamp("start_dt").toLocalDateTime();
                 final LocalDateTime endDT = board.getTimestamp("end_dt").toLocalDateTime();
@@ -387,6 +388,7 @@ public class DatabaseSave extends Save {
 
                 final List<String> names = new ArrayList<>(4);
                 while (variant.next()) {
+                    // TODO: do something about problematic symbols in the name
                     names.add(variant.getString("name"));
                 }
 
@@ -451,6 +453,7 @@ public class DatabaseSave extends Save {
                 byte i = 0;
                 while (playerSaved.next()) {
                     final int playerID = playerSaved.getInt("save_id");
+                    // TODO: do something about problematic symbols in the name
                     final String name = playerSaved.getString("name");
                     final boolean plays = playerSaved.getBoolean("plays");
 
