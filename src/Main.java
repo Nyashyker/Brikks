@@ -250,7 +250,16 @@ public class Main {
             );
         }
         // TODO: design normal logo
-        final String logo = "BRIKKS";
+        final String logo = """
+                ____________ _____ _   __ _   __ _____\s
+                | ___ \\ ___ \\_   _| | / /| | / //  ___|
+                | |_/ / |_/ / | | | |/ / | |/ / \\ `--.\s
+                | ___ \\    /  | | |    \\ |    \\  `--. \\
+                | |_/ / |\\ \\ _| |_| |\\  \\| |\\  \\/\\__/ /
+                \\____/\\_| \\_|\\___/\\_| \\_/\\_| \\_/\\____/\s
+                                                      \s
+                                                      \s
+                """;
 
         final Save backupSave = new EmptySave();
         try (
