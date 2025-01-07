@@ -408,8 +408,9 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public void successPlace(final PlacedBlock placed) {
+    public void successPlace(final Player player, final PlacedBlock placed) {
         // There could be something in not console version
+        this.draw(player);
     }
 
     @Override

@@ -116,6 +116,7 @@ public class Brikks implements GameSave {
         this.firstChoice();
 
         this.firstSave = true;
+        this.turn = 0;
         this.launch(difficulty, duelMode);
     }
 

@@ -193,8 +193,9 @@ public class Player implements Comparable<Player> {
                         }
                         final PlacedBlock placed = new PlacedBlock(block, choice);
 
-                        user.successPlace(placed);
-                        return new TurnsResults(false, false, this.board.place(placed));
+                        final byte duelBonus = this.board.place(placed);
+                        user.successPlace(this, placed);
+                        return new TurnsResults(false, false, duelBonus);
                     } else {
                         user.failPlace();
                     }

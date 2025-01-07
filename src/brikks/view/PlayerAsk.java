@@ -17,7 +17,7 @@ public interface PlayerAsk {
     Position askChoice(final Block[][] variants);
 
 
-    void successPlace(final PlacedBlock placed);
+    void successPlace(final Player player, final PlacedBlock placed);
 
     void successBomb();
 
