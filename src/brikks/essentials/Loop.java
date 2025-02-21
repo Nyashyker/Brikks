@@ -83,6 +83,15 @@ public class Loop {
     }
 
 
+    public byte goBack() {
+        this.position = this.backcast();
+        return position;
+    }
+
+    public boolean loopedBack() {
+        return this.finishedLoop(this.position, this.backcast());
+    }
+
     public byte backcast() {
         return this.toBack.get();
     }

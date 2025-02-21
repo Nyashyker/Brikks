@@ -226,14 +226,14 @@ public class Player implements Comparable<Player> {
         for (; amount > 0; amount--) {
             final Position[] variants = this.board.canBePlacedDuel();
             if (variants.length == 0) {
-                return false;
+                return true;
             }
 
             final Position choice = user.askPlacingMiniblock(opponent, variants);
             opponent.board.opponentsPlace(choice);
         }
 
-        return true;
+        return false;
     }
 
     public short calculateFinal() {
@@ -256,11 +256,11 @@ public class Player implements Comparable<Player> {
         this.saver.save(this.calculateFinal());
     }
 
-    public void setDuration() {
+    public void begin() {
         this.saver.setDuration();
     }
 
-    public void updateDuration() {
+    public void end() {
         this.saver.updateDuration();
     }
 

@@ -1,6 +1,5 @@
 package brikks;
 
-import brikks.container.RunsResults;
 import brikks.container.TurnsResults;
 import brikks.essentials.Block;
 import brikks.essentials.Loop;
@@ -82,16 +81,16 @@ public class Brikks implements GameSave {
             return;
         }
 
-        final Level difficulty = this.view.askDifficulty();
-        if (difficulty == null) {
-            return;
-        }
-
         final boolean duelMode;
         if (playerCount == 2) {
             duelMode = this.view.askDuel();
         } else {
             duelMode = false;
+        }
+
+        final Level difficulty = this.view.askDifficulty();
+        if (difficulty == null) {
+            return;
         }
 
 
@@ -109,15 +108,45 @@ public class Brikks implements GameSave {
         }
 
         // Save
-        this.players = new Player[playerCount];
-        final PlayerSave[] playerSaves = this.saver.save(names, difficulty, duelMode);
-        for (byte i = 0; i < playerCount; i++) {
-            this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
+        {
+            this.players = new Player[playerCount];
+            final PlayerSave[] playerSaves = this.saver.save(names, difficulty, duelMode);
+            for (byte i = 0; i < playerCount; i++) {
+                this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
+            }
         }
-        this.firstChoice();
+
+        // First choice
+        {
+            final Position[] taken = new Position[this.players.length];
+
+            final Loop looperRow = new Loop(BlocksTable.WIDTH);
+            final Loop looperColumn = new Loop(BlocksTable.HEIGHT);
+            for (byte i = 0; i < this.players.length; i++) {
+                Position firstChoice = this.matrixDie.roll();
+
+                // Ensure that there are no duplicates
+                looperRow.setPosition(firstChoice.getX());
+                looperColumn.setPosition(firstChoice.getY());
+                boolean guessTaken;
+                do {
+                    guessTaken = false;
+                    for (byte t = 0; t < i; t++) {
+                        if (taken[t].equals(firstChoice)) {
+                            guessTaken = true;
+                            firstChoice = new Position(looperRow.goForward(), looperRow.goForward());
+                            break;
+                        }
+                    }
+                } while (guessTaken);
+
+                taken[i] = firstChoice;
+                this.players[i].firstChoice(this.blocksTable.getBlock(firstChoice));
+            }
+        }
 
         this.firstSave = true;
-        this.turn = (byte) (playerCount - 1);
+        this.turn = 0;
         this.launch(difficulty, duelMode);
     }
 
@@ -143,116 +172,98 @@ public class Brikks implements GameSave {
             turnChoice = loaded.choice();
         }
 
+        // TODO: make the saved turn work
+
         this.firstSave = false;
-
-        // Unfinished turn
-        {
-            final Loop loop = new Loop(turn, (byte) this.players.length);
-            final Player player = this.players[turn];
-
-            this.view.draw(player);
-
-            player.setDuration();
-            final TurnsResults result = player.turn(this.view, this, this.blocksTable, turnChoice);
-            player.updateDuration();
-
-            if (result.exit()) {
-                this.players = null;
-                this.turn = -1;
-                return;
-            } else if (result.giveUp()) {
-                player.saveFinal();
-                if (duelMode) {
-                    this.end(difficulty, duelMode, loop.backcast());
-                    this.players = null;
-                    this.turn = -1;
-                    return;
-                }
-            }
-
-            if (duelMode && result.duelBonus() > 0) {
-                if (!player.duelTurn(this.view, this.players[loop.forecast()], result.duelBonus())) {
-                    this.end(difficulty, duelMode, this.turn);
-                    this.players = null;
-                    this.turn = -1;
-                    return;
-                }
-            }
-
-            this.turn = turn;
-        }
-
         this.launch(difficulty, duelMode);
     }
 
 
-    private void firstChoice() {
-        final Position[] taken = new Position[this.players.length];
-
-        final Loop looperRow = new Loop(BlocksTable.WIDTH);
-        final Loop looperColumn = new Loop(BlocksTable.HEIGHT);
-        for (byte i = 0; i < this.players.length; i++) {
-            Position firstChoice = this.matrixDie.roll();
-
-            // Ensure that there are no duplicates
-            looperRow.setPosition(firstChoice.getX());
-            looperColumn.setPosition(firstChoice.getY());
-            boolean guessTaken;
-            do {
-                guessTaken = false;
-                for (byte t = 0; t < i; t++) {
-                    if (taken[t].equals(firstChoice)) {
-                        guessTaken = true;
-                        firstChoice = new Position(looperRow.goForward(), looperRow.goForward());
-                        break;
-                    }
-                }
-            } while (guessTaken);
-
-            taken[i] = firstChoice;
-            this.players[i].firstChoice(this.blocksTable.getBlock(firstChoice));
-        }
-    }
-
     private void launch(final Level difficulty, final boolean duelMode) {
-        final RunsResults results;
+        final byte duelWinner;
+        final boolean gameOver;
+
         if (this.players.length == 1) {
-            results = this.runSolo();
+            duelWinner = -1;
+            gameOver = this.runSolo();
+
+        } else if (duelMode) {
+            duelWinner = this.runDuel();
+            // Should always be true
+            gameOver = duelWinner != -1;
+
         } else {
-            results = this.run(duelMode);
+            duelWinner = -1;
+            gameOver = this.run();
         }
-        if (results.endGame()) {
-            this.end(difficulty, duelMode, results.duelWinnerIndex());
+
+        if (gameOver) {
+            this.end(difficulty, duelMode, duelWinner);
         }
 
         this.players = null;
         this.turn = -1;
     }
 
-    private RunsResults runSolo() {
+    private boolean runSolo() {
         final Player player = this.players[0];
-        this.turn = 0;
 
         do {
             this.view.draw(player);
 
-            player.setDuration();
+            player.begin();
             final TurnsResults result = player.turn(this.view, this, this.blocksTable, this.matrixDie.roll());
-            player.updateDuration();
+            player.end();
 
             if (result.exit()) {
-                return new RunsResults(false, (byte) -1);
+                return false;
             } else if (result.giveUp()) {
                 player.saveFinal();
                 break;
             }
         } while (player.isPlays());
 
-        return new RunsResults(true, (byte) -1);
+        return true;
     }
 
-    private RunsResults run(final boolean duelMode) {
-        // TODO: fix
+    private byte runDuel() {
+        final Loop loopingLoop = new Loop(this.turn, (byte) this.players.length);
+        final Loop loop = new Loop((byte) this.players.length);
+
+        while (this.players[0].isPlays() && this.players[1].isPlays()) {
+            loop.setPosition(loopingLoop.goForward());
+
+            boolean first = true;
+            for (; !loop.loopedForward(); loop.goForward()) {
+                this.turn = loop.current();
+                final Player player = this.players[this.turn];
+
+                this.view.draw(player);
+
+                player.begin();
+                final TurnsResults result;
+                if (first) {
+                    first = false;
+                    this.matrixDie.roll();
+                    result = player.turn(this.view, this, this.blocksTable, this.matrixDie);
+                } else {
+                    result = player.turn(this.view, this, this.blocksTable, this.matrixDie.get());
+                }
+                player.end();
+
+                if (result.exit() || result.giveUp()) {
+                    return loop.backcast();
+                } else if (result.duelBonus() > 0 &&
+                        player.duelTurn(this.view, this.players[loop.forecast()], result.duelBonus())) {
+                    return loop.current();
+                }
+            }
+        }
+        // Should never be reached
+        return -1;
+    }
+
+    private boolean run() {
         final Loop loopingLoop = new Loop(this.turn, (byte) this.players.length);
         final Loop loop = new Loop((byte) this.players.length);
 
@@ -261,47 +272,38 @@ public class Brikks implements GameSave {
             stillPlays = false;
             loop.setPosition(loopingLoop.goForward());
 
-            boolean first = this.players.length != 1;
-            for (; this.players.length == 1 || !loop.loopedForward(); loop.goForward()) {
+            boolean first = true;
+            for (; !loop.loopedForward(); loop.goForward()) {
                 this.turn = loop.current();
                 final Player player = this.players[this.turn];
 
                 if (!player.isPlays()) {
                     continue;
                 }
-
                 stillPlays = true;
+
                 this.view.draw(player);
 
-                player.setDuration();
+                player.begin();
                 final TurnsResults result;
                 if (first) {
+                    first = false;
                     this.matrixDie.roll();
                     result = player.turn(this.view, this, this.blocksTable, this.matrixDie);
-                    first = false;
                 } else {
                     result = player.turn(this.view, this, this.blocksTable, this.matrixDie.get());
                 }
-                player.updateDuration();
+                player.end();
 
                 if (result.exit()) {
-                    return new RunsResults(false, (byte) -1);
+                    return false;
                 } else if (result.giveUp()) {
                     player.saveFinal();
-                    if (duelMode) {
-                        return new RunsResults(true, loop.backcast());
-                    }
-                }
-
-                if (duelMode && result.duelBonus() > 0) {
-                    if (!player.duelTurn(this.view, this.players[loop.forecast()], result.duelBonus())) {
-                        return new RunsResults(true, this.turn);
-                    }
                 }
             }
         } while (!stillPlays);
 
-        return new RunsResults(true, (byte) -1);
+        return true;
     }
 
     private void end(final Level difficulty, final boolean duelMode, final byte winnerIndex) {
@@ -312,8 +314,7 @@ public class Brikks implements GameSave {
         if (this.players.length == 1) {
             this.view.endSolo(this.players[0].name, this.players[0].calculateFinal(), difficulty);
         } else if (duelMode) {
-            final Loop loop = new Loop(winnerIndex, (byte) 2);
-            this.view.endDuel(this.players[loop.current()].name, this.players[loop.forecast()].name);
+            this.view.endDuel(this.players[winnerIndex].name, this.players[this.nextDuelist(winnerIndex)].name);
         } else {
             this.view.endStandard(this.players);
         }
@@ -322,9 +323,13 @@ public class Brikks implements GameSave {
     }
 
 
+    private byte nextDuelist(final byte current) {
+        // 0 -> 1 || 1 -> 0
+        return (byte) (current ^ 1);
+    }
+
     @Override
     public void save(final Position choice) {
-        System.out.println("Zberigajemo");
         if (this.firstSave) {
             this.saver.save(this.turn, choice, this.matrixDie.get());
             for (byte i = 0; i < this.players.length; i++) {
