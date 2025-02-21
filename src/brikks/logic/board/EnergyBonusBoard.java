@@ -5,8 +5,8 @@ import brikks.essentials.enums.*;
 
 import java.util.Random;
 
-public abstract class EnergyBonusBoard {
-    public static EnergyBonusBoard create(final Level difficulty, final Color[][] energyBonus) {
+abstract class EnergyBonusBoard {
+    static EnergyBonusBoard create(final Level difficulty, final Color[][] energyBonus) {
         return switch (difficulty) {
             case ONE -> new EnergyBonusBoardD1(energyBonus);
             case TWO -> new EnergyBonusBoardD2(energyBonus);
@@ -15,7 +15,7 @@ public abstract class EnergyBonusBoard {
         };
     }
 
-    public static Color[][] generateEnergyBonus(final byte width, final byte height) {
+    static Color[][] generateEnergyBonus(final byte width, final byte height) {
         final Random rand = new Random();
 
         final byte maxHeight = (byte) (height - Block.LEN / 2);

@@ -1,8 +1,9 @@
-package brikks.logic;
+package brikks.logic.board;
 
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
-import brikks.logic.board.*;
+import brikks.logic.BonusScore;
+import brikks.logic.Energy;
 
 import java.util.ArrayList;
 import java.util.List;

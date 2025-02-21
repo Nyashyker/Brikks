@@ -7,7 +7,7 @@ import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
 import brikks.essentials.enums.Level;
-import brikks.logic.Board;
+import brikks.logic.board.Board;
 import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;

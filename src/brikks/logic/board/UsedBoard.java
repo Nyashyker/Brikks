@@ -5,13 +5,13 @@ import brikks.essentials.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsedBoard {
+class UsedBoard {
     private final byte width;
     private final byte height;
     public final boolean[][] used;
 
 
-    public UsedBoard(final byte width, final byte height) {
+    UsedBoard(final byte width, final byte height) {
         boolean[][] used = new boolean[height][width];
         for (int y = 0; y < height; ++y) {
             used[y] = new boolean[width];
@@ -25,7 +25,7 @@ public class UsedBoard {
         this.used = used;
     }
 
-    public UsedBoard(final byte width, final byte height, final List<PlacedBlock> placed) {
+    UsedBoard(final byte width, final byte height, final List<PlacedBlock> placed) {
         this(width, height);
 
         for (final PlacedBlock block : placed) {

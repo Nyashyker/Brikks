@@ -3,8 +3,8 @@ package brikks.logic.board;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 
-public class EnergyBonusBoardD1 extends EnergyBonusBoard {
-    public EnergyBonusBoardD1(final Color[][] energyBonus) {
+class EnergyBonusBoardD1 extends EnergyBonusBoard {
+    EnergyBonusBoardD1(final Color[][] energyBonus) {
         super(energyBonus);
     }
 

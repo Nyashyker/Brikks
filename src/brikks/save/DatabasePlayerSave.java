@@ -3,7 +3,7 @@ package brikks.save;
 
 import brikks.Player;
 import brikks.essentials.PlacedBlock;
-import brikks.logic.Board;
+import brikks.logic.board.Board;
 
 import java.sql.SQLException;
 import java.time.LocalTime;
