@@ -12,7 +12,9 @@ import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
 import brikks.view.View;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Brikks implements GameSave {
@@ -118,30 +120,29 @@ public class Brikks implements GameSave {
 
         // First choice
         {
-            final Position[] taken = new Position[this.players.length];
-
+            final Set<Position> taken = new HashSet<>(playerCount);
             final Loop looperRow = new Loop(BlocksTable.WIDTH);
             final Loop looperColumn = new Loop(BlocksTable.HEIGHT);
-            for (byte i = 0; i < this.players.length; i++) {
-                Position firstChoice = this.matrixDie.roll();
+
+            for (final Player player : this.players) {
+                final Position firstChoice = this.matrixDie.roll();
 
                 // Ensure that there are no duplicates
                 looperRow.setPosition(firstChoice.getX());
                 looperColumn.setPosition(firstChoice.getY());
-                boolean guessTaken;
-                do {
-                    guessTaken = false;
-                    for (byte t = 0; t < i; t++) {
-                        if (taken[t].equals(firstChoice)) {
-                            guessTaken = true;
-                            firstChoice = new Position(looperRow.goForward(), looperRow.goForward());
-                            break;
-                        }
-                    }
-                } while (guessTaken);
 
-                taken[i] = firstChoice;
-                this.players[i].firstChoice(this.blocksTable.getBlock(firstChoice));
+                final byte takenSize = (byte) taken.size();
+                taken.add(firstChoice);
+                while (takenSize == taken.size()) {
+                    firstChoice.setX(looperRow.goForward());
+                    if (looperRow.loopedForward()) {
+                        firstChoice.setY(looperColumn.goForward());
+                    }
+
+                    taken.add(firstChoice);
+                }
+
+                player.firstChoice(this.blocksTable.getBlock(firstChoice));
             }
         }
 
