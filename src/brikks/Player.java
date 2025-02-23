@@ -6,15 +6,16 @@ import brikks.essentials.MatrixDice;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
-import brikks.logic.board.Board;
 import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
+import brikks.logic.board.Board;
 import brikks.save.PlayerSave;
 import brikks.view.DuelAsk;
 import brikks.view.PlayerAsk;
 
 import java.time.LocalTime;
+import java.util.function.Supplier;
 
 
 public class Player implements Comparable<Player> {
@@ -26,6 +27,8 @@ public class Player implements Comparable<Player> {
     private final Energy energy;
     private final Bombs bombs;
     private final Board board;
+
+    private Supplier<Short> finalCalculator;
 
 
     public Player(final PlayerSave saver, final String name, final byte playerCount, final Level difficulty) {
@@ -49,6 +52,13 @@ public class Player implements Comparable<Player> {
         this.energy = new Energy(this.bonusScore, playerCount);
         this.bombs = new Bombs();
         this.board = new Board(this.bonusScore, this.energy, difficulty);
+
+        this.finalCalculator = () -> (short) (
+                this.bonusScore.calculateFinal()
+                        + this.energy.calculateFinal()
+                        + this.bombs.calculateFinal()
+                        + this.board.calculateFinal()
+        );
     }
 
     public Player(
@@ -58,7 +68,7 @@ public class Player implements Comparable<Player> {
             final Board board,
             final Energy energy,
             final Bombs bombs,
-            BonusScore bonusScore
+            final BonusScore bonusScore
     ) {
         if (saver == null) {
             throw new IllegalArgumentException("Saver cannot be null");
@@ -87,6 +97,13 @@ public class Player implements Comparable<Player> {
         this.energy = energy;
         this.bombs = bombs;
         this.bonusScore = bonusScore;
+
+        this.finalCalculator = () -> (short) (
+                this.bonusScore.calculateFinal()
+                        + this.energy.calculateFinal()
+                        + this.bombs.calculateFinal()
+                        + this.board.calculateFinal()
+        );
     }
 
 
@@ -203,7 +220,6 @@ public class Player implements Comparable<Player> {
 
                 case GIVE_UP -> {
                     if (canGiveUp) {
-                        this.plays = false;
                         user.fail();
                         return new TurnsResults(false, true, (byte) 0);
                     } else {
@@ -223,6 +239,10 @@ public class Player implements Comparable<Player> {
     }
 
     public boolean duelTurn(final DuelAsk user, final Player opponent, byte amount) {
+        /*
+         * -> true  : win
+         */
+
         for (; amount > 0; amount--) {
             final Position[] variants = this.board.canBePlacedDuel();
             if (variants.length == 0) {
@@ -236,13 +256,6 @@ public class Player implements Comparable<Player> {
         return false;
     }
 
-    public short calculateFinal() {
-        return (byte) (this.bonusScore.calculateFinal() +
-                this.energy.calculateFinal() +
-                this.bombs.calculateFinal() +
-                this.board.calculateFinal()
-        );
-    }
 
     public void save(final byte order) {
         this.saver.save(this, order);
@@ -252,9 +265,27 @@ public class Player implements Comparable<Player> {
         this.saver.update(this);
     }
 
+
+    public short calculateFinal() {
+        return this.finalCalculator.get();
+    }
+
     public void saveFinal() {
+        this.plays = false;
         this.saver.save(this.calculateFinal());
     }
+
+    // Duel final
+    public void saveFinal(final boolean hasWon) {
+        if (hasWon) {
+            this.finalCalculator = () -> Short.MAX_VALUE;
+        } else {
+            this.finalCalculator = () -> (short) 0;
+        }
+
+        this.saveFinal();
+    }
+
 
     public void begin() {
         this.saver.setDuration();
@@ -263,6 +294,7 @@ public class Player implements Comparable<Player> {
     public void end() {
         this.saver.updateDuration();
     }
+
 
     @Override
     public int compareTo(final Player other) {
