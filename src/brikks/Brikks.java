@@ -32,7 +32,7 @@ public class Brikks implements GameSave {
     private boolean firstSave;
 
 
-    public Brikks(View view, Save saver, Block[][] blocksTable) {
+    public Brikks(final View view, final Save saver, final Block[][] blocksTable) {
         if (view == null) {
             throw new IllegalArgumentException("view cannot be null");
         }
@@ -51,10 +51,6 @@ public class Brikks implements GameSave {
 
         this.saver = saver;
         this.view = view;
-
-        this.players = null;
-        this.turn = -1;
-        this.firstSave = true;
     }
 
 
@@ -148,13 +144,14 @@ public class Brikks implements GameSave {
 
         this.firstSave = true;
         this.turn = 0;
-        this.launch(difficulty, duelMode);
+        if (this.startRun(duelMode)) {
+            this.end(difficulty, duelMode);
+        }
     }
 
     public void load() {
         final Level difficulty;
         final boolean duelMode;
-        final byte turn;
         final Position turnChoice;
         {
             final List<SavedGame> variants = this.saver.load();
@@ -169,28 +166,24 @@ public class Brikks implements GameSave {
             this.matrixDie.cheat(loaded.matrixDie());
             difficulty = loaded.difficulty();
             duelMode = loaded.duel();
-            turn = loaded.turn();
+            this.turn = loaded.turn();
             turnChoice = loaded.choice();
         }
 
-        // TODO: make the saved turn work
+        // Perform the turn on which was saved
+        if (this.rawTurn(this.turn, turnChoice, duelMode)) {
+            return;
+        }
+        // TODO: go next turn
 
         this.firstSave = false;
-        this.launch(difficulty, duelMode);
-    }
-
-
-    private void launch(final Level difficulty, final boolean duelMode) {
-        if (this.rawRun(duelMode)) {
+        if (this.startRun(duelMode)) {
             this.end(difficulty, duelMode);
         }
-
-        this.players = null;
-        this.turn = -1;
     }
 
 
-    private boolean rawRun(final boolean duelMode) {
+    private boolean startRun(final boolean duelMode) {
         /*
          * -> false : exit
          */
@@ -200,28 +193,24 @@ public class Brikks implements GameSave {
         boolean plays;
         do {
             plays = false;
-            final Position roll;
+            Position roll = null;
 
-            // TODO: fix first
             for (
                     loopPlayers.setPosition(loopLoopPlayers.goForward());
-                    !plays || !loopPlayers.loopedForward();
+                    !loopPlayers.loopedForward();
                     loopPlayers.goForward()
             ) {
-                final Player player = this.players[loopPlayers.current()];
-                if (player.isPlays()) {
+                if (this.players[loopPlayers.current()].isPlays()) {
                     plays = true;
                 } else {
                     continue;
                 }
 
-                final boolean turn;
-                if (!plays) {
-                    turn = this.rawTurn(player, null, duelMode ? this.players[loopPlayers.forecast()] : null);
+                final boolean turn = this.rawTurn(loopPlayers.current(), roll, duelMode);
+                if (roll == null) {
                     roll = this.matrixDie.get();
-                } else {
-                    turn = this.rawTurn(player, roll, duelMode ? this.players[loopPlayers.forecast()] : null);
                 }
+
                 if (turn) {
                     return false;
                 }
@@ -229,6 +218,11 @@ public class Brikks implements GameSave {
         } while (plays);
 
         return true;
+    }
+
+    private boolean rawTurn(final byte turn, final Position roll, final boolean duelMode) {
+        // turn ^ 1 => 1 -> 0 || 0 -> 1
+        return this.rawTurn(this.players[turn], roll, duelMode ? this.players[turn ^ 1] : null);
     }
 
     private boolean rawTurn(final Player player, final Position roll, final Player opponent) {

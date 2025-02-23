@@ -8,6 +8,7 @@ public class Loop {
     private byte STEP;
 
     private byte position;
+    private byte last;
     private byte POINT;
 
     private Supplier<Byte> toMove;
@@ -45,8 +46,10 @@ public class Loop {
         }
 
         this.position = position;
+        this.last = position;
         this.POINT = position;
     }
+
 
     public void setStep(final byte step) {
         if (step == 0) {
@@ -84,12 +87,11 @@ public class Loop {
 
 
     public byte goBack() {
-        this.position = this.backcast();
-        return position;
+        return this.updatePosition(this.backcast());
     }
 
     public boolean loopedBack() {
-        return this.finishedLoop(this.position, this.backcast());
+        return this.finishedLoop(this.position, this.last);
     }
 
     public byte backcast() {
@@ -105,12 +107,11 @@ public class Loop {
     }
 
     public boolean loopedForward() {
-        return this.finishedLoop(this.backcast(), this.position);
+        return this.finishedLoop(this.last, this.position);
     }
 
     public byte goForward() {
-        this.position = this.forecast();
-        return position;
+        return this.updatePosition(this.forecast());
     }
 
 
@@ -175,8 +176,15 @@ public class Loop {
     }
 
 
-    private boolean finishedLoop(final byte newPosition, final byte oldPosition) {
-        return newPosition > this.POINT && oldPosition <= this.POINT;
+    private byte updatePosition(final byte newPosition) {
+        this.last = this.position;
+        this.position = newPosition;
+        return position;
+    }
+
+    private boolean finishedLoop(final byte oldPosition, final byte newPosition) {
+        // TODO: allow to circle through only 1 elem
+        return newPosition >= this.POINT && (oldPosition < this.POINT || oldPosition > newPosition);
     }
 
     public String toString() {
