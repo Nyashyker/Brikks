@@ -91,22 +91,21 @@ public class Brikks implements GameSave {
             return;
         }
 
-
-        final String[] names = new String[playerCount];
-        for (byte i = 0; i < playerCount; i++) {
-            String name;
-            do {
-                name = this.view.askName((byte) (i + 1));
-                if (name == null) {
-                    return;
-                }
-            } while (this.saver.playerExists(name) && !this.view.askUseExistingPlayer(name));
-
-            names[i] = name;
-        }
-
-        // Save
+        // Players creation
         {
+            final String[] names = new String[playerCount];
+            for (byte i = 0; i < playerCount; i++) {
+                String name;
+                do {
+                    name = this.view.askName((byte) (i + 1));
+                    if (name == null) {
+                        return;
+                    }
+                } while (this.saver.playerExists(name) && !this.view.askUseExistingPlayer(name));
+
+                names[i] = name;
+            }
+
             this.players = new Player[playerCount];
             final PlayerSave[] playerSaves = this.saver.save(names, difficulty, duelMode);
             for (byte i = 0; i < playerCount; i++) {
@@ -187,7 +186,6 @@ public class Brikks implements GameSave {
         /*
          * -> false : exit
          */
-        // TODO: sxos' iz cym cyklom ne tak
         final Loop loopLoopPlayers = new Loop(this.turn, (byte) this.players.length);
         final Loop loopPlayers = new Loop((byte) this.players.length);
 
