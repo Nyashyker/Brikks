@@ -31,11 +31,11 @@ public class EmptySave extends Save {
     }
 
     @Override
-    public void save(final byte turn, final Position choice, final Position matrixDie) {
+    public void save(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
     @Override
-    public void update(final byte turn, final Position choice, final Position matrixDie) {
+    public void update(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
     @Override

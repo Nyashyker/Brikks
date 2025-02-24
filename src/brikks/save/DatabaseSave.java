@@ -229,7 +229,7 @@ public class DatabaseSave extends Save {
 
     private int getGeneratedID(final String sql) throws SQLException {
         this.dbc.executeUpdate(sql);
-        // TODO: this embeded methdot does not work - fix
+        // TODO: this embedded method does not work - fix
         final ResultSet getID = this.dbc.getGeneratedKeys();
         if (getID.next()) {
             return getID.getInt(1);
@@ -283,13 +283,14 @@ public class DatabaseSave extends Save {
     }
 
     @Override
-    public void save(final byte turn, final Position choice, final Position matrixDie) {
+    public void save(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
-            this.backup.save(turn, choice, matrixDie);
+            this.backup.save(turn, turnRotation, choice, matrixDie);
             return;
         }
 
         try {
+            // TODO: save turnRotation
             this.dbc.executeUpdate(String.format("""
                     INSERT INTO saved_games (save_id, turn, roll_column, roll_row, die_column, die_row)
                     VALUES (%d, %d, %d, %d, %d, %d);
@@ -297,20 +298,21 @@ public class DatabaseSave extends Save {
                     """, this.ID, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID, this.ID));
         } catch (SQLException _e) {
             this.fail = true;
-            this.backup.save(turn, choice, matrixDie);
+            this.backup.save(turn, turnRotation, choice, matrixDie);
         }
     }
 
 
     ///        Update
     @Override
-    public void update(final byte turn, final Position choice, final Position matrixDie) {
+    public void update(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
-            this.backup.update(turn, choice, matrixDie);
+            this.backup.update(turn, turnRotation, choice, matrixDie);
             return;
         }
 
         try {
+            // TODO: update turnRotation
             this.dbc.executeUpdate(String.format("""
                     UPDATE saved_games
                     SET turn=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
@@ -318,7 +320,7 @@ public class DatabaseSave extends Save {
                     """, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID));
         } catch (SQLException _e) {
             this.fail = true;
-            this.backup.update(turn, choice, matrixDie);
+            this.backup.update(turn, turnRotation, choice, matrixDie);
         }
     }
 
@@ -513,6 +515,8 @@ public class DatabaseSave extends Save {
             );
 
             final byte turn = stateSaved.getByte("turn");
+            // TODO: load turnRotation
+            final byte turnRotation = stateSaved.getByte("turnRotation");
             final byte dieRow = stateSaved.getByte("die_row");
             final byte dieColumn = stateSaved.getByte("die_column");
             final byte rollX = stateSaved.getByte("roll_row");
@@ -522,6 +526,7 @@ public class DatabaseSave extends Save {
                     players.toArray(Player[]::new),
                     new Position(dieRow, dieColumn),
                     turn,
+                    turnRotation,
                     new Position(rollX, rollY),
                     difficulty,
                     duelMode

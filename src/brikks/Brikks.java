@@ -29,6 +29,7 @@ public class Brikks implements GameSave {
 
     private Player[] players;
     private byte turn;
+    private byte turnRotation;
     private boolean firstSave;
 
 
@@ -143,6 +144,7 @@ public class Brikks implements GameSave {
 
         this.firstSave = true;
         this.turn = (byte) (playerCount - 1);
+        this.turnRotation = 0;
 
         if (this.rawRun(duelMode)) {
             this.end(difficulty, duelMode);
@@ -167,6 +169,7 @@ public class Brikks implements GameSave {
             difficulty = loaded.difficulty();
             duelMode = loaded.duel();
             this.turn = loaded.turn();
+            this.turnRotation = loaded.turnRotation();
             turnChoice = loaded.choice();
         }
         this.firstSave = false;
@@ -194,7 +197,8 @@ public class Brikks implements GameSave {
             plays = false;
             Position roll = null;
 
-            loopPlayers.setPosition(loopLoopPlayers.goForward());
+            this.turnRotation = loopLoopPlayers.goForward();
+            loopPlayers.setPosition(this.turnRotation);
             do {
                 if (this.players[loopPlayers.current()].isPlays()) {
                     plays = true;
@@ -211,7 +215,7 @@ public class Brikks implements GameSave {
                     return false;
                 }
                 loopPlayers.goForward();
-            } while (!loopPlayers.loopedForward());
+            } while (!loopPlayers.loopedForward() && this.players.length != 1);
         } while (plays);
 
         return true;
@@ -286,13 +290,13 @@ public class Brikks implements GameSave {
         if (this.firstSave) {
             this.firstSave = false;
 
-            this.saver.save(this.turn, choice, this.matrixDie.get());
+            this.saver.save(this.turn, this.turnRotation, choice, this.matrixDie.get());
             for (byte i = 0; i < this.players.length; i++) {
                 this.players[i].save(i);
             }
 
         } else {
-            this.saver.update(this.turn, choice, this.matrixDie.get());
+            this.saver.update(this.turn, this.turnRotation, choice, this.matrixDie.get());
             for (final Player player : this.players) {
                 player.update();
             }

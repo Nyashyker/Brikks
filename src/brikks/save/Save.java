@@ -22,9 +22,9 @@ public abstract class Save {
     ///        First save
     abstract public boolean playerExists(final String name);
     abstract public PlayerSave[] save(final String[] names, final Level difficulty, final boolean duel);
-    abstract public void save(final byte turn, final Position choice, final Position matrixDie);
+    abstract public void save(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie);
     ///        Update
-    abstract public void update(final byte turn, final Position choice, final Position matrixDie);
+    abstract public void update(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie);
     ///        Load
     abstract public List<PlayerLeaderboard> leaderboard();
     abstract public List<SavedGame> load();
