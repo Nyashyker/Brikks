@@ -141,7 +141,7 @@ public class Player implements Comparable<Player> {
         final byte index = (byte) (LocalTime.now().getNano() % variants.length);
         final PlacedBlock placed = new PlacedBlock(block, variants[index]);
 
-        this.board.place(placed);
+        this.board.place(placed, false);
     }
 
     public TurnsResults turn(final PlayerAsk user, final GameSave gameSave, final BlocksTable blocks, final MatrixDice matrixDie) {
@@ -210,7 +210,7 @@ public class Player implements Comparable<Player> {
                         }
                         final PlacedBlock placed = new PlacedBlock(block, choice);
 
-                        final byte duelBonus = this.board.place(placed);
+                        final byte duelBonus = this.board.place(placed, true);
                         user.successPlace(this, placed);
                         return new TurnsResults(false, false, duelBonus);
                     } else {
@@ -244,13 +244,13 @@ public class Player implements Comparable<Player> {
          */
 
         for (; amount > 0; amount--) {
-            final Position[] variants = this.board.canBePlacedDuel();
+            final Position[] variants = opponent.board.canBePlaced(BlocksTable.duelBlock);
             if (variants.length == 0) {
                 return true;
             }
 
             final Position choice = user.askPlacingMiniblock(opponent, variants);
-            opponent.board.opponentsPlace(choice);
+            opponent.board.place(new PlacedBlock(BlocksTable.duelBlock, choice), false);
         }
 
         return false;

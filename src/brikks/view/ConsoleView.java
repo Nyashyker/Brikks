@@ -161,7 +161,7 @@ public class ConsoleView extends View {
         final StringBuilder columnNumber = new StringBuilder();
         columnNumber.append('|').append(" ".repeat(side + 1));
         for (byte i = 1; i <= Board.WIDTH; i++) {
-            columnNumber.append(this.normNumberLen(i, (byte) 2)).append(' ');
+            columnNumber.append(String.format("%02d", i)).append(' ');
         }
         // one space already added
         columnNumber.append(" ".repeat(side)).append('|');
@@ -234,7 +234,7 @@ public class ConsoleView extends View {
 
                 playerScreen[index].append("| ");
                 // Score for row
-                playerScreen[index].append(this.normNumberLen((byte) board.calculateRow(y), (byte) 2));
+                playerScreen[index].append(String.format("%02d", board.calculateRow(y)));
                 playerScreen[index].append("  ");
                 // Board itself
                 for (String cell : stringedBoard[y]) {
@@ -360,13 +360,7 @@ public class ConsoleView extends View {
         this.draw(player);
         this.showBlock(block);
 
-        final String[] stringedVariants = new String[variants.length];
-        for (byte i = 0; i < variants.length; i++) {
-            stringedVariants[i] = String.format(this.text.blockPosition(),
-                    variants[i].getX() + 1, Board.HEIGHT - variants[i].getY());
-        }
-
-        final byte choice = this.askUserChoice(this.text.askPlacingSpot(), stringedVariants, true);
+        final byte choice = this.askUserChoice(this.text.askPlacingSpot(), this.listPlaceVariants(variants), true);
         return choice == 0 ? null : variants[choice - 1];
     }
 
@@ -462,16 +456,12 @@ public class ConsoleView extends View {
     @Override
     public Position askPlacingMiniblock(final Player opponent, final Position[] variants) {
         this.draw(opponent);
-        this.showBlock(Board.duelBlock);
+        this.showBlock(BlocksTable.duelBlock);
 
-        final String[] stringedVariants = new String[variants.length];
-        for (byte i = 0; i < variants.length; i++) {
-            stringedVariants[i] = String.format("%d  %d", variants[i].getX(), variants[i].getY());
-        }
-
-        final byte choice = this.askUserChoice(this.text.askPlacingSpotDuel(), stringedVariants, false);
+        final byte choice = this.askUserChoice(this.text.askPlacingSpotDuel(), this.listPlaceVariants(variants), false);
         return variants[choice - 1];
     }
+
 
 
     private void goToMainMenuOnTap() {
@@ -479,22 +469,15 @@ public class ConsoleView extends View {
         keyboard.nextLine();
     }
 
-    private String normNumberLen(byte number, final byte len) {
-        if (number < 0) {
-            throw new IllegalArgumentException("Numbers less than zero is not supported for the moment");
+    private String[] listPlaceVariants(final Position[] variants) {
+        final String[] stringedVariants = new String[variants.length];
+
+        for (byte i = 0; i < variants.length; i++) {
+            stringedVariants[i] = String.format(this.text.blockPosition(),
+                    variants[i].getX() + 1, Board.HEIGHT - variants[i].getY());
         }
 
-        final StringBuilder normNumber = new StringBuilder();
-        while (number != 0) {
-            normNumber.append(number % 10);
-            number /= 10;
-        }
-
-        if (normNumber.length() <= len) {
-            normNumber.append("0".repeat(len - normNumber.length()));
-        }
-
-        return normNumber.reverse().toString();
+        return stringedVariants;
     }
 
     // Showers for blocks

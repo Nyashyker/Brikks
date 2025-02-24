@@ -23,6 +23,10 @@ public class Loop {
         this(start, (byte) 0, max, (byte) 1);
     }
 
+    public Loop(final byte start, final byte min, final byte max) {
+        this(start, min, max, (byte) 1);
+    }
+
     public Loop(final byte start, final byte min, final byte max, final byte step) {
         this.setRange(start, min, max);
         this.setStep(step);
@@ -41,7 +45,7 @@ public class Loop {
     }
 
     public void setPosition(final byte position) {
-        if ((this.MIN > position || position >= this.MAX) && this.MIN != this.MAX) {
+        if (this.MIN > position || position >= this.MAX) {
             throw new IllegalArgumentException("The start value must be in between min & max!");
         }
 
@@ -183,7 +187,6 @@ public class Loop {
     }
 
     private boolean finishedLoop(final byte oldPosition, final byte newPosition) {
-        // TODO: allow to circle through only 1 elem
         return newPosition >= this.POINT && (oldPosition < this.POINT || oldPosition > newPosition);
     }
 

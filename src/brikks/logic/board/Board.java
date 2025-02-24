@@ -1,5 +1,6 @@
 package brikks.logic.board;
 
+import brikks.BlocksTable;
 import brikks.essentials.*;
 import brikks.essentials.enums.*;
 import brikks.logic.BonusScore;
@@ -11,8 +12,6 @@ import java.util.List;
 public class Board {
     public static final byte WIDTH = 10;
     public static final byte HEIGHT = 11;
-
-    public static final Block duelBlock = new Block(new Position[]{new Position()}, Color.DUELER);
 
 
     private final List<PlacedBlock> placed;
@@ -93,54 +92,19 @@ public class Board {
     }
 
 
-    public Position[] canBePlacedDuel() {
-        List<Position> variants = this.used.canBePlaced(Board.duelBlock);
-
-        List<Position> placedMiniblock = new ArrayList<>();
-        for (final PlacedBlock placed : this.placed) {
-            if (placed.getColor() == Color.DUELER) {
-                placedMiniblock.add(placed.getPlace());
-            }
-        }
-
-        for (byte i = 0; i < variants.size(); ) {
-            boolean guessPlaceable = true;
-
-            for (final Position check : placedMiniblock) {
-                final byte distanceY = (byte) (Math.abs(variants.get(i).getY() - check.getY()));
-                final byte distanceX = (byte) (Math.abs(variants.get(i).getX() - check.getX()));
-
-                if (distanceY == 1 && distanceX == 0 || distanceY == 0 && distanceX == 1) {
-                    guessPlaceable = false;
-                    variants.remove(i);
-                    break;
-                }
-            }
-
-            if (guessPlaceable) {
-                i++;
-            }
-        }
-
-        return variants.toArray(Position[]::new);
-    }
-
     public Position[] canBePlaced(final Block block) {
         return this.used.canBePlaced(block).toArray(Position[]::new);
     }
 
-    public byte place(final PlacedBlock block) {
+    public byte place(final PlacedBlock block, final boolean grow) {
         this.used.place(block);
         this.placed.add(block);
 
-        return (byte) (this.energy.grow(this.energyBonus.place(block)) + this.bonusScore.growByBoard(this.used.rowsFilled(block)));
-    }
-
-    public void opponentsPlace(final Position position) {
-        final PlacedBlock miniblock = new PlacedBlock(Board.duelBlock, position);
-
-        this.used.place(miniblock);
-        this.placed.add(miniblock);
+        if (grow) {
+            return (byte) (this.energy.grow(this.energyBonus.place(block)) + this.bonusScore.growByBoard(this.used.rowsFilled(block)));
+        } else {
+            return (byte) 0;
+        }
     }
 
     public short calculateRow(final byte y) {

@@ -143,8 +143,9 @@ public class Brikks implements GameSave {
         }
 
         this.firstSave = true;
-        this.turn = 0;
-        if (this.startRun(duelMode)) {
+        this.turn = (byte) (playerCount - 1);
+
+        if (this.rawRun(duelMode)) {
             this.end(difficulty, duelMode);
         }
     }
@@ -169,25 +170,25 @@ public class Brikks implements GameSave {
             this.turn = loaded.turn();
             turnChoice = loaded.choice();
         }
+        this.firstSave = false;
 
         // Perform the turn on which was saved
         if (this.rawTurn(this.turn, turnChoice, duelMode)) {
             return;
         }
-        // TODO: go next turn
 
-        this.firstSave = false;
-        if (this.startRun(duelMode)) {
+        if (this.rawRun(duelMode)) {
             this.end(difficulty, duelMode);
         }
     }
 
 
-    private boolean startRun(final boolean duelMode) {
+    private boolean rawRun(final boolean duelMode) {
         /*
          * -> false : exit
          */
-        final Loop loopLoopPlayers = new Loop((byte) (this.players.length - 1), (byte) this.players.length);
+        // TODO: sxos' iz cym cyklom ne tak
+        final Loop loopLoopPlayers = new Loop(this.turn, (byte) this.players.length);
         final Loop loopPlayers = new Loop((byte) this.players.length);
 
         boolean plays;
@@ -195,11 +196,8 @@ public class Brikks implements GameSave {
             plays = false;
             Position roll = null;
 
-            for (
-                    loopPlayers.setPosition(loopLoopPlayers.goForward());
-                    !loopPlayers.loopedForward();
-                    loopPlayers.goForward()
-            ) {
+            loopPlayers.setPosition(loopLoopPlayers.goForward());
+            do {
                 if (this.players[loopPlayers.current()].isPlays()) {
                     plays = true;
                 } else {
@@ -214,7 +212,8 @@ public class Brikks implements GameSave {
                 if (turn) {
                     return false;
                 }
-            }
+                loopPlayers.goForward();
+            } while (!loopPlayers.loopedForward());
         } while (plays);
 
         return true;

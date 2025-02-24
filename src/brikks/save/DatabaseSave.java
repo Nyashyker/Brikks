@@ -490,7 +490,7 @@ public class DatabaseSave extends Save {
                         final byte blockColumn = boardSaved.getByte("table_column");
                         final Block block;
                         if (boardSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
-                            block = Board.duelBlock;
+                            block = BlocksTable.duelBlock;
                         } else {
                             block = blocksTable.getBlock(new Position(blockRow, blockColumn));
                         }

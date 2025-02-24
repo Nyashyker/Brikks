@@ -22,7 +22,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        runGame();
+        System.out.printf("%02d\n", 5);
+        //runGame();
     }
 
     private static void runGame() {

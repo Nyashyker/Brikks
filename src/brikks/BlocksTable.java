@@ -1,10 +1,13 @@
 package brikks;
 
 import brikks.essentials.*;
+import brikks.essentials.enums.Color;
 
 public class BlocksTable {
     public static final byte HEIGHT = 6;
     public static final byte WIDTH = 4;
+
+    public static final Block duelBlock = new Block(new Position[]{new Position()}, Color.DUELER);
 
     private final Block[][] blocks;
 
