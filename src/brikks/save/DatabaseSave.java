@@ -227,12 +227,12 @@ public class DatabaseSave extends Save {
         }
     }
 
-    private int getGeneratedID(final String sql) throws SQLException {
-        this.dbc.executeUpdate(sql);
-        // TODO: this embedded method does not work - fix
-        final ResultSet getID = this.dbc.getGeneratedKeys();
+    private int getGeneratedID(final String sql, final String idColumn) throws SQLException {
+        final ResultSet getID = this.dbc.executeQuery(sql + " RETURNING " + idColumn + ";");
         if (getID.next()) {
-            return getID.getInt(1);
+            int tmp = getID.getInt(1);
+            System.out.println("--- os'o ID = " + tmp + " ---");
+            return tmp;
         } else {
             throw new SQLException("ID did not generate");
         }
@@ -249,8 +249,8 @@ public class DatabaseSave extends Save {
         try {
             this.ID = this.getGeneratedID(String.format("""
                     INSERT INTO games (start_dt, end_dt, difficulty, duel)
-                    VALUES (NOW(), NULL, %d, %s);
-                    """, difficulty.ordinal(), duel ? "TRUE" : "FALSE"));
+                    VALUES (NOW(), NULL, %d, %s)
+                    """, difficulty.ordinal(), duel ? "TRUE" : "FALSE"), "game_id");
 
             for (byte i = 0; i < saves.length; i++) {
                 final int ID;
@@ -267,7 +267,8 @@ public class DatabaseSave extends Save {
                 } else {
                     // TODO: do something about problematic symbols in the name
                     ID = this.getGeneratedID(
-                            String.format("INSERT INTO players (name) VALUES ('%s');", names[i])
+                            String.format("INSERT INTO players (name) VALUES ('%s')", names[i]),
+                            "player_id"
                     );
                 }
 
