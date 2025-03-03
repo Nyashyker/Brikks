@@ -1,6 +1,7 @@
 package brikks.essentials;
 
 public class Loop {
+    @FunctionalInterface
     private interface ByteSupplier {
         byte perform();
     }
