@@ -1,18 +1,19 @@
 package brikks.essentials;
 
-import java.util.function.Supplier;
-
 public class Loop {
+    private interface ByteSupplier {
+        byte perform();
+    }
+
     private byte MIN;
     private byte MAX;
     private byte STEP;
 
     private byte position;
-    private byte last;
     private byte POINT;
 
-    private Supplier<Byte> toMove;
-    private Supplier<Byte> toBack;
+    private ByteSupplier forwarder;
+    private ByteSupplier backer;
 
 
     public Loop(final byte max) {
@@ -50,7 +51,6 @@ public class Loop {
         }
 
         this.position = position;
-        this.last = position;
         this.POINT = position;
     }
 
@@ -64,27 +64,27 @@ public class Loop {
             this.STEP = step;
 
             if (this.STEP == 1) {
-                this.toMove = this::simpleAdd;
-                this.toBack = this::simpleSubtract;
+                this.forwarder = this::simpleAdd;
+                this.backer = this::simpleSubtract;
             } else if (this.STEP > (this.MAX - this.MIN)) {
-                this.toMove = this::complexAdd;
-                this.toBack = this::complexSubtract;
+                this.forwarder = this::complexAdd;
+                this.backer = this::complexSubtract;
             } else {
-                this.toMove = this::add;
-                this.toBack = this::subtract;
+                this.forwarder = this::add;
+                this.backer = this::subtract;
             }
         } else {
             this.STEP = (byte) -step;
 
             if (this.STEP == 1) {
-                this.toMove = this::simpleSubtract;
-                this.toBack = this::simpleAdd;
+                this.forwarder = this::simpleSubtract;
+                this.backer = this::simpleAdd;
             } else if (this.STEP > (this.MAX - this.MIN)) {
-                this.toMove = this::complexSubtract;
-                this.toBack = this::complexAdd;
+                this.forwarder = this::complexSubtract;
+                this.backer = this::complexAdd;
             } else {
-                this.toMove = this::subtract;
-                this.toBack = this::add;
+                this.forwarder = this::subtract;
+                this.backer = this::add;
             }
         }
     }
@@ -95,11 +95,11 @@ public class Loop {
     }
 
     public boolean loopedBack() {
-        return this.finishedLoop(this.position, this.last);
+        return this.finishedLoop(this.position, this.forecast());
     }
 
     public byte backcast() {
-        return this.toBack.get();
+        return this.backer.perform();
     }
 
     public byte current() {
@@ -107,11 +107,11 @@ public class Loop {
     }
 
     public byte forecast() {
-        return this.toMove.get();
+        return this.forwarder.perform();
     }
 
     public boolean loopedForward() {
-        return this.finishedLoop(this.last, this.position);
+        return this.finishedLoop(this.backcast(), this.position);
     }
 
     public byte goForward() {
@@ -181,7 +181,6 @@ public class Loop {
 
 
     private byte updatePosition(final byte newPosition) {
-        this.last = this.position;
         this.position = newPosition;
         return position;
     }
