@@ -1,5 +1,6 @@
 package brikks.save;
 
+import brikks.BlocksTable;
 import brikks.Player;
 
 public abstract class PlayerSave {
@@ -14,7 +15,7 @@ public abstract class PlayerSave {
 
 
     ///        First save
-    abstract public void save(final Player player, final byte playerOrder);
+    abstract public void save(final BlocksTable blocksTable, final Player player, final byte playerOrder);
     ///        Update
     abstract public void setDuration();
     abstract public void updateDuration();

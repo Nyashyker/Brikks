@@ -7,6 +7,7 @@ import brikks.essentials.enums.Level;
 import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
+import brikks.logic.board.Board;
 import brikks.save.DatabaseConnection;
 import brikks.save.DatabaseSave;
 import brikks.save.EmptySave;
@@ -265,7 +266,10 @@ public class Main {
         ) {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
             save.dropDB();
-            save.recreateDB(BlocksTable.WIDTH,
+            save.recreateDB(
+                    Board.WIDTH,
+                    Board.HEIGHT,
+                    BlocksTable.WIDTH,
                     BlocksTable.HEIGHT,
                     Brikks.MAX_PLAYERS,
                     (byte) Level.values().length,

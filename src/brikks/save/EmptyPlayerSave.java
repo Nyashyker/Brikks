@@ -1,6 +1,7 @@
 package brikks.save;
 
 
+import brikks.BlocksTable;
 import brikks.Player;
 
 
@@ -8,13 +9,13 @@ public class EmptyPlayerSave extends PlayerSave {
     public EmptyPlayerSave() { super(null); }
 
     @Override
-    public void save(Player player, byte playerOrder) {}
+    public void save(final BlocksTable blocksTable, final Player player, final byte playerOrder) {}
     @Override
     public void setDuration() {}
     @Override
     public void updateDuration() {}
     @Override
-    public void update(Player player) {}
+    public void update(final Player player) {}
     @Override
-    public void save(short score) {}
+    public void save(final short score) {}
 }

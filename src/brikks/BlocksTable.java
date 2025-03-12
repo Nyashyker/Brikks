@@ -33,4 +33,22 @@ public class BlocksTable {
     public Block[][] getTable() {
         return this.blocks;
     }
+
+
+    public Position findOrigin(final Block block) {
+        if (block.equals(BlocksTable.duelBlock)) {
+            return null;
+        }
+
+        for (byte row = 0; row < BlocksTable.HEIGHT; row++) {
+            for (byte column = 0; column < BlocksTable.WIDTH; column++) {
+                if (this.blocks[row][column].equals(block)) {
+                    return new Position(column, row);
+                }
+            }
+        }
+
+        // Should not be reached
+        return null;
+    }
 }

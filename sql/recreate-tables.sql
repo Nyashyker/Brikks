@@ -96,8 +96,7 @@ CREATE TABLE IF NOT EXISTS saved_boards
     y            SMALLINT
         CONSTRAINT ch_y CHECK ( y >= 0 AND y < 6 ),
     energy_bonus SMALLINT
-        CONSTRAINT nn_energy_bonus NOT NULL
-        CONSTRAINT ch_energy_bonus CHECK ( energy_bonus >= 0 AND energy_bonus < 6 ),
+        CONSTRAINT ch_energy_bonus CHECK ( energy_bonus > 0 AND energy_bonus <= 6 ),
     block        SMALLINT
         CONSTRAINT nn_block NOT NULL
         CONSTRAINT fk_block REFERENCES blocks (block)
@@ -167,3 +166,6 @@ WHERE sg.save_id=1;
 SELECT player_id FROM players WHERE name='%s';
 SELECT * FROM players;
 SELECT * FROM games;
+SELECT * FROM players_games;
+SELECT * FROM saved_games;
+SELECT * FROM saved_players_games;

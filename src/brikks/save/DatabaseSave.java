@@ -59,6 +59,8 @@ public class DatabaseSave extends Save {
     }
 
     public void recreateDB(
+            final byte boardWidth,
+            final byte boardHeight,
             final byte tableWidth,
             final byte tableHeight,
             final byte maxPlayers,
@@ -128,7 +130,7 @@ public class DatabaseSave extends Save {
                         CONSTRAINT nn_plays NOT NULL,
                     bombs        SMALLINT
                         CONSTRAINT nn_bombs NOT NULL
-                        CONSTRAINT ch_bombs CHECK ( bombs >= 0 AND bombs < %d ),
+                        CONSTRAINT ch_bombs CHECK ( bombs >= 0 AND bombs <= %d ),
                     energy       SMALLINT
                         CONSTRAINT nn_energy NOT NULL
                         CONSTRAINT ch_energy CHECK ( energy >= 0 AND energy < %d ),
@@ -166,15 +168,14 @@ public class DatabaseSave extends Save {
                     y            SMALLINT
                         CONSTRAINT ch_y CHECK ( y >= 0 AND y < %d ),
                     energy_bonus SMALLINT
-                        CONSTRAINT nn_energy_bonus NOT NULL
-                        CONSTRAINT ch_energy_bonus CHECK ( energy_bonus >= 0 AND energy_bonus < %d ),
+                        CONSTRAINT ch_energy_bonus CHECK ( energy_bonus > 0 AND energy_bonus <= %d ),
                     block        SMALLINT
                         CONSTRAINT fk_block REFERENCES blocks (block)
                             ON DELETE RESTRICT
                         CONSTRAINT ch_block CHECK ( block >= 0 AND block < %d ),
                     CONSTRAINT pk_save_cell PRIMARY KEY (save_id, x, y)
                 );
-                """, tableWidth, tableHeight, maxEnergyBonus, tableWidth * tableHeight + 1));
+                """, boardWidth, boardHeight, maxEnergyBonus, tableWidth * tableHeight + 1));
         this.dbc.executeUpdate(String.format("""
                         CREATE TABLE IF NOT EXISTS players_games
                         (
@@ -221,7 +222,9 @@ public class DatabaseSave extends Save {
             final ResultSet player = this.dbc.executeQuery(String.format("SELECT * FROM players WHERE name='%s';",
                     name));
             return player.next();
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Cant check on Players existance");
+            System.out.println(_e.getMessage());
             this.fail = true;
             return this.backup.playerExists(name);
         }
@@ -248,8 +251,8 @@ public class DatabaseSave extends Save {
         final PlayerSave[] saves = new PlayerSave[names.length];
         try {
             this.ID = this.getGeneratedID(String.format("""
-                    INSERT INTO games (start_dt, end_dt, difficulty, duel)
-                    VALUES (NOW(), NULL, %d, %s)
+                    INSERT INTO games (start_dt, end_dt, difficulty, duel, save_id)
+                    VALUES (NOW(), NULL, %d, %s, NULL)
                     """, difficulty.ordinal(), duel ? "TRUE" : "FALSE"), "game_id");
 
             for (byte i = 0; i < saves.length; i++) {
@@ -272,10 +275,17 @@ public class DatabaseSave extends Save {
                     );
                 }
 
+                this.dbc.executeUpdate(String.format("""
+                        INSERT INTO players_games (game_id, player_id, save_id, duration, score)
+                        VALUES (%d, %d, %d, INTERVAL '0 seconds', 0)
+                        """, this.ID, ID, this.ID));
+
                 saves[i] = new DatabasePlayerSave(this.dbc, ID, backupPlayerSaves[i]);
             }
 
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Global forced save has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             return backupPlayerSaves;
         }
@@ -297,7 +307,9 @@ public class DatabaseSave extends Save {
                     VALUES (%d, %d, %d, %d, %d, %d);
                     UPDATE games SET save_id=%d WHERE game_id=%d;
                     """, this.ID, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID, this.ID));
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Global first save has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             this.backup.save(turn, turnRotation, choice, matrixDie);
         }
@@ -319,7 +331,9 @@ public class DatabaseSave extends Save {
                     SET turn=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
                     WHERE save_id=%d;
                     """, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID));
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Global save has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             this.backup.update(turn, turnRotation, choice, matrixDie);
         }
@@ -357,7 +371,9 @@ public class DatabaseSave extends Save {
 
                 leaderboard.add(new PlayerLeaderboard(name, startDT, endDT, duration, score));
             }
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Load leaderboard has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             return this.backup.leaderboard();
         }
@@ -373,11 +389,14 @@ public class DatabaseSave extends Save {
 
         final List<SavedGame> saved = new ArrayList<>();
         try {
+            System.out.println("Start load");
             final ResultSet variants = this.dbc.executeQuery(
-                    "SELECT g.game_id, g.start_dt FROM games g WHERE g.end_dt IS NULL ORDER BY g.start_dt DESC;"
+                    "SELECT g.game_id FROM games g WHERE g.save_id IS NOT NULL ORDER BY g.start_dt DESC;"
             );
+            System.out.println("Start list variants");
             while (variants.next()) {
                 final int ID = variants.getInt("game_id");
+                System.out.println("Game ID getted " + ID);
                 final ResultSet variant = this.dbc.executeQuery(
                         String.format("""
                                 SELECT p.name
@@ -388,18 +407,25 @@ public class DatabaseSave extends Save {
                                 ORDER BY spg.player_order ASC;
                                 """, ID)
                 );
+                System.out.println("Select performed");
 
-                final List<String> names = new ArrayList<>(4);
+                final List<String> names = new ArrayList<>(Brikks.MAX_PLAYERS);
+                System.out.println("Before the fail");
                 while (variant.next()) {
+                    System.out.println("Try to take the field");
                     // TODO: do something about problematic symbols in the name
                     names.add(variant.getString("name"));
+                    System.out.println("Name retrived " + names.getLast());
                 }
 
                 final LocalDateTime start = variants.getTimestamp("start_dt").toLocalDateTime();
+                System.out.println("DateTime loaded");
 
                 saved.add(new SavedGame(ID, names, start));
             }
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Loading has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             return this.backup.load();
         }
@@ -486,8 +512,8 @@ public class DatabaseSave extends Save {
                         final byte x = boardSaved.getByte("x");
                         final byte y = boardSaved.getByte("y");
 
-                        final Color color = Color.values()[boardSaved.getByte("energy_bonus")];
-                        energyBonus[y][x] = color;
+                        final byte colorID = boardSaved.getByte("energy_bonus");
+                        energyBonus[y][x] = colorID == 0 ? null : Color.values()[colorID - 1];
 
                         final byte blockRow = boardSaved.getByte("table_row");
                         final byte blockColumn = boardSaved.getByte("table_column");
@@ -533,7 +559,9 @@ public class DatabaseSave extends Save {
                     duelMode
             );
 
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Load loads variants has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             return backupLoadedGame;
         }
@@ -559,7 +587,9 @@ public class DatabaseSave extends Save {
                             """, this.ID, this.ID)
             );
             // Respective parts of SAVED_BOARDS are deleted automatically with SAVED_PLAYERS_GAMES
-        } catch (SQLException _e) {
+        } catch (final SQLException _e) {
+            System.out.println("Dropping the save has failed");
+            System.out.println(_e.getMessage());
             this.fail = true;
             this.backup.dropSave();
         }

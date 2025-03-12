@@ -1,6 +1,7 @@
 package brikks.essentials;
 
-import brikks.essentials.enums.*;
+import brikks.BlocksTable;
+import brikks.essentials.enums.Color;
 
 import java.util.Arrays;
 
@@ -65,6 +66,37 @@ public class Block {
 
         return new Block(shape, color);
     }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Block block)) {
+            return false;
+        } else {
+            if (this.hashCode() != block.hashCode()) {
+                return false;
+            }
+
+            return Arrays.equals(this.shape, block.shape) && this.color == block.color;
+        }
+    }
+
+    public boolean equals(final Block other) {
+        if (this.hashCode() != other.hashCode()) {
+            return false;
+        }
+
+        return Arrays.equals(this.shape, other.shape) && this.color == other.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return BlocksTable.WIDTH * BlocksTable.HEIGHT * Arrays.hashCode(this.shape) + this.color.hashCode();
+    }
+
 
     @Override
     public String toString() {
