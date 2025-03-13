@@ -134,10 +134,6 @@ public class DatabasePlayerSave extends PlayerSave {
 
     @Override
     public void updateDuration() {
-        if (this.saveID == -1) {
-            throw new IllegalArgumentException("SaveID has not been generated yet, but `updateDuration` uses it");
-        }
-
         if (this.fail) {
             this.backup.updateDuration();
             return;
@@ -148,9 +144,10 @@ public class DatabasePlayerSave extends PlayerSave {
         }
 
         final String sql = String.format(
-                "UPDATE players_games SET duration = duration + interval '%d seconds' WHERE save_id = %d;",
+                "UPDATE players_games SET duration = duration + interval '%d seconds' WHERE player_id = %d AND game_id = %d;",
                 Duration.between(this.lastDurationUpdate, LocalTime.now()).getSeconds(),
-                this.saveID
+                this.playerID,
+                this.gameID
         );
 
         try {
