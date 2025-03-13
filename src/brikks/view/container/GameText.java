@@ -10,6 +10,7 @@ public record GameText(
         String[] menuVariants,
 
         String leaderboard,
+        String none,
 
         String askUseExistingPlayer,
 

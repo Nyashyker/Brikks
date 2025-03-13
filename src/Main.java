@@ -43,6 +43,7 @@ public class Main {
                             "Вийти"
                     },
                     "ТАБЛИЦЯ ЛІДЕРІВ",
+                    "НІЦ",
                     "Гравець із таким ім'ям уже існує. Бажаєте використати його? ",
                     "Оберіть рівень складности:",
                     new String[]{
@@ -117,6 +118,7 @@ public class Main {
                             "Exit"
                     },
                     "LEADERBOARD",
+                    "NONE",
                     "A player with this name already exists. Do you want to use it? ",
                     "Choose difficulty level:",
                     new String[]{
@@ -191,6 +193,7 @@ public class Main {
                             "Изход"
                     },
                     "КЛАСАЦИЯ",
+                    "Нищо",
                     "Играч с такова име вече съществува. Искате ли да го използвате?",
                     "Изберете трудност:",
                     new String[]{

@@ -19,6 +19,7 @@ import brikks.view.View;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -366,7 +367,15 @@ public class DatabaseSave extends Save {
                 // TODO: do something about problematic symbols in the name
                 final String name = board.getString("name");
                 final LocalDateTime startDT = board.getTimestamp("start_dt").toLocalDateTime();
-                final LocalDateTime endDT = board.getTimestamp("end_dt").toLocalDateTime();
+                final LocalDateTime endDT;
+                {
+                    final Timestamp tmpEndDT = board.getTimestamp("end_dt");
+                    if (tmpEndDT == null) {
+                        endDT = null;
+                    } else {
+                        endDT = tmpEndDT.toLocalDateTime();
+                    }
+                }
 
                 final LocalDateTime duration = board.getTimestamp("duration").toLocalDateTime();
 

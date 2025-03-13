@@ -78,7 +78,11 @@ public class ConsoleView extends View {
         final DateTimeFormatter duration = DateTimeFormatter.ofPattern("D HH:mm:ss");
         for (final PlayerLeaderboard player : players) {
             System.out.printf("%s - (%s - %s) %s - %d\n",
-                    player.name(), player.startDateTime().format(start), player.endDateTime().format(end), player.duration().format(duration), player.score());
+                    player.name(),
+                    player.startDateTime().format(start),
+                    player.endDateTime() == null ? this.text.none() : player.endDateTime().format(end),
+                    player.duration().format(duration),
+                    player.score());
         }
         System.out.println();
 
