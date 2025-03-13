@@ -282,6 +282,7 @@ public class DatabaseSave extends Save {
                         VALUES (%d, %d, NULL, INTERVAL '0 seconds', 0)
                         """, this.gameID, playerID));
 
+                System.out.println("Assigned players ID = " + playerID + " --- gameID="+ this.gameID);
                 saves[i] = new DatabasePlayerSave(this.dbc, this.gameID, playerID, backupPlayerSaves[i]);
             }
 
@@ -408,10 +409,6 @@ public class DatabaseSave extends Save {
 
             while (variants.next()) {
                 final int checkID = variants.getInt("game_id");
-                start = variants.getTimestamp("start_dt").toLocalDateTime();
-
-                // TODO: do something about problematic symbols in the name
-                names.add(variants.getString("name"));
 
                 if (gameID == -1) {
                     gameID = checkID;
@@ -419,6 +416,11 @@ public class DatabaseSave extends Save {
                     saved.add(new SavedGame(gameID, names, start));
                     names = new ArrayList<>(Brikks.MAX_PLAYERS);
                 }
+
+                start = variants.getTimestamp("start_dt").toLocalDateTime();
+
+                // TODO: do something about problematic symbols in the name
+                names.add(variants.getString("name"));
             }
 
             if (start != null) {

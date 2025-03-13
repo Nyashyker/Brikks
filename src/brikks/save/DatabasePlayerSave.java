@@ -24,7 +24,7 @@ public class DatabasePlayerSave extends PlayerSave {
 
 
     public DatabasePlayerSave(final DatabaseConnection dbc, final int gameID, final int playerID, final PlayerSave backup) {
-        this(dbc, playerID, gameID, -1, backup);
+        this(dbc, gameID, playerID, -1, backup);
     }
 
     public DatabasePlayerSave(final DatabaseConnection dbc, final int gameID, final int playerID, final int saveID, final PlayerSave backup) {
@@ -109,6 +109,7 @@ public class DatabasePlayerSave extends PlayerSave {
                     "UPDATE players_games SET save_id = %d WHERE game_id = %d AND player_id = %d;",
                     this.saveID, this.gameID, this.playerID
             ));
+            System.out.println("Player " + player.name + " id=" + this.playerID + ", game="+this.gameID+", save=" + this.saveID);
 
             this.saveBoard(player.getBoard(), blocksTable);
         } catch (final SQLException _e) {

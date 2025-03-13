@@ -180,8 +180,10 @@ SELECT *
 FROM players;
 SELECT *
 FROM games;
-SELECT *
-FROM players_games;
+SELECT game_id, p.player_id, name, save_id, duration, score
+    FROM players_games
+INNER JOIN players p on p.player_id = players_games.player_id
+ORDER BY game_id, player_id, save_id;
 SELECT *
 FROM saved_games;
 SELECT *
