@@ -67,6 +67,6 @@ abstract class EnergyBonusBoard {
     }
 
 
-    // TODO: clear the space after block overlapped
+    // TODO: clear the space after block overlapped // Ce vazxlyvo dl'a pravyl'nogo zavantazxenn'a
     abstract public byte place(PlacedBlock block);
 }

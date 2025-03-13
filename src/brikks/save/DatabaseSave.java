@@ -8,10 +8,10 @@ import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
 import brikks.essentials.enums.Level;
-import brikks.logic.board.Board;
 import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
+import brikks.logic.board.Board;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class DatabaseSave extends Save {
     private final DatabaseConnection dbc;
-    private int ID;
+    private int gameID;
 
 
     public DatabaseSave(final DatabaseConnection dbc, final Save backupSaver) {
@@ -230,10 +230,11 @@ public class DatabaseSave extends Save {
         }
     }
 
-    private int getGeneratedID(final String sql, final String idColumn) throws SQLException {
-        final ResultSet getID = this.dbc.executeQuery(sql + " RETURNING " + idColumn + ";");
+    static int getGeneratedID(final DatabaseConnection dbc, final String sql, final String idColumn) throws SQLException {
+        final ResultSet getID = dbc.executeQuery(sql + " RETURNING " + idColumn + ";");
         if (getID.next()) {
             int tmp = getID.getInt(1);
+            // TODO: remove debug
             System.out.println("--- os'o ID = " + tmp + " ---");
             return tmp;
         } else {
@@ -250,26 +251,27 @@ public class DatabaseSave extends Save {
 
         final PlayerSave[] saves = new PlayerSave[names.length];
         try {
-            this.ID = this.getGeneratedID(String.format("""
+            this.gameID = DatabaseSave.getGeneratedID(this.dbc, String.format("""
                     INSERT INTO games (start_dt, end_dt, difficulty, duel, save_id)
                     VALUES (NOW(), NULL, %d, %s, NULL)
                     """, difficulty.ordinal(), duel ? "TRUE" : "FALSE"), "game_id");
 
             for (byte i = 0; i < saves.length; i++) {
-                final int ID;
+                final int playerID;
                 if (this.playerExists(names[i])) {
                     // TODO: do something about problematic symbols in the name
                     final ResultSet getID = this.dbc.executeQuery(
                             String.format("SELECT player_id FROM players WHERE name='%s';", names[i])
                     );
                     if (getID.next()) {
-                        ID = getID.getInt(1);
+                        playerID = getID.getInt(1);
                     } else {
                         throw new SQLException("No ID found for existing player");
                     }
                 } else {
                     // TODO: do something about problematic symbols in the name
-                    ID = this.getGeneratedID(
+                    playerID = DatabaseSave.getGeneratedID(
+                            this.dbc,
                             String.format("INSERT INTO players (name) VALUES ('%s')", names[i]),
                             "player_id"
                     );
@@ -277,10 +279,10 @@ public class DatabaseSave extends Save {
 
                 this.dbc.executeUpdate(String.format("""
                         INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-                        VALUES (%d, %d, %d, INTERVAL '0 seconds', 0)
-                        """, this.ID, ID, this.ID));
+                        VALUES (%d, %d, NULL, INTERVAL '0 seconds', 0)
+                        """, this.gameID, playerID));
 
-                saves[i] = new DatabasePlayerSave(this.dbc, ID, backupPlayerSaves[i]);
+                saves[i] = new DatabasePlayerSave(this.dbc, this.gameID, playerID, backupPlayerSaves[i]);
             }
 
         } catch (final SQLException _e) {
@@ -306,7 +308,7 @@ public class DatabaseSave extends Save {
                     INSERT INTO saved_games (save_id, turn, roll_column, roll_row, die_column, die_row)
                     VALUES (%d, %d, %d, %d, %d, %d);
                     UPDATE games SET save_id=%d WHERE game_id=%d;
-                    """, this.ID, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID, this.ID));
+                    """, this.gameID, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID, this.gameID));
         } catch (final SQLException _e) {
             System.out.println("Global first save has failed");
             System.out.println(_e.getMessage());
@@ -330,7 +332,7 @@ public class DatabaseSave extends Save {
                     UPDATE saved_games
                     SET turn=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
                     WHERE save_id=%d;
-                    """, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.ID));
+                    """, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID));
         } catch (final SQLException _e) {
             System.out.println("Global save has failed");
             System.out.println(_e.getMessage());
@@ -389,40 +391,40 @@ public class DatabaseSave extends Save {
 
         final List<SavedGame> saved = new ArrayList<>();
         try {
-            System.out.println("Start load");
+            int gameID = -1;
+            List<String> names = new ArrayList<>(Brikks.MAX_PLAYERS);
+            LocalDateTime start = null;
+
             final ResultSet variants = this.dbc.executeQuery(
-                    "SELECT g.game_id FROM games g WHERE g.save_id IS NOT NULL ORDER BY g.start_dt DESC;"
+                    """
+                            SELECT p.name, pg.game_id, g.start_dt
+                            FROM saved_players_games spg
+                                     INNER JOIN players_games pg ON spg.save_id = pg.save_id
+                                     INNER JOIN players p ON p.player_id = pg.player_id
+                                     INNER JOIN games g on g.game_id = pg.game_id
+                            ORDER BY g.start_dt DESC, pg.game_id ASC, spg.player_order ASC;
+                            """
             );
-            System.out.println("Start list variants");
+
             while (variants.next()) {
-                final int ID = variants.getInt("game_id");
-                System.out.println("Game ID getted " + ID);
-                final ResultSet variant = this.dbc.executeQuery(
-                        String.format("""
-                                SELECT p.name
-                                FROM saved_players_games spg
-                                INNER JOIN players_games pg ON spg.save_id = pg.save_id
-                                INNER JOIN players p ON p.player_id = pg.player_id
-                                WHERE pg.game_id=%d
-                                ORDER BY spg.player_order ASC;
-                                """, ID)
-                );
-                System.out.println("Select performed");
+                final int checkID = variants.getInt("game_id");
+                start = variants.getTimestamp("start_dt").toLocalDateTime();
 
-                final List<String> names = new ArrayList<>(Brikks.MAX_PLAYERS);
-                System.out.println("Before the fail");
-                while (variant.next()) {
-                    System.out.println("Try to take the field");
-                    // TODO: do something about problematic symbols in the name
-                    names.add(variant.getString("name"));
-                    System.out.println("Name retrived " + names.getLast());
+                // TODO: do something about problematic symbols in the name
+                names.add(variants.getString("name"));
+
+                if (gameID == -1) {
+                    gameID = checkID;
+                } else if (checkID != gameID) {
+                    saved.add(new SavedGame(gameID, names, start));
+                    names = new ArrayList<>(Brikks.MAX_PLAYERS);
                 }
-
-                final LocalDateTime start = variants.getTimestamp("start_dt").toLocalDateTime();
-                System.out.println("DateTime loaded");
-
-                saved.add(new SavedGame(ID, names, start));
             }
+
+            if (start != null) {
+                saved.add(new SavedGame(gameID, names, start));
+            }
+            System.out.println("gameID=" + gameID + ", names=" + names + ", start=" + start);
         } catch (final SQLException _e) {
             System.out.println("Loading has failed");
             System.out.println(_e.getMessage());
@@ -448,7 +450,7 @@ public class DatabaseSave extends Save {
             return this.backup.load(ID, blocksTable);
         }
 
-        this.ID = ID;
+        this.gameID = ID;
 
         final LoadedGame game;
         try {
@@ -460,7 +462,7 @@ public class DatabaseSave extends Save {
                     INNER JOIN players p ON p.player_id = pg.player_id
                     WHERE pg.game_id=%d
                     ORDER BY spg.player_order DESC;
-                    """, this.ID)
+                    """, this.gameID)
             );
 
             final Level difficulty;
@@ -468,7 +470,7 @@ public class DatabaseSave extends Save {
             {
                 final ResultSet gameSaved = this.dbc.executeQuery(
                         String.format("SELECT g.difficulty, g.duel FROM games g WHERE g.game_id=%d;",
-                                this.ID)
+                                this.gameID)
                 );
                 if (!gameSaved.next()) {
                     throw new SQLException("No game");
@@ -481,7 +483,7 @@ public class DatabaseSave extends Save {
             {
                 byte i = 0;
                 while (playerSaved.next()) {
-                    final int playerID = playerSaved.getInt("save_id");
+                    final int saveID = playerSaved.getInt("save_id");
                     // TODO: do something about problematic symbols in the name
                     final String name = playerSaved.getString("name");
                     final boolean plays = playerSaved.getBoolean("plays");
@@ -499,7 +501,7 @@ public class DatabaseSave extends Save {
                                     LEFT OUTER JOIN blocks b on b.block = sb.block
                                     WHERE sb.save_id=%d
                                     ORDER BY sb.y DESC;
-                                    """, playerID)
+                                    """, saveID)
                     );
 
                     final Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
@@ -529,7 +531,7 @@ public class DatabaseSave extends Save {
 
                     final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
 
-                    players.add(new Player(new DatabasePlayerSave(this.dbc, playerID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
+                    players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, saveID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
                 }
             }
 
@@ -538,11 +540,10 @@ public class DatabaseSave extends Save {
                             SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
                             FROM saved_games sg
                             WHERE sg.save_id=%d;
-                            """, this.ID)
+                            """, this.gameID)
             );
 
             final byte turn = stateSaved.getByte("turn");
-            // TODO: load turnRotation
             final byte turnRotation = stateSaved.getByte("turnRotation");
             final byte dieRow = stateSaved.getByte("die_row");
             final byte dieColumn = stateSaved.getByte("die_column");
@@ -584,7 +585,7 @@ public class DatabaseSave extends Save {
                             DELETE FROM saved_games WHERE save_id=%d;
                             DELETE FROM saved_players_games WHERE save_id IN
                             (SELECT save_id FROM players_games WHERE game_id=%d);
-                            """, this.ID, this.ID)
+                            """, this.gameID, this.gameID)
             );
             // Respective parts of SAVED_BOARDS are deleted automatically with SAVED_PLAYERS_GAMES
         } catch (final SQLException _e) {

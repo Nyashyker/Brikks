@@ -130,16 +130,19 @@ public class ConsoleView extends View {
     @Override
     public SavedGame askChoiceSave(final List<SavedGame> variants) {
         final String[] textedVariants = new String[variants.size()];
+        final DateTimeFormatter start = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
         for (byte i = 0; i < textedVariants.length; i++) {
+            final SavedGame variant = variants.get(i);
+
             final StringBuilder played = new StringBuilder();
-            for (final String name : variants.get(i).playerNames()) {
+            for (final String name : variant.playerNames()) {
                 played.append(name);
                 played.append(", ");
             }
             played.delete(played.length() - 2, played.length());
 
-            textedVariants[i] = String.format("%s: %s", variants.get(i).startTime(), played);
+            textedVariants[i] = String.format("%s: %s", variant.startTime().format(start), played);
         }
 
         final byte choice = this.askUserChoice(this.text.askChoiceSave(), textedVariants, true);

@@ -261,8 +261,8 @@ public class Player implements Comparable<Player> {
         this.saver.save(blocksTable,this, order);
     }
 
-    public void update() {
-        this.saver.update(this);
+    public void update(final BlocksTable blocksTable) {
+        this.saver.update(this, blocksTable);
     }
 
 

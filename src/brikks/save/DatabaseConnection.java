@@ -29,6 +29,8 @@ public class DatabaseConnection implements AutoCloseable {
 
     @Override
     public void close() throws SQLException {
+        // TODO: remove debug
+        System.out.println("\t\t-- Zakryvajemos'a --");
         this.stmt.close();
         this.connection.close();
     }

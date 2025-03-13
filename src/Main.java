@@ -265,7 +265,7 @@ public class Main {
                 )
         ) {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
-            save.dropDB();
+            //save.dropDB();
             save.recreateDB(
                     Board.WIDTH,
                     Board.HEIGHT,

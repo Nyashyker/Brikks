@@ -123,49 +123,82 @@ CREATE TABLE IF NOT EXISTS players_games
 );
 
 
-INSERT INTO players (name) VALUES ('testuval''nyk 0');
-INSERT INTO players (name) VALUES ('testuval''nyk 2');
-INSERT INTO players (name) VALUES ('testuval''nyk 3');
+INSERT INTO players (name)
+VALUES ('testuval''nyk 0');
+INSERT INTO players (name)
+VALUES ('testuval''nyk 2');
+INSERT INTO players (name)
+VALUES ('testuval''nyk 3');
 INSERT INTO games (start_dt, end_dt, difficulty, duel, save_id)
 VALUES (TO_DATE('2025-01-07 12:00', 'YYYY-MM-DD HH:MI'), NOW(), 0, FALSE, NULL);
 INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
-VALUES (1,FALSE, 0, 0, 0, 0, 0);
+VALUES (1, FALSE, 0, 0, 0, 0, 0);
 INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
-VALUES (2,TRUE, 0, 0, 0, 0, 1);
+VALUES (2, TRUE, 0, 0, 0, 0, 1);
 INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
-VALUES (3,TRUE, 0, 4, 0, 0, 3);
+VALUES (3, TRUE, 0, 4, 0, 0, 3);
 INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-VALUES (1, 1, 1, NOW()-TO_DATE('2025-01-05 12:00', 'YYYY-MM-DD HH24:MI'), 123);
+VALUES (1, 1, 1, NOW() - TO_DATE('2025-01-05 12:00', 'YYYY-MM-DD HH24:MI'), 123);
 INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-VALUES (1, 2, 2, NOW()-TO_DATE('2025-01-05 11:00', 'YYYY-MM-DD HH24:MI'), 150);
+VALUES (1, 2, 2, NOW() - TO_DATE('2025-01-05 11:00', 'YYYY-MM-DD HH24:MI'), 150);
 INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-VALUES (1, 3, 3, NOW()-TO_DATE('2025-01-05 13:00', 'YYYY-MM-DD HH24:MI'), 190);
+VALUES (1, 3, 3, NOW() - TO_DATE('2025-01-05 13:00', 'YYYY-MM-DD HH24:MI'), 190);
 INSERT INTO saved_boards (save_id, x, y, energy_bonus, block)
 VALUES (1, 0, 0, 1, 24);
-SELECT * FROM saved_players_games;
-DELETE FROM saved_players_games WHERE save_id IN (SELECT save_id FROM players_games WHERE game_id = 1);
-SELECT * FROM saved_boards;
-SELECT * FROM players_games;
+SELECT *
+FROM saved_players_games;
+DELETE
+FROM saved_players_games
+WHERE save_id IN (SELECT save_id FROM players_games WHERE game_id = 1);
+SELECT *
+FROM saved_boards;
+SELECT *
+FROM players_games;
 
 SELECT g.game_id
 FROM games g
 WHERE g.end_dt IS NULL;
 
-UPDATE saved_players_games SET player_order=2 WHERE player_order=0;
+UPDATE saved_players_games
+SET player_order=2
+WHERE player_order = 0;
 
 SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
 FROM saved_boards sb
-LEFT OUTER JOIN blocks b on b.block = sb.block
-WHERE sb.save_id=1
+         LEFT OUTER JOIN blocks b on b.block = sb.block
+WHERE sb.save_id = 1
 ORDER BY sb.y DESC;
 
 SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
 FROM saved_games sg
-WHERE sg.save_id=1;
+WHERE sg.save_id = 1;
 
-SELECT player_id FROM players WHERE name='%s';
-SELECT * FROM players;
-SELECT * FROM games;
-SELECT * FROM players_games;
-SELECT * FROM saved_games;
-SELECT * FROM saved_players_games;
+SELECT player_id
+FROM players
+WHERE name = '%s';
+SELECT *
+FROM players;
+SELECT *
+FROM games;
+SELECT *
+FROM players_games;
+SELECT *
+FROM saved_games;
+SELECT *
+FROM saved_players_games;
+SELECT *
+FROM saved_boards;
+SELECT *
+FROM blocks;
+
+UPDATE players_games
+SET save_id = 1
+WHERE game_id = 1
+  AND player_id = 1;
+
+SELECT p.name, pg.game_id, g.start_dt
+FROM saved_players_games spg
+         INNER JOIN players_games pg ON spg.save_id = pg.save_id
+         INNER JOIN players p ON p.player_id = pg.player_id
+         INNER JOIN games g on g.game_id = pg.game_id
+ORDER BY g.start_dt DESC, pg.game_id ASC, spg.player_order ASC;

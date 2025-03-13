@@ -298,7 +298,7 @@ public class Brikks implements GameSave {
         } else {
             this.saver.update(this.turn, this.turnRotation, choice, this.matrixDie.get());
             for (final Player player : this.players) {
-                player.update();
+                player.update(this.blocksTable);
             }
         }
     }
