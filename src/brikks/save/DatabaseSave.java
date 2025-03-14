@@ -283,7 +283,7 @@ public class DatabaseSave extends Save {
                         VALUES (%d, %d, NULL, INTERVAL '0 seconds', 0)
                         """, this.gameID, playerID));
 
-                System.out.println("Assigned players ID = " + playerID + " --- gameID="+ this.gameID);
+                System.out.println("Assigned players ID = " + playerID + " --- gameID=" + this.gameID);
                 saves[i] = new DatabasePlayerSave(this.dbc, this.gameID, playerID, backupPlayerSaves[i]);
             }
 
@@ -422,6 +422,7 @@ public class DatabaseSave extends Save {
                 if (gameID == -1) {
                     gameID = checkID;
                 } else if (checkID != gameID) {
+                    gameID = checkID;
                     saved.add(new SavedGame(gameID, names, start));
                     names = new ArrayList<>(Brikks.MAX_PLAYERS);
                 }
@@ -466,100 +467,125 @@ public class DatabaseSave extends Save {
         final LoadedGame game;
         try {
             final List<Player> players = new ArrayList<>(Brikks.MAX_PLAYERS);
-            final ResultSet playerSaved = this.dbc.executeQuery(String.format("""
-                    SELECT pg.save_id, p.name, spg.plays, spg.energy, spg.energy_left, spg.bombs, spg.bonus_score
+            final ResultSet gameSaved = this.dbc.executeQuery(String.format("""
+                    SELECT g.difficulty,
+                           g.duel,
+                           pg.save_id,
+                           p.name,
+                           spg.plays,
+                           sb.x,
+                           sb.y,
+                           sb.energy_bonus,
+                           b.block,
+                           b.table_row,
+                           b.table_column,
+                           spg.energy,
+                           spg.energy_left,
+                           spg.bombs,
+                           spg.bonus_score,
+                           sg.turn,
+                           sg.die_row,
+                           sg.die_column,
+                           sg.roll_row,
+                           sg.roll_column
                     FROM saved_players_games spg
-                    INNER JOIN players_games pg ON spg.save_id = pg.save_id
-                    INNER JOIN players p ON p.player_id = pg.player_id
-                    WHERE pg.game_id=%d
+                             INNER JOIN players_games pg ON spg.save_id = pg.save_id
+                             INNER JOIN players p ON p.player_id = pg.player_id
+                             INNER JOIN games g ON g.game_id = pg.game_id
+                             INNER JOIN saved_games sg ON sg.save_id = g.save_id
+                             INNER JOIN saved_boards sb ON spg.save_id = sb.save_id
+                             INNER JOIN blocks b ON b.block = sb.block
+                    WHERE pg.game_id = %d
                     ORDER BY spg.player_order DESC;
                     """, this.gameID)
             );
 
-            final Level difficulty;
-            final boolean duelMode;
-            {
-                final ResultSet gameSaved = this.dbc.executeQuery(
-                        String.format("SELECT g.difficulty, g.duel FROM games g WHERE g.game_id=%d;",
-                                this.gameID)
-                );
-                if (!gameSaved.next()) {
-                    throw new SQLException("No game");
-                }
 
-                difficulty = Level.values()[gameSaved.getByte("difficulty")];
-                duelMode = gameSaved.getBoolean("duel");
-            }
-
+            Level difficulty = Level.TWO;
+            boolean duelMode = false;
+            byte turn = 0;
+            byte turnRotation = 0;
+            byte dieRow = 0;
+            byte dieColumn = 0;
+            byte rollX = 0;
+            byte rollY = 0;
             {
+                int saveID = -1;
+                String name = null;
+                boolean plays = false;
+
+                BonusScore bonusScore = null;
+                byte energyPosition = -1;
+                byte energyAvailable = -1;
+                Energy energy = null;
+                Bombs bombs = null;
+
+                List<PlacedBlock> placedBlocks = new ArrayList<>();
+                Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
+
                 byte i = 0;
-                while (playerSaved.next()) {
-                    final int saveID = playerSaved.getInt("save_id");
-                    // TODO: do something about problematic symbols in the name
-                    final String name = playerSaved.getString("name");
-                    final boolean plays = playerSaved.getBoolean("plays");
+                while (gameSaved.next()) {
+                    final int checkID = gameSaved.getInt("save_id");
 
-                    final BonusScore bonusScore = new BonusScore(playerSaved.getByte("bonus_score"));
-                    final byte energyPosition = playerSaved.getByte("energy");
-                    final byte energyAvailable = playerSaved.getByte("energy_left");
-                    final Energy energy = new Energy(bonusScore, energyPosition, energyAvailable);
-                    final Bombs bombs = new Bombs(playerSaved.getByte("bombs"));
+                    if (checkID == -1) {
+                        difficulty = Level.values()[gameSaved.getByte("difficulty")];
+                        duelMode = gameSaved.getBoolean("duel");
 
-                    final ResultSet boardSaved = this.dbc.executeQuery(
-                            String.format("""
-                                    SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
-                                    FROM saved_boards sb
-                                    LEFT OUTER JOIN blocks b on b.block = sb.block
-                                    WHERE sb.save_id=%d
-                                    ORDER BY sb.y DESC;
-                                    """, saveID)
-                    );
+                        turn = gameSaved.getByte("turn");
+                        turnRotation = gameSaved.getByte("turnRotation");
+                        dieRow = gameSaved.getByte("die_row");
+                        dieColumn = gameSaved.getByte("die_column");
+                        rollX = gameSaved.getByte("roll_row");
+                        rollY = gameSaved.getByte("roll_column");
 
-                    final Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
-                    for (byte y = 0; y < energyBonus.length; y++) {
-                        energyBonus[y] = new Color[Board.WIDTH];
-                    }
+                        saveID = checkID;
+                    } else if (checkID != saveID) {
+                        saveID = checkID;
 
-                    final List<PlacedBlock> placedBlocks = new ArrayList<>();
-                    while (boardSaved.next()) {
-                        final byte x = boardSaved.getByte("x");
-                        final byte y = boardSaved.getByte("y");
+                        final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
+                        players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, saveID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
 
-                        final byte colorID = boardSaved.getByte("energy_bonus");
-                        energyBonus[y][x] = colorID == 0 ? null : Color.values()[colorID - 1];
-
-                        final byte blockRow = boardSaved.getByte("table_row");
-                        final byte blockColumn = boardSaved.getByte("table_column");
-                        final Block block;
-                        if (boardSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
-                            block = BlocksTable.duelBlock;
-                        } else {
-                            block = blocksTable.getBlock(new Position(blockRow, blockColumn));
+                        placedBlocks = new ArrayList<>();
+                        energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
+                        for (byte y = 0; y < energyBonus.length; y++) {
+                            energyBonus[y] = new Color[Board.WIDTH];
                         }
-
-                        placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
                     }
 
-                    final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
+                    // Player info
+                    // TODO: do something about problematic symbols in the name
+                    name = gameSaved.getString("name");
+                    plays = gameSaved.getBoolean("plays");
 
-                    players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, saveID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
+                    // Player status
+                    bonusScore = new BonusScore(gameSaved.getByte("bonus_score"));
+                    energyPosition = gameSaved.getByte("energy");
+                    energyAvailable = gameSaved.getByte("energy_left");
+                    energy = new Energy(bonusScore, energyPosition, energyAvailable);
+                    bombs = new Bombs(gameSaved.getByte("bombs"));
+
+
+                    // Block creation
+                    final byte x = gameSaved.getByte("x");
+                    final byte y = gameSaved.getByte("y");
+
+                    final byte colorID = gameSaved.getByte("energy_bonus");
+                    energyBonus[y][x] = colorID == 0 ? null : Color.values()[colorID - 1];
+
+                    final byte blockRow = gameSaved.getByte("table_row");
+                    final byte blockColumn = gameSaved.getByte("table_column");
+                    final Block block;
+                    if (gameSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
+                        block = BlocksTable.duelBlock;
+                    } else {
+                        block = blocksTable.getBlock(new Position(blockRow, blockColumn));
+                    }
+
+                    placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+
                 }
             }
 
-            final ResultSet stateSaved = this.dbc.executeQuery(
-                    String.format("""
-                            SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
-                            FROM saved_games sg
-                            WHERE sg.save_id=%d;
-                            """, this.gameID)
-            );
-
-            final byte turn = stateSaved.getByte("turn");
-            final byte turnRotation = stateSaved.getByte("turnRotation");
-            final byte dieRow = stateSaved.getByte("die_row");
-            final byte dieColumn = stateSaved.getByte("die_column");
-            final byte rollX = stateSaved.getByte("roll_row");
-            final byte rollY = stateSaved.getByte("roll_column");
 
             game = new LoadedGame(
                     players.toArray(Player[]::new),
@@ -575,6 +601,7 @@ public class DatabaseSave extends Save {
             System.out.println("Load loads variants has failed");
             System.out.println(_e.getMessage());
             this.fail = true;
+            System.exit(1);
             return backupLoadedGame;
         }
 

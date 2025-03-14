@@ -181,8 +181,8 @@ FROM players;
 SELECT *
 FROM games;
 SELECT game_id, p.player_id, name, save_id, duration, score
-    FROM players_games
-INNER JOIN players p on p.player_id = players_games.player_id
+FROM players_games
+         INNER JOIN players p on p.player_id = players_games.player_id
 ORDER BY game_id, player_id, save_id;
 SELECT *
 FROM saved_games;
@@ -193,14 +193,34 @@ FROM saved_boards;
 SELECT *
 FROM blocks;
 
-UPDATE players_games
-SET save_id = 1
-WHERE game_id = 1
-  AND player_id = 1;
 
-SELECT p.name, pg.game_id, g.start_dt
+
+SELECT g.difficulty,
+       g.duel,
+       pg.save_id,
+       p.name,
+       spg.plays,
+       sb.x,
+       sb.y,
+       sb.energy_bonus,
+       b.block,
+       b.table_row,
+       b.table_column,
+       spg.energy,
+       spg.energy_left,
+       spg.bombs,
+       spg.bonus_score,
+       sg.turn,
+       sg.die_row,
+       sg.die_column,
+       sg.roll_row,
+       sg.roll_column
 FROM saved_players_games spg
          INNER JOIN players_games pg ON spg.save_id = pg.save_id
          INNER JOIN players p ON p.player_id = pg.player_id
-         INNER JOIN games g on g.game_id = pg.game_id
-ORDER BY g.start_dt DESC, pg.game_id ASC, spg.player_order ASC;
+         INNER JOIN games g ON g.game_id = pg.game_id
+         INNER JOIN saved_games sg ON sg.save_id = g.save_id
+         INNER JOIN saved_boards sb ON spg.save_id = sb.save_id
+         INNER JOIN blocks b ON b.block = sb.block
+WHERE pg.game_id = 1
+ORDER BY spg.player_order DESC;
