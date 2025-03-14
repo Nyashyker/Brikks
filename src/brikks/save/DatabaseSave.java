@@ -81,6 +81,9 @@ public class DatabaseSave extends Save {
                     turn        SMALLINT
                         CONSTRAINT nn_turn NOT NULL
                         CONSTRAINT ch_turn CHECK ( turn >= 0 AND turn < %d ),
+                    turn_rotation SMALLINT
+                        CONSTRAINT nn_turn_rotation NOT NULL
+                        CONSTRAINT ch_turn_rotation CHECK ( turn >= 0 AND turn < %d ),
                     roll_column SMALLINT
                         CONSTRAINT nn_roll_column NOT NULL
                         CONSTRAINT ch_roll_column CHECK ( roll_column >= 0 AND roll_column < %d ),
@@ -94,7 +97,7 @@ public class DatabaseSave extends Save {
                         CONSTRAINT nn_die_row NOT NULL
                         CONSTRAINT ch_die_row CHECK ( die_row >= 0 AND die_row < %d )
                 );
-                """, maxPlayers, tableWidth, tableHeight, tableWidth, tableHeight));
+                """, maxPlayers, maxPlayers, tableWidth, tableHeight, tableWidth, tableHeight));
         this.dbc.executeUpdate(String.format("""
                 CREATE TABLE IF NOT EXISTS games
                 (
@@ -307,10 +310,10 @@ public class DatabaseSave extends Save {
         try {
             // TODO: save turnRotation
             this.dbc.executeUpdate(String.format("""
-                    INSERT INTO saved_games (save_id, turn, roll_column, roll_row, die_column, die_row)
-                    VALUES (%d, %d, %d, %d, %d, %d);
+                    INSERT INTO saved_games (save_id, turn, turn_rotation, roll_column, roll_row, die_column, die_row)
+                    VALUES (%d, %d, %d, %d, %d, %d, %d);
                     UPDATE games SET save_id=%d WHERE game_id=%d;
-                    """, this.gameID, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID, this.gameID));
+                    """, this.gameID, turn, turnRotation, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID, this.gameID));
         } catch (final SQLException _e) {
             System.out.println("Global first save has failed");
             System.out.println(_e.getMessage());
@@ -332,9 +335,9 @@ public class DatabaseSave extends Save {
             // TODO: update turnRotation
             this.dbc.executeUpdate(String.format("""
                     UPDATE saved_games
-                    SET turn=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
+                    SET turn=%d, turn_rotation=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
                     WHERE save_id=%d;
-                    """, turn, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID));
+                    """, turn, turnRotation, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID));
         } catch (final SQLException _e) {
             System.out.println("Global save has failed");
             System.out.println(_e.getMessage());
@@ -471,6 +474,7 @@ public class DatabaseSave extends Save {
                     SELECT g.difficulty,
                            g.duel,
                            pg.save_id,
+                           pg.player_id,
                            p.name,
                            spg.plays,
                            sb.x,
@@ -484,6 +488,7 @@ public class DatabaseSave extends Save {
                            spg.bombs,
                            spg.bonus_score,
                            sg.turn,
+                           sg.turn_rotation,
                            sg.die_row,
                            sg.die_column,
                            sg.roll_row,
@@ -511,6 +516,7 @@ public class DatabaseSave extends Save {
             byte rollY = 0;
             {
                 int saveID = -1;
+                int playerID = -1;
                 String name = null;
                 boolean plays = false;
 
@@ -527,23 +533,24 @@ public class DatabaseSave extends Save {
                 while (gameSaved.next()) {
                     final int checkID = gameSaved.getInt("save_id");
 
-                    if (checkID == -1) {
+                    if (saveID == -1) {
+                        saveID = checkID;
+
                         difficulty = Level.values()[gameSaved.getByte("difficulty")];
                         duelMode = gameSaved.getBoolean("duel");
 
                         turn = gameSaved.getByte("turn");
-                        turnRotation = gameSaved.getByte("turnRotation");
+                        turnRotation = gameSaved.getByte("turn_rotation");
                         dieRow = gameSaved.getByte("die_row");
                         dieColumn = gameSaved.getByte("die_column");
                         rollX = gameSaved.getByte("roll_row");
                         rollY = gameSaved.getByte("roll_column");
 
-                        saveID = checkID;
                     } else if (checkID != saveID) {
                         saveID = checkID;
 
                         final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
-                        players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, saveID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
+                        players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, playerID, saveID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
 
                         placedBlocks = new ArrayList<>();
                         energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
@@ -553,6 +560,7 @@ public class DatabaseSave extends Save {
                     }
 
                     // Player info
+                    playerID = gameSaved.getInt("player_id");
                     // TODO: do something about problematic symbols in the name
                     name = gameSaved.getString("name");
                     plays = gameSaved.getBoolean("plays");
@@ -582,7 +590,6 @@ public class DatabaseSave extends Save {
                     }
 
                     placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
-
                 }
             }
 

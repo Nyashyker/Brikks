@@ -1,6 +1,7 @@
 package brikks.save;
 
 import brikks.BlocksTable;
+import brikks.Brikks;
 import brikks.Player;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
@@ -51,7 +52,11 @@ public class EmptySave extends Save {
 
     @Override
     public LoadedGame load(final int ID, final BlocksTable blocksTable) {
-        return new LoadedGame(new Player[0], new Position(), (byte) 0, (byte) 0, new Position(), Level.TWO, false);
+        final Player[] players = new Player[Brikks.MAX_PLAYERS];
+        for (byte i = 0; i < players.length; i++) {
+            players[i] = new Player(new EmptyPlayerSave(), "", false, null, null, null, null);
+        }
+        return new LoadedGame(players, new Position(), (byte) 0, (byte) 0, new Position(), Level.TWO, false);
     }
 
     @Override

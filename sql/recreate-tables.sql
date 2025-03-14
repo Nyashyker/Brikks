@@ -8,21 +8,24 @@ DROP TABLE IF EXISTS saved_games;
 
 CREATE TABLE IF NOT EXISTS saved_games
 (
-    save_id     SERIAL
+    save_id       SERIAL
         CONSTRAINT pk_save_save_id PRIMARY KEY,
-    turn        SMALLINT
+    turn          SMALLINT
         CONSTRAINT nn_turn NOT NULL
         CONSTRAINT ch_turn CHECK ( turn >= 0 AND turn < 4 ),
-    roll_column SMALLINT
+    turn_rotation SMALLINT
+        CONSTRAINT nn_turn_rotation NOT NULL
+        CONSTRAINT ch_turn_rotation CHECK ( turn >= 0 AND turn < 4 ),
+    roll_column   SMALLINT
         CONSTRAINT nn_roll_column NOT NULL
         CONSTRAINT ch_roll_column CHECK ( roll_column >= 0 AND roll_column < 4 ),
-    roll_row    SMALLINT
+    roll_row      SMALLINT
         CONSTRAINT nn_roll_row NOT NULL
         CONSTRAINT ch_roll_row CHECK ( roll_row >= 0 AND roll_row < 6 ),
-    die_column  SMALLINT
+    die_column    SMALLINT
         CONSTRAINT nn_die_column NOT NULL
         CONSTRAINT ch_die_column CHECK ( die_column >= 0 AND die_column < 4 ),
-    die_row     SMALLINT
+    die_row       SMALLINT
         CONSTRAINT nn_die_row NOT NULL
         CONSTRAINT ch_die_row CHECK ( die_row >= 0 AND die_row < 6 )
 );
@@ -198,6 +201,7 @@ FROM blocks;
 SELECT g.difficulty,
        g.duel,
        pg.save_id,
+       pg.player_id,
        p.name,
        spg.plays,
        sb.x,
@@ -211,6 +215,7 @@ SELECT g.difficulty,
        spg.bombs,
        spg.bonus_score,
        sg.turn,
+       sg.turn_rotation,
        sg.die_row,
        sg.die_column,
        sg.roll_row,

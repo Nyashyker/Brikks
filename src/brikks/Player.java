@@ -76,18 +76,6 @@ public class Player implements Comparable<Player> {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
-        if (board == null) {
-            throw new IllegalArgumentException("Board cannot be null");
-        }
-        if (energy == null) {
-            throw new IllegalArgumentException("Energy cannot be null");
-        }
-        if (bombs == null) {
-            throw new IllegalArgumentException("Bombs cannot be null");
-        }
-        if (bonusScore == null) {
-            throw new IllegalArgumentException("BonusScore cannot be null");
-        }
 
 
         this.saver = saver;
