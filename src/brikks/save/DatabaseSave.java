@@ -574,22 +574,29 @@ public class DatabaseSave extends Save {
 
 
                     // Block creation
-                    final byte x = gameSaved.getByte("x");
-                    final byte y = gameSaved.getByte("y");
+                    {
+                        final byte x = gameSaved.getByte("x");
+                        final byte y = gameSaved.getByte("y");
 
-                    final byte colorID = gameSaved.getByte("energy_bonus");
-                    energyBonus[y][x] = colorID == 0 ? null : Color.values()[colorID - 1];
+                        final byte colorID = gameSaved.getByte("energy_bonus");
+                        energyBonus[y][x] = colorID == 0 ? null : Color.values()[colorID - 1];
 
-                    final byte blockRow = gameSaved.getByte("table_row");
-                    final byte blockColumn = gameSaved.getByte("table_column");
-                    final Block block;
-                    if (gameSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
-                        block = BlocksTable.duelBlock;
-                    } else {
-                        block = blocksTable.getBlock(new Position(blockRow, blockColumn));
+                        final byte blockRow = gameSaved.getByte("table_row");
+                        final byte blockColumn = gameSaved.getByte("table_column");
+                        final Block block;
+                        if (gameSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
+                            block = BlocksTable.duelBlock;
+                        } else {
+                            block = blocksTable.getBlock(new Position(blockColumn, blockRow));
+                        }
+
+                        placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
                     }
+                }
 
-                    placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+                if (saveID != -1) {
+                    final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
+                    players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, playerID, saveID, backupPlayerSaves[i]), name, plays, board, energy, bombs, bonusScore));
                 }
             }
 
