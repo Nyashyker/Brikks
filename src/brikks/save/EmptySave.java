@@ -54,7 +54,7 @@ public class EmptySave extends Save {
     public LoadedGame load(final int ID, final BlocksTable blocksTable) {
         final Player[] players = new Player[Brikks.MAX_PLAYERS];
         for (byte i = 0; i < players.length; i++) {
-            players[i] = new Player(new EmptyPlayerSave(), "", false, null, null, null, null);
+            players[i] = new Player(new EmptyPlayerSave(), "EMPTY-" + (i + 1), Brikks.MAX_PLAYERS, Level.TWO);
         }
         return new LoadedGame(players, new Position(), (byte) 0, (byte) 0, new Position(), Level.TWO, false);
     }
