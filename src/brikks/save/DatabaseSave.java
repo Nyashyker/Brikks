@@ -237,8 +237,7 @@ public class DatabaseSave extends Save {
     static int getGeneratedID(final DatabaseConnection dbc, final String sql, final String idColumn) throws SQLException {
         final ResultSet getID = dbc.executeQuery(sql + " RETURNING " + idColumn + ";");
         if (getID.next()) {
-            int tmp = getID.getInt(1);
-            return tmp;
+            return getID.getInt(1);
         } else {
             throw new SQLException("ID did not generate");
         }
@@ -574,19 +573,23 @@ public class DatabaseSave extends Save {
                         final byte x = gameSaved.getByte("x");
                         final byte y = gameSaved.getByte("y");
 
-                        final byte colorID = gameSaved.getByte("energy_bonus");
-                        energyBonus[y][x] = colorID == 0 ? null : Color.values()[colorID - 1];
-
-                        final byte blockRow = gameSaved.getByte("table_row");
-                        final byte blockColumn = gameSaved.getByte("table_column");
                         final Block block;
-                        if (gameSaved.getByte("block") == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
-                            block = BlocksTable.duelBlock;
+                        final byte blockID = gameSaved.getByte("block");
+                        if (blockID == 0) {
+                            final byte color = gameSaved.getByte("energy_bonus");
+                            energyBonus[y][x] = Color.values()[color - 1];
                         } else {
-                            block = blocksTable.getBlock(new Position(blockColumn, blockRow));
-                        }
+                            if (blockID == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
+                                block = BlocksTable.duelBlock;
+                            } else {
+                                final byte blockRow = gameSaved.getByte("table_row");
+                                final byte blockColumn = gameSaved.getByte("table_column");
 
-                        placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+                                block = blocksTable.getBlock(new Position(blockColumn, blockRow));
+                            }
+
+                            placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+                        }
                     }
                 }
 

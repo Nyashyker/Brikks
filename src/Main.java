@@ -280,7 +280,7 @@ public class Main {
                 )
         ) {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
-            //save.dropDB();
+            save.dropDB();
             save.recreateDB(
                     Board.WIDTH,
                     Board.HEIGHT,
@@ -292,7 +292,7 @@ public class Main {
                     Bombs.MAX_AMOUNT,
                     Energy.MAX_POSITION,
                     BonusScore.MAX_SCALE,
-                    (byte) (Color.values().length - 1),
+                    (byte) Color.values().length,
                     (short) 191
             );
 

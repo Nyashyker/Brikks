@@ -46,12 +46,10 @@ public class DatabasePlayerSave extends PlayerSave {
 
         this.dbc.executeUpdate(String.format("DELETE FROM saved_boards WHERE save_id = %d;", this.saveID));
 
-        final StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("INSERT INTO saved_boards (save_id, x, y, energy_bonus, block) VALUES ");
+        final Color[][] energyBonus = board.getEnergyBonus();
 
-        for (PlacedBlock placedBlock : board.getBoard()) {
-            final Color energyBonus = board.getEnergyBonus()[placedBlock.getPlace().getY()][placedBlock.getPlace().getX()];
-
+        // Placed Blocks
+        for (final PlacedBlock placedBlock : board.getBoard()) {
             final int blockID;
             {
                 final Position blockOrigin = blocksTable.findOrigin(placedBlock);
@@ -62,24 +60,43 @@ public class DatabasePlayerSave extends PlayerSave {
                             "SELECT block FROM blocks WHERE table_column=%d AND table_row=%d;",
                             blockOrigin.getX(), blockOrigin.getY()
                     ));
-                    getterBlockID.next();
-                    blockID = getterBlockID.getByte("block");
+                    if (getterBlockID.next()) {
+                        blockID = getterBlockID.getByte("block");
+                    } else {
+                        throw new SQLException("Block ID is not found");
+                    }
                 }
             }
 
-            sqlBuilder.append(String.format(
-                    "(%d, %d, %d, %s, %d),",
+            this.dbc.executeUpdate(String.format("""
+                            INSERT INTO saved_boards (save_id, x, y, energy_bonus, block)
+                            VALUES (%d, %d, %d, %d, %d);
+                            """,
                     this.saveID,
                     placedBlock.getPlace().getX(),
                     placedBlock.getPlace().getY(),
-                    energyBonus == null ? "NULL" : String.format("%d", energyBonus.ordinal() + 1),
+                    placedBlock.getColor().ordinal() + 1,
                     blockID
             ));
         }
 
-        // Remove the trailing comma and finalize the SQL statement
-        final String sql = sqlBuilder.deleteCharAt(sqlBuilder.length() - 1).append(";").toString();
-        this.dbc.executeUpdate(sql);
+        // Energy Bonus
+        for (byte y = 0; y < energyBonus.length; y++) {
+            for (byte x = 0; x < energyBonus[0].length; x++) {
+                final Color colorOfBonus = energyBonus[y][x];
+                if (colorOfBonus != null) {
+                    this.dbc.executeUpdate(String.format("""
+                            INSERT INTO saved_boards (save_id, x, y, energy_bonus, block)
+                            VALUES (%d, %d, %d, %d, NULL);
+                            """,
+                            this.saveID,
+                            x,
+                            y,
+                            colorOfBonus.ordinal() + 1
+                    ));
+                }
+            }
+        }
     }
 
 

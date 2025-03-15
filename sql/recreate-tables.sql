@@ -91,16 +91,16 @@ CREATE TABLE IF NOT EXISTS blocks
 
 CREATE TABLE IF NOT EXISTS saved_boards
 (
-    save_id      INT
+    save_id INT
         CONSTRAINT fk_save_id REFERENCES saved_players_games (save_id)
             ON DELETE CASCADE,
-    x            SMALLINT
+    x       SMALLINT
         CONSTRAINT ch_x CHECK ( x >= 0 AND x < 4 ),
-    y            SMALLINT
+    y       SMALLINT
         CONSTRAINT ch_y CHECK ( y >= 0 AND y < 6 ),
-    energy_bonus SMALLINT
-        CONSTRAINT ch_energy_bonus CHECK ( energy_bonus > 0 AND energy_bonus <= 6 ),
-    block        SMALLINT
+    color   SMALLINT
+        CONSTRAINT ch_color CHECK ( color > 0 AND color <= 7 ),
+    block   SMALLINT
         CONSTRAINT nn_block NOT NULL
         CONSTRAINT fk_block REFERENCES blocks (block)
             ON DELETE RESTRICT
@@ -125,60 +125,6 @@ CREATE TABLE IF NOT EXISTS players_games
     CONSTRAINT pk_player_game PRIMARY KEY (game_id, player_id)
 );
 
-
-INSERT INTO players (name)
-VALUES ('testuval''nyk 0');
-INSERT INTO players (name)
-VALUES ('testuval''nyk 2');
-INSERT INTO players (name)
-VALUES ('testuval''nyk 3');
-INSERT INTO games (start_dt, end_dt, difficulty, duel, save_id)
-VALUES (TO_DATE('2025-01-07 12:00', 'YYYY-MM-DD HH:MI'), NOW(), 0, FALSE, NULL);
-INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
-VALUES (1, FALSE, 0, 0, 0, 0, 0);
-INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
-VALUES (2, TRUE, 0, 0, 0, 0, 1);
-INSERT INTO saved_players_games (save_id, plays, bombs, energy, energy_left, bonus_score, player_order)
-VALUES (3, TRUE, 0, 4, 0, 0, 3);
-INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-VALUES (1, 1, 1, NOW() - TO_DATE('2025-01-05 12:00', 'YYYY-MM-DD HH24:MI'), 123);
-INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-VALUES (1, 2, 2, NOW() - TO_DATE('2025-01-05 11:00', 'YYYY-MM-DD HH24:MI'), 150);
-INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-VALUES (1, 3, 3, NOW() - TO_DATE('2025-01-05 13:00', 'YYYY-MM-DD HH24:MI'), 190);
-INSERT INTO saved_boards (save_id, x, y, energy_bonus, block)
-VALUES (1, 0, 0, 1, 24);
-SELECT *
-FROM saved_players_games;
-DELETE
-FROM saved_players_games
-WHERE save_id IN (SELECT save_id FROM players_games WHERE game_id = 1);
-SELECT *
-FROM saved_boards;
-SELECT *
-FROM players_games;
-
-SELECT g.game_id
-FROM games g
-WHERE g.end_dt IS NULL;
-
-UPDATE saved_players_games
-SET player_order=2
-WHERE player_order = 0;
-
-SELECT sb.x, sb.y, sb.energy_bonus, b.block, b.table_row, b.table_column
-FROM saved_boards sb
-         LEFT OUTER JOIN blocks b on b.block = sb.block
-WHERE sb.save_id = 1
-ORDER BY sb.y DESC;
-
-SELECT sg.turn, sg.die_row, sg.die_column, sg.roll_row, sg.roll_column
-FROM saved_games sg
-WHERE sg.save_id = 1;
-
-SELECT player_id
-FROM players
-WHERE name = '%s';
 SELECT *
 FROM players;
 SELECT *
