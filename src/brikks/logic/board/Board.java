@@ -70,7 +70,7 @@ public class Board {
         this.bonusScore = bonusScore;
         this.energy = energy;
 
-        this.energyBonus = EnergyBonusBoard.create(difficulty, energyBonus);
+        this.energyBonus = new EnergyBonusBoard(difficulty, energyBonus);
         this.used = new UsedBoard(Board.WIDTH, Board.HEIGHT, placed);
     }
 
