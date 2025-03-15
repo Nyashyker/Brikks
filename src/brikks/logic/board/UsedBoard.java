@@ -8,7 +8,7 @@ import java.util.List;
 class UsedBoard {
     private final byte width;
     private final byte height;
-    public final boolean[][] used;
+    final boolean[][] used;
 
 
     UsedBoard(final byte width, final byte height) {
@@ -34,7 +34,7 @@ class UsedBoard {
     }
 
 
-    public List<Position> canBePlaced(final Block block) {
+    List<Position> canBePlaced(final Block block) {
         List<Position> variants = new ArrayList<>();
 
         for (byte x = 0; x < this.width; x++) {
@@ -78,7 +78,7 @@ class UsedBoard {
         return variants;
     }
 
-    public void place(final PlacedBlock block) {
+    void place(final PlacedBlock block) {
         for (final Position shapePos : block.getBlock()) {
             if (shapePos.getY() < 0 || shapePos.getY() >= this.height || shapePos.getX() < 0 || shapePos.getX() >= this.width || this.used[shapePos.getY()][shapePos.getX()]) {
                 throw new IllegalArgumentException("Block " + block + " can not be placed");
@@ -88,7 +88,7 @@ class UsedBoard {
         }
     }
 
-    public byte rowsFilled(final PlacedBlock block) {
+    byte rowsFilled(final PlacedBlock block) {
         byte count = 0;
 
         byte lastY = -1;
@@ -106,7 +106,7 @@ class UsedBoard {
         return count;
     }
 
-    public byte countRowsGaps(final byte y) {
+    byte countRowsGaps(final byte y) {
         byte gaps = 0;
 
         for (byte x = 0; x < this.width; x++) {

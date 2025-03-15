@@ -59,7 +59,7 @@ abstract class EnergyBonusBoard {
     }
 
 
-    public final Color[][] bonusEnergy;
+    final Color[][] bonusEnergy;
 
 
     protected EnergyBonusBoard(final Color[][] energyBonus) {
@@ -68,5 +68,102 @@ abstract class EnergyBonusBoard {
 
 
     // TODO: clear the space after block overlapped // Ce vazxlyvo dl'a pravyl'nogo zavantazxenn'a
-    abstract public byte place(PlacedBlock block);
+    abstract byte place(PlacedBlock block);
+
+
+    private static class EnergyBonusBoardD1 extends EnergyBonusBoard {
+        private EnergyBonusBoardD1(final Color[][] energyBonus) {
+            super(energyBonus);
+        }
+
+
+        @Override
+        byte place(PlacedBlock block) {
+            byte bonusPoints = 0;
+
+            for (final Position shapePos : block.getBlock()) {
+                final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getX()];
+                if (point != null) {
+                    if (point == block.getColor()) {
+                        bonusPoints += 2;
+                    } else {
+                        bonusPoints += 1;
+                    }
+                }
+            }
+
+            return bonusPoints;
+        }
+    }
+
+    private static class EnergyBonusBoardD2 extends EnergyBonusBoard {
+        private EnergyBonusBoardD2(final Color[][] energyBonus) {
+            super(energyBonus);
+        }
+
+
+        @Override
+        byte place(final PlacedBlock block) {
+            byte bonusPoints = 0;
+
+            for (final Position shapePos : block.getBlock()) {
+                final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getX()];
+                if (point != null && point == block.getColor()) {
+                    bonusPoints += 2;
+                }
+            }
+
+            return bonusPoints;
+        }
+    }
+
+    private static class EnergyBonusBoardD3 extends EnergyBonusBoard {
+        private EnergyBonusBoardD3(final Color[][] energyBonus) {
+            super(energyBonus);
+        }
+
+
+        @Override
+        byte place(final PlacedBlock block) {
+            byte bonusPoints = 0;
+
+            for (final Position shapePos : block.getBlock()) {
+                final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getX()];
+                if (point != null) {
+                    if (point == block.getColor()) {
+                        bonusPoints += 2;
+                    } else {
+                        bonusPoints -= 1;
+                    }
+                }
+            }
+
+            return bonusPoints;
+        }
+    }
+
+    private static class EnergyBonusBoardD4 extends EnergyBonusBoard {
+        private EnergyBonusBoardD4(final Color[][] energyBonus) {
+            super(energyBonus);
+        }
+
+
+        @Override
+        byte place(final PlacedBlock block) {
+            byte bonusPoints = 0;
+
+            for (final Position shapePos : block.getBlock()) {
+                final Color point = this.bonusEnergy[shapePos.getY()][shapePos.getX()];
+                if (point != null) {
+                    if (point == block.getColor()) {
+                        bonusPoints += 2;
+                    } else {
+                        bonusPoints -= 2;
+                    }
+                }
+            }
+
+            return bonusPoints;
+        }
+    }
 }
