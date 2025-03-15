@@ -17,10 +17,11 @@ import brikks.view.View;
 import brikks.view.container.GameText;
 
 import java.sql.SQLException;
+import java.util.Locale;
 
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         final GameText textUkr;
         // Defining Ukrainian text
         {
@@ -249,7 +250,20 @@ public class Main {
             );
         }
 
-        runGame(textUkr);
+
+        final GameText text;
+        if (args.length == 1) {
+            text = switch (args[0].toUpperCase(Locale.ROOT)) {
+                case "ANGL", "ENGLISH" -> textAngl;
+                case "BG", "BULGARIAN" -> textBg;
+                case "UKR", "UKRAINIAN" -> textUkr;
+                default -> textUkr;
+            };
+        } else {
+            text = textUkr;
+        }
+
+        runGame(text);
     }
 
     private static void runGame(final GameText text) {
