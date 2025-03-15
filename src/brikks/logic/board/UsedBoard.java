@@ -1,6 +1,8 @@
 package brikks.logic.board;
 
-import brikks.essentials.*;
+import brikks.essentials.Block;
+import brikks.essentials.PlacedBlock;
+import brikks.essentials.Position;
 
 import java.util.ArrayList;
 import java.util.List;

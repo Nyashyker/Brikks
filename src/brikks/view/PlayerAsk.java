@@ -1,9 +1,10 @@
 package brikks.view;
 
-import brikks.BlocksTable;
 import brikks.Player;
-import brikks.essentials.*;
-import brikks.view.enums.*;
+import brikks.essentials.Block;
+import brikks.essentials.PlacedBlock;
+import brikks.essentials.Position;
+import brikks.view.enums.Deed;
 
 public interface PlayerAsk {
     boolean askReroll(final Block block);

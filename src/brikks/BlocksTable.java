@@ -1,6 +1,7 @@
 package brikks;
 
-import brikks.essentials.*;
+import brikks.essentials.Block;
+import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
 
 import java.util.ArrayList;

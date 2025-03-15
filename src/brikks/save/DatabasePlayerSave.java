@@ -109,7 +109,7 @@ public class DatabasePlayerSave extends PlayerSave {
                     "UPDATE players_games SET save_id = %d WHERE game_id = %d AND player_id = %d;",
                     this.saveID, this.gameID, this.playerID
             ));
-            System.out.println("Player " + player.name + " id=" + this.playerID + ", game="+this.gameID+", save=" + this.saveID);
+            System.out.println("Player " + player.name + " id=" + this.playerID + ", game=" + this.gameID + ", save=" + this.saveID);
 
             this.saveBoard(player.getBoard(), blocksTable);
         } catch (final SQLException _e) {

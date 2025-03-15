@@ -16,10 +16,14 @@ public abstract class PlayerSave {
 
     ///        First save
     abstract public void save(final BlocksTable blocksTable, final Player player, final byte playerOrder);
+
     ///        Update
     abstract public void setDuration();
+
     abstract public void updateDuration();
+
     abstract public void update(final Player player, final BlocksTable blocksTable);
+
     ///        End game
     abstract public void save(final short score);
 }

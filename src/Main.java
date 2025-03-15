@@ -1,7 +1,5 @@
 import brikks.BlocksTable;
 import brikks.Brikks;
-import brikks.essentials.Block;
-import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
 import brikks.essentials.enums.Level;
 import brikks.logic.Bombs;

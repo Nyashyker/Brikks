@@ -238,8 +238,6 @@ public class DatabaseSave extends Save {
         final ResultSet getID = dbc.executeQuery(sql + " RETURNING " + idColumn + ";");
         if (getID.next()) {
             int tmp = getID.getInt(1);
-            // TODO: remove debug
-            System.out.println("--- os'o ID = " + tmp + " ---");
             return tmp;
         } else {
             throw new SQLException("ID did not generate");
@@ -308,7 +306,6 @@ public class DatabaseSave extends Save {
         }
 
         try {
-            // TODO: save turnRotation
             this.dbc.executeUpdate(String.format("""
                     INSERT INTO saved_games (save_id, turn, turn_rotation, roll_column, roll_row, die_column, die_row)
                     VALUES (%d, %d, %d, %d, %d, %d, %d);
@@ -332,7 +329,6 @@ public class DatabaseSave extends Save {
         }
 
         try {
-            // TODO: update turnRotation
             this.dbc.executeUpdate(String.format("""
                     UPDATE saved_games
                     SET turn=%d, turn_rotation=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d

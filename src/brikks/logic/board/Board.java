@@ -1,8 +1,10 @@
 package brikks.logic.board;
 
-import brikks.BlocksTable;
-import brikks.essentials.*;
-import brikks.essentials.enums.*;
+import brikks.essentials.Block;
+import brikks.essentials.PlacedBlock;
+import brikks.essentials.Position;
+import brikks.essentials.enums.Color;
+import brikks.essentials.enums.Level;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
 

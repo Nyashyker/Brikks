@@ -7,10 +7,10 @@ import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
 import brikks.essentials.enums.Level;
-import brikks.logic.board.Board;
 import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
+import brikks.logic.board.Board;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
 import brikks.view.container.GameText;
@@ -468,7 +468,6 @@ public class ConsoleView extends View {
         final byte choice = this.askUserChoice(this.text.askPlacingSpotDuel(), this.listPlaceVariants(variants), false);
         return variants[choice - 1];
     }
-
 
 
     private void goToMainMenuOnTap() {

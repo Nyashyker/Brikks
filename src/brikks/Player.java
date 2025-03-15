@@ -246,7 +246,7 @@ public class Player implements Comparable<Player> {
 
 
     public void save(final BlocksTable blocksTable, final byte order) {
-        this.saver.save(blocksTable,this, order);
+        this.saver.save(blocksTable, this, order);
     }
 
     public void update(final BlocksTable blocksTable) {

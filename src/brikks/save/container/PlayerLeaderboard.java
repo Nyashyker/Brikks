@@ -10,4 +10,5 @@ public record PlayerLeaderboard(
         // Duration is pain to format!!!
         LocalDateTime duration,
         short score
-) {}
+) {
+}

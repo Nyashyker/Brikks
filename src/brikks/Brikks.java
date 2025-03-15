@@ -1,7 +1,6 @@
 package brikks;
 
 import brikks.container.TurnsResults;
-import brikks.essentials.Block;
 import brikks.essentials.Loop;
 import brikks.essentials.MatrixDice;
 import brikks.essentials.Position;

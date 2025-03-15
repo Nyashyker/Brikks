@@ -65,4 +65,5 @@ public record GameText(
 
 
         String askPlacingSpotDuel
-) {}
+) {
+}
