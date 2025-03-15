@@ -91,8 +91,9 @@ public class Brikks implements GameSave {
             final String[] names = new String[playerCount];
             for (byte i = 0; i < playerCount; i++) {
                 String name;
-                boolean guessUsed = false;
+                boolean guessUsed;
                 do {
+                    guessUsed = false;
                     name = this.view.askName((byte) (i + 1));
                     if (name == null) {
                         return;
@@ -104,7 +105,7 @@ public class Brikks implements GameSave {
                             }
                         }
                     }
-                } while (!guessUsed && this.saver.playerExists(name) && !this.view.askUseExistingPlayer(name));
+                } while (guessUsed || (this.saver.playerExists(name) && !this.view.askUseExistingPlayer(name)));
 
                 names[i] = name;
             }
