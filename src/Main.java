@@ -22,7 +22,7 @@ import java.sql.SQLException;
 public class Main {
     public static void main(String[] args) {
         final GameText textUkr;
-        // Defining text
+        // Defining Ukrainian text
         {
             textUkr = new GameText(
                     "Назад",
@@ -97,7 +97,7 @@ public class Main {
             );
         }
         final GameText textAngl;
-        // Defining text
+        // Defining English text
         {
             textAngl = new GameText(
                     "Back",
@@ -173,7 +173,7 @@ public class Main {
 
         }
         final GameText textBg;
-        // Defining text
+        // Defining Bulgarian text
         {
             textBg = new GameText(
                     "Назад",
