@@ -33,21 +33,15 @@ public class Brikks implements GameSave {
     private boolean firstSave;
 
 
-    public Brikks(final View view, final Save saver, final Block[][] blocksTable) {
+    public Brikks(final View view, final Save saver) {
         if (view == null) {
             throw new IllegalArgumentException("view cannot be null");
         }
         if (saver == null) {
             throw new IllegalArgumentException("save cannot be null");
         }
-        if (blocksTable == null) {
-            throw new IllegalArgumentException("blocksTable cannot be null");
-        }
-        if (blocksTable.length == 0 || blocksTable[0].length == 0) {
-            throw new IllegalArgumentException("blocksTable cannot be empty");
-        }
 
-        this.blocksTable = new BlocksTable(blocksTable);
+        this.blocksTable = new BlocksTable();
         this.matrixDie = new MatrixDice(BlocksTable.WIDTH, BlocksTable.HEIGHT);
 
         this.saver = saver;
