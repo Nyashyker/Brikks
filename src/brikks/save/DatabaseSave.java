@@ -434,7 +434,6 @@ public class DatabaseSave extends Save {
             if (start != null) {
                 saved.add(new SavedGame(gameID, names, start));
             }
-            System.out.println("gameID=" + gameID + ", names=" + names + ", start=" + start);
         } catch (final SQLException _e) {
             System.out.println("Loading has failed");
             System.out.println(_e.getMessage());
@@ -573,12 +572,12 @@ public class DatabaseSave extends Save {
                         final byte x = gameSaved.getByte("x");
                         final byte y = gameSaved.getByte("y");
 
-                        final Block block;
                         final byte blockID = gameSaved.getByte("block");
                         if (blockID == 0) {
                             final byte color = gameSaved.getByte("energy_bonus");
                             energyBonus[y][x] = Color.values()[color - 1];
                         } else {
+                            final Block block;
                             if (blockID == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
                                 block = BlocksTable.duelBlock;
                             } else {
