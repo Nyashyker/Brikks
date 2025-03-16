@@ -4,6 +4,7 @@ import brikks.Player;
 import brikks.essentials.enums.Level;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
+import brikks.view.container.GameText;
 import brikks.view.enums.Menu;
 
 import java.util.List;
@@ -12,6 +13,14 @@ import java.util.List;
 public abstract class View implements PlayerAsk, DuelAsk {
     public final static byte MAX_NAME_LEN = 37;
     public final static byte LEADERBOARD_COUNT = 12;
+
+    protected final GameText text;
+
+
+    protected View(final GameText text) {
+        this.text = text;
+    }
+
 
     abstract public Menu menu();
 

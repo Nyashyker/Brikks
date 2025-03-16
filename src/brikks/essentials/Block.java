@@ -68,6 +68,14 @@ public class Block {
     }
 
 
+    public boolean equals(final Block other) {
+        if (this.hashCode() != other.hashCode()) {
+            return false;
+        }
+
+        return Arrays.equals(this.shape, other.shape) && this.color == other.color;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) {
@@ -82,14 +90,6 @@ public class Block {
 
             return Arrays.equals(this.shape, block.shape) && this.color == block.color;
         }
-    }
-
-    public boolean equals(final Block other) {
-        if (this.hashCode() != other.hashCode()) {
-            return false;
-        }
-
-        return Arrays.equals(this.shape, other.shape) && this.color == other.color;
     }
 
     @Override

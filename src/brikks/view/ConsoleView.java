@@ -45,12 +45,11 @@ public class ConsoleView extends View {
         private static final String ANSI_BG_DUELER = "\u001B[46m";
     }
 
-    private final GameText text;
     private final String gameLogo;
 
 
     public ConsoleView(final GameText text, final String gameLogo) {
-        this.text = text;
+        super(text);
         this.gameLogo = gameLogo;
     }
 

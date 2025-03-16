@@ -10,23 +10,22 @@ public class EmptyPlayerSave extends PlayerSave {
         super(null);
     }
 
+
+    ///        First save
     @Override
-    public void save(final BlocksTable blocksTable, final Player player, final byte playerOrder) {
-    }
+    public void save(final BlocksTable blocksTable, final Player player, final byte playerOrder) {}
+
+    ///        Update
+    @Override
+    public void setDuration() {}
 
     @Override
-    public void setDuration() {
-    }
+    public void updateDuration() {}
 
     @Override
-    public void updateDuration() {
-    }
+    public void update(final Player player, final BlocksTable blocksTable) {}
 
+    ///        End game
     @Override
-    public void update(final Player player, final BlocksTable blocksTable) {
-    }
-
-    @Override
-    public void save(final short score) {
-    }
+    public void save(final short score) {}
 }

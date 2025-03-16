@@ -30,8 +30,8 @@ public class DatabaseSave extends Save {
     private int gameID;
 
 
-    public DatabaseSave(final DatabaseConnection dbc, final Save backupSaver) {
-        super(backupSaver);
+    public DatabaseSave(final DatabaseConnection dbc, final Save backup) {
+        super(backup);
         this.dbc = dbc;
     }
 

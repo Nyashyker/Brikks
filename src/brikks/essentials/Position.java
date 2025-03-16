@@ -23,6 +23,7 @@ public class Position {
         return this.y;
     }
 
+
     public void setX(final byte x) {
         this.x = x;
     }
@@ -39,10 +40,6 @@ public class Position {
 
     public Position add(final Position other) {
         return new Position((byte) (this.getX() + other.getX()), (byte) (this.getY() + other.getY()));
-    }
-
-    public boolean equals(final Position other) {
-        return this.getX() == other.getX() && this.getY() == other.getY();
     }
 
 

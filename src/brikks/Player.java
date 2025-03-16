@@ -19,6 +19,11 @@ import java.util.function.Supplier;
 
 
 public class Player implements Comparable<Player> {
+    @FunctionalInterface
+    private interface ShortSupplier {
+        short calculate();
+    }
+
     public final String name;
     private boolean plays;
 
@@ -28,7 +33,7 @@ public class Player implements Comparable<Player> {
     private final Bombs bombs;
     private final Board board;
 
-    private Supplier<Short> finalCalculator;
+    private ShortSupplier finalCalculator;
 
 
     public Player(final PlayerSave saver, final String name, final byte playerCount, final Level difficulty) {
@@ -255,7 +260,7 @@ public class Player implements Comparable<Player> {
 
 
     public short calculateFinal() {
-        return this.finalCalculator.get();
+        return this.finalCalculator.calculate();
     }
 
     public void saveFinal() {

@@ -17,6 +17,8 @@ public class EmptySave extends Save {
         super(null);
     }
 
+
+    ///        First save
     @Override
     public boolean playerExists(final String name) {
         return false;
@@ -36,10 +38,12 @@ public class EmptySave extends Save {
     public void save(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
+    ///        Update
     @Override
     public void update(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
+    ///        Load
     @Override
     public List<PlayerLeaderboard> leaderboard() {
         return new ArrayList<>();
@@ -59,6 +63,7 @@ public class EmptySave extends Save {
         return new LoadedGame(players, new Position(), (byte) 0, (byte) 0, new Position(), Level.TWO, false);
     }
 
+    ///        End game
     @Override
     public void dropSave() {
     }

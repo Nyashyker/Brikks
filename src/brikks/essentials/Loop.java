@@ -190,6 +190,8 @@ public class Loop {
         return newPosition >= this.POINT && (oldPosition < this.POINT || oldPosition > newPosition);
     }
 
+
+    @Override
     public String toString() {
         return String.format("ByteLoop{MIN-MAX=%d-%d (STEP=%d), position=%d, START=%d}",
                 this.MIN, this.MAX, this.STEP, this.position, this.POINT);
