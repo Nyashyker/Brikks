@@ -276,7 +276,7 @@ public class Main {
                 final DatabaseConnection connection = new DatabaseConnection(
                         "jdbc:postgresql://localhost:5432/brikks",
                         "postgres",
-                        "Student_1234"
+                        "postgres"
                 )
         ) {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
