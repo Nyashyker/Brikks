@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS players_games;
 DROP TABLE IF EXISTS saved_boards;
 DROP TABLE IF EXISTS saved_players_games;
 DROP TABLE IF EXISTS players;
-DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS saved_games;
+DROP TABLE IF EXISTS games;
 
 
 CREATE TABLE IF NOT EXISTS games

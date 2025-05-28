@@ -280,27 +280,30 @@ public class Main {
                 )
         ) {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
-            //save.dropDB();
-            save.recreateDB(
-                    Board.WIDTH,
-                    Board.HEIGHT,
-                    BlocksTable.WIDTH,
-                    BlocksTable.HEIGHT,
-                    Brikks.MAX_PLAYERS,
-                    (byte) Level.values().length,
-                    View.MAX_NAME_LEN,
-                    Bombs.MAX_AMOUNT,
-                    Energy.MAX_POSITION,
-                    BonusScore.MAX_SCALE,
-                    (byte) Color.values().length,
-                    (short) 191
-            );
-
+            recreateDB(save);
 
             final Brikks game = new Brikks(new ConsoleView(text, logo), save);
             game.menu();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void recreateDB(final DatabaseSave save) throws SQLException {
+        save.dropDB();
+        save.recreateDB(
+                (byte) Level.values().length,
+                Brikks.MAX_PLAYERS,
+                BlocksTable.WIDTH,
+                BlocksTable.HEIGHT,
+                View.MAX_NAME_LEN,
+                Bombs.MAX_AMOUNT,
+                Energy.MAX_POSITION,
+                BonusScore.MAX_SCALE,
+                Board.WIDTH,
+                Board.HEIGHT,
+                (byte) Color.values().length,
+                (short) 191
+        );
     }
 }
