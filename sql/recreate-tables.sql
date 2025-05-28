@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS players_games;
 DROP TABLE IF EXISTS saved_boards;
 DROP TABLE IF EXISTS saved_players_games;
 DROP TABLE IF EXISTS players;
-DROP TABLE IF EXISTS saved_games;
 DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS saved_games;
 
 
 CREATE TABLE IF NOT EXISTS games
@@ -97,13 +97,13 @@ CREATE TABLE IF NOT EXISTS saved_boards
 
 CREATE TABLE IF NOT EXISTS players_games
 (
-    game_id    INT
-        CONSTRAINT nn_game_id NOT NULL
-        CONSTRAINT fk_game_id REFERENCES games (game_id)
-            ON DELETE RESTRICT,
     player_id  INT
         CONSTRAINT nn_player_id NOT NULL
         CONSTRAINT fk_player_id REFERENCES players (player_id)
+            ON DELETE RESTRICT,
+    game_id    INT
+        CONSTRAINT nn_game_id NOT NULL
+        CONSTRAINT fk_game_id REFERENCES games (game_id)
             ON DELETE RESTRICT,
     pg_save_id INT
         CONSTRAINT fk_player_game_save_id REFERENCES saved_players_games (pg_save_id)
@@ -111,5 +111,5 @@ CREATE TABLE IF NOT EXISTS players_games
     duration   INTERVAL,
     score      SMALLINT
         CONSTRAINT ch_score CHECK ( score >= 0 AND score <= 191 ),
-    CONSTRAINT pk_player_game PRIMARY KEY (game_id, player_id)
+    CONSTRAINT pk_player_game PRIMARY KEY (player_id, game_id)
 );
