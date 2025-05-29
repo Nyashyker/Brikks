@@ -1,5 +1,6 @@
 package brikks.save.container;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 
@@ -7,7 +8,6 @@ public record PlayerLeaderboard(
         String name,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
-        // Duration is pain to format!!!
-        LocalDateTime duration,
+        Duration duration,
         short score
 ) {}

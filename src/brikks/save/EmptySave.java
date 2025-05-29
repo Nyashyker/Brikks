@@ -34,18 +34,26 @@ public class EmptySave extends Save {
 
     ///        Update
     @Override
+    public void setDuration() {
+    }
+
+    @Override
+    public void updateDuration(final byte turn) {
+    }
+
+    @Override
     public void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
     ///        Load
     @Override
-    public List<PlayerLeaderboard> leaderboard() {
-        return new ArrayList<>();
+    public List<PlayerLeaderboard> leaderboard(final int count) {
+        return new ArrayList<>(0);
     }
 
     @Override
     public List<SavedGame> load() {
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -58,6 +66,10 @@ public class EmptySave extends Save {
     }
 
     ///        End game
+    @Override
+    public void save(final byte order, final short score) {
+    }
+
     @Override
     public void dropSave() {
     }

@@ -67,7 +67,6 @@ public class Player implements Comparable<Player> {
     }
 
     public Player(
-            final PlayerSave saver,
             final String name,
             final boolean plays,
             final Board board,
@@ -75,15 +74,11 @@ public class Player implements Comparable<Player> {
             final Bombs bombs,
             final BonusScore bonusScore
     ) {
-        if (saver == null) {
-            throw new IllegalArgumentException("Saver cannot be null");
-        }
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
 
 
-        this.saver = saver;
         this.name = name;
         this.plays = plays;
         this.board = board;

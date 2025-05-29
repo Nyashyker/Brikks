@@ -15,26 +15,34 @@ import brikks.logic.board.Board;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
-import brikks.view.View;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class DatabaseSave extends Save {
     private final DatabaseConnection dbc;
+    // Per game
     private int gameID;
-    private int playerID[];
-    private int playerSaveID[];
+    private LocalTime lastDurationUpdate;
+    // Per player
+    private int[] playerID;
+    private int[] playerSaveID;
 
 
     public DatabaseSave(final DatabaseConnection dbc, final Save backup) {
         super(backup);
         this.dbc = dbc;
+
+        this.gameID = -1;
+        this.lastDurationUpdate = null;
+
         this.playerID = null;
         this.playerSaveID = null;
     }
@@ -228,8 +236,8 @@ public class DatabaseSave extends Save {
             return player.next();
 
         } catch (final SQLException _e) {
-            System.out.println("Checking player existence has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Checking player existence has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
             return this.backup.playerExists(name);
         }
@@ -298,8 +306,8 @@ public class DatabaseSave extends Save {
             }
 
         } catch (final SQLException _e) {
-            System.out.println("Global forced save has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Global forced save has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
         }
     }
@@ -362,8 +370,8 @@ public class DatabaseSave extends Save {
             }
 
         } catch (final SQLException _e) {
-            System.out.println("Global first save has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Global first save has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
             this.backup.save(blocksTable, players, turn, turnRotation, choice, matrixDie);
         }
@@ -371,6 +379,51 @@ public class DatabaseSave extends Save {
 
 
     ///        Update
+    @Override
+    public void setDuration() {
+        if (this.fail) {
+            this.backup.setDuration();
+            return;
+        }
+
+        this.lastDurationUpdate = LocalTime.now();
+    }
+
+    @Override
+    public void updateDuration(final byte turn) {
+        if (this.fail) {
+            this.backup.updateDuration(turn);
+            return;
+        }
+
+        if (this.lastDurationUpdate == null) {
+            return;
+        }
+
+        try {
+            setProperIntervalStandard(this.dbc);
+            this.dbc.executeUpdate(String.format("""
+                                    UPDATE players_games
+                                    SET duration = duration + interval %s
+                                    WHERE game_id = %d
+                                      AND player_id = %d;
+                                    """,
+                            duration2interval(Duration.between(this.lastDurationUpdate, LocalTime.now())),
+                            this.gameID,
+                            this.playerID[turn]
+                    )
+            );
+
+        } catch (final SQLException _e) {
+            System.err.printf("Saving duration of player %d has failed\n", turn);
+            System.err.println(_e.getMessage());
+            this.fail = true;
+            this.backup.updateDuration(turn);
+        }
+
+        this.lastDurationUpdate = null;
+    }
+
     @Override
     public void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
@@ -418,26 +471,16 @@ public class DatabaseSave extends Save {
                         )
                 );
 
-                this.dbc.executeUpdate(String.format("""
-                                        UPDATE players_games
-                                        SET duration = duration + interval %s
-                                        WHERE game_id = %d
-                                          AND player_id = %d;
-                                        """,
-                                // TODO: get here the duration AND format it!
-                                "0.0",
-                                this.gameID,
-                                this.playerID[order]
-                        )
-                );
-
                 this.resaveBoard(blocksTable, players[order].getBoard(), this.playerSaveID[order]);
             }
 
+            this.updateDuration(turn);
+            this.setDuration();
+
 
         } catch (final SQLException _e) {
-            System.out.println("Global save has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Global save has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
             this.backup.update(blocksTable, players, turn, turnRotation, choice, matrixDie);
         }
@@ -490,30 +533,33 @@ public class DatabaseSave extends Save {
 
     ///        Load
     @Override
-    public List<PlayerLeaderboard> leaderboard() {
+    public List<PlayerLeaderboard> leaderboard(final int count) {
         if (this.fail) {
-            return this.backup.leaderboard();
+            return this.backup.leaderboard(count);
         }
 
-        final List<PlayerLeaderboard> leaderboard = new ArrayList<>(View.LEADERBOARD_COUNT);
+        final List<PlayerLeaderboard> leaderboard = new ArrayList<>(count);
         try {
+            setProperIntervalStandard(this.dbc);
             final ResultSet board = this.dbc.executeQuery(String.format("""
-                    SELECT p.name, g.start_dt, g.end_dt, (TO_DATE('1970-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') + pg.duration) AS "duration", pg.score
-                    FROM players_games pg
-                    INNER JOIN games g on g.game_id = pg.game_id
-                    INNER JOIN players p on p.player_id = pg.player_id
-                    WHERE g.duel IS FALSE
-                    ORDER BY pg.score DESC
-                    LIMIT %d;
-                    """, View.LEADERBOARD_COUNT));
+                                    SELECT p.name AS "username", g.start_dt AS "start", g.end_dt AS "end", pg.duration AS "duration", pg.score AS "score"
+                                    FROM players_games pg
+                                             INNER JOIN games g on g.game_id = pg.game_id
+                                             INNER JOIN players p on p.player_id = pg.player_id
+                                    WHERE g.duel IS FALSE
+                                    ORDER BY pg.score DESC
+                                    LIMIT %d;
+                                    """,
+                            count
+                    )
+            );
 
             while (board.next()) {
-                // TODO: do something about problematic symbols in the name
-                final String name = board.getString("name");
-                final LocalDateTime startDT = board.getTimestamp("start_dt").toLocalDateTime();
+                final String name = unformatStr(board.getString("username"));
+                final LocalDateTime startDT = board.getTimestamp("start").toLocalDateTime();
                 final LocalDateTime endDT;
                 {
-                    final Timestamp tmpEndDT = board.getTimestamp("end_dt");
+                    final Timestamp tmpEndDT = board.getTimestamp("end");
                     if (tmpEndDT == null) {
                         endDT = null;
                     } else {
@@ -521,17 +567,18 @@ public class DatabaseSave extends Save {
                     }
                 }
 
-                final LocalDateTime duration = board.getTimestamp("duration").toLocalDateTime();
+                final Duration duration = interval2duration(board.getString("duration"));
 
                 final short score = board.getShort("score");
 
                 leaderboard.add(new PlayerLeaderboard(name, startDT, endDT, duration, score));
             }
+
         } catch (final SQLException _e) {
-            System.out.println("Load leaderboard has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Load leaderboard has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
-            return this.backup.leaderboard();
+            return this.backup.leaderboard(count);
         }
 
         return leaderboard;
@@ -549,15 +596,15 @@ public class DatabaseSave extends Save {
             List<String> names = new ArrayList<>(Brikks.MAX_PLAYERS);
             LocalDateTime start = null;
 
-            final ResultSet variants = this.dbc.executeQuery(
+            final ResultSet variants = this.dbc.executeQuery("""
+                    SELECT g.game_id AS "game_id", p.name AS "username", g.start_dt AS "start"
+                    FROM saved_games sg
+                             INNER JOIN games g ON g.game_id = sg.g_save_id
+                             INNER JOIN players_games pg ON pg.game_id = g.game_id
+                             INNER JOIN players p ON p.player_id = pg.player_id
+                             INNER JOIN saved_players_games spg ON spg.pg_save_id = pg.pg_save_id
+                    ORDER BY g.game_id, spg.player_order;
                     """
-                            SELECT p.name, pg.game_id, g.start_dt
-                            FROM saved_players_games spg
-                                     INNER JOIN players_games pg ON spg.save_id = pg.save_id
-                                     INNER JOIN players p ON p.player_id = pg.player_id
-                                     INNER JOIN games g on g.game_id = pg.game_id
-                            ORDER BY g.start_dt DESC, pg.game_id ASC, spg.player_order ASC;
-                            """
             );
 
             while (variants.next()) {
@@ -571,18 +618,18 @@ public class DatabaseSave extends Save {
                     names = new ArrayList<>(Brikks.MAX_PLAYERS);
                 }
 
-                start = variants.getTimestamp("start_dt").toLocalDateTime();
+                start = variants.getTimestamp("start").toLocalDateTime();
 
-                // TODO: do something about problematic symbols in the name
-                names.add(variants.getString("name"));
+                names.add(unformatStr(variants.getString("username")));
             }
 
             if (start != null) {
                 saved.add(new SavedGame(gameID, names, start));
             }
+
         } catch (final SQLException _e) {
-            System.out.println("Loading has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Loading variants has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
             return this.backup.load();
         }
@@ -592,15 +639,6 @@ public class DatabaseSave extends Save {
 
     @Override
     public LoadedGame load(final int ID, final BlocksTable blocksTable) {
-        final LoadedGame backupLoadedGame = this.backup.load(ID, blocksTable);
-        final PlayerSave[] backupPlayerSaves;
-        {
-            final Player[] players = backupLoadedGame.players();
-            backupPlayerSaves = new PlayerSave[players.length];
-            for (byte i = 0; i < players.length; i++) {
-                backupPlayerSaves[i] = players[i].getSaver();
-            }
-        }
         if (this.fail) {
             return this.backup.load(ID, blocksTable);
         }
@@ -610,40 +648,58 @@ public class DatabaseSave extends Save {
         final LoadedGame game;
         try {
             final List<Player> players = new ArrayList<>(Brikks.MAX_PLAYERS);
-            final ResultSet gameSaved = this.dbc.executeQuery(String.format("""
-                    SELECT g.difficulty,
-                           g.duel,
-                           pg.save_id,
-                           pg.player_id,
-                           p.name,
-                           spg.plays,
-                           sb.x,
-                           sb.y,
-                           sb.energy_bonus,
-                           b.block,
-                           b.table_row,
-                           b.table_column,
-                           spg.energy,
-                           spg.energy_left,
-                           spg.bombs,
-                           spg.bonus_score,
-                           sg.turn,
-                           sg.turn_rotation,
-                           sg.die_row,
-                           sg.die_column,
-                           sg.roll_row,
-                           sg.roll_column
-                    FROM saved_players_games spg
-                             INNER JOIN players_games pg ON spg.save_id = pg.save_id
-                             INNER JOIN players p ON p.player_id = pg.player_id
-                             INNER JOIN games g ON g.game_id = pg.game_id
-                             INNER JOIN saved_games sg ON sg.save_id = g.save_id
-                             INNER JOIN saved_boards sb ON spg.save_id = sb.save_id
-                             INNER JOIN blocks b ON b.block = sb.block
-                    WHERE pg.game_id = %d
-                    ORDER BY spg.player_order DESC;
-                    """, this.gameID)
-            );
+            final ResultSet gameSaved;
+            {
+                gameSaved = this.dbc.executeQuery(String.format("""
+                                        SELECT spg.player_order,
+                                               -- Player
+                                               p.name           AS "username",
+                                               spg.plays        AS "plays",
+                                               -- Board
+                                               sb.x             AS "x",
+                                               sb.y             AS "y",
+                                               sb.color         AS "color",
+                                               sb.block         AS "block",
+                                               -- Energy
+                                               spg.energy       AS "energy",
+                                               spg.energy_left  AS "energy_left",
+                                               -- Bombs
+                                               spg.bombs        AS "bombs",
+                                               -- BonusScore
+                                               spg.bonus_score  AS "bonus_score",
+                                        
+                                               -- matrixDie
+                                               sg.die_column    AS "die_column",
+                                               sg.die_row       AS "die_row",
+                                               -- turn
+                                               sg.turn          AS "turn",
+                                               -- turnRotation
+                                               sg.turn_rotation AS "turn_rotation",
+                                               -- choice
+                                               sg.roll_column   AS "choice_column",
+                                               sg.roll_row      AS "choice_row",
+                                               -- difficulty
+                                               g.difficulty     AS "difficulty",
+                                               -- duelMode
+                                               g.duel           AS "duel_mode",
+                                        
+                                               -- save
+                                               pg.player_id     AS "player_id",
+                                               spg.pg_save_id   AS "pg_save_id",
+                                               pg.duration      AS "duration"
+                                        FROM saved_games sg
+                                                 INNER JOIN games g ON g.game_id = sg.g_save_id
+                                                 INNER JOIN players_games pg ON pg.game_id = g.game_id
+                                                 INNER JOIN players p ON p.player_id = pg.player_id
+                                                 INNER JOIN saved_players_games spg ON spg.pg_save_id = pg.pg_save_id
+                                                 INNER JOIN saved_boards sb ON sb.pg_save_id = spg.pg_save_id
+                                        WHERE sg.g_save_id = %d
+                                        ORDER BY spg.player_order ASC;
+                                        """,
+                                this.gameID
+                        )
+                );
+            }
 
 
             Level difficulty = Level.TWO;
@@ -655,7 +711,7 @@ public class DatabaseSave extends Save {
             byte rollX = 0;
             byte rollY = 0;
             {
-                int saveID = -1;
+                int playerSaveID = -1;
                 int playerID = -1;
                 String name = null;
                 boolean plays = false;
@@ -669,29 +725,40 @@ public class DatabaseSave extends Save {
                 List<PlacedBlock> placedBlocks = new ArrayList<>();
                 Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
 
-                byte i = 0;
+                byte order = 0;
                 while (gameSaved.next()) {
-                    final int checkID = gameSaved.getInt("save_id");
+                    final int checkID = gameSaved.getInt("pg_save_id");
 
-                    if (saveID == -1) {
-                        saveID = checkID;
+                    if (playerSaveID == -1) {
+                        playerSaveID = checkID;
 
                         difficulty = Level.values()[gameSaved.getByte("difficulty")];
-                        duelMode = gameSaved.getBoolean("duel");
+                        duelMode = gameSaved.getBoolean("duel_mode");
 
                         turn = gameSaved.getByte("turn");
                         turnRotation = gameSaved.getByte("turn_rotation");
-                        dieRow = gameSaved.getByte("die_row");
                         dieColumn = gameSaved.getByte("die_column");
-                        rollX = gameSaved.getByte("roll_row");
-                        rollY = gameSaved.getByte("roll_column");
+                        dieRow = gameSaved.getByte("die_row");
+                        rollX = gameSaved.getByte("roll_column");
+                        rollY = gameSaved.getByte("roll_row");
 
-                    } else if (checkID != saveID) {
-                        saveID = checkID;
+                    } else if (checkID != playerSaveID) {
+                        playerSaveID = checkID;
 
-                        final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
-                        players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, playerID, saveID, backupPlayerSaves[i++]), name, plays, board, energy, bombs, bonusScore));
+                        players.add(
+                                new Player(
+                                        name,
+                                        plays,
+                                        new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus),
+                                        energy,
+                                        bombs,
+                                        bonusScore
+                                )
+                        );
+                        this.playerID[order] = playerID;
+                        this.playerSaveID[order] = playerSaveID;
 
+                        order++;
                         placedBlocks = new ArrayList<>();
                         energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
                         for (byte y = 0; y < energyBonus.length; y++) {
@@ -701,8 +768,7 @@ public class DatabaseSave extends Save {
 
                     // Player info
                     playerID = gameSaved.getInt("player_id");
-                    // TODO: do something about problematic symbols in the name
-                    name = gameSaved.getString("name");
+                    name = unformatStr(gameSaved.getString("username"));
                     plays = gameSaved.getBoolean("plays");
 
                     // Player status
@@ -738,9 +804,19 @@ public class DatabaseSave extends Save {
                     }
                 }
 
-                if (saveID != -1) {
-                    final Board board = new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus);
-                    players.add(new Player(new DatabasePlayerSave(this.dbc, this.gameID, playerID, saveID, backupPlayerSaves[i]), name, plays, board, energy, bombs, bonusScore));
+                if (playerSaveID != -1) {
+                    players.add(
+                            new Player(
+                                    name,
+                                    plays,
+                                    new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus),
+                                    energy,
+                                    bombs,
+                                    bonusScore
+                            )
+                    );
+                    this.playerID[order] = playerID;
+                    this.playerSaveID[order] = playerSaveID;
                 }
             }
 
@@ -756,11 +832,10 @@ public class DatabaseSave extends Save {
             );
 
         } catch (final SQLException _e) {
-            System.out.println("Load loads variants has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Loading has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
-            System.exit(1);
-            return backupLoadedGame;
+            return this.backup.load(ID, blocksTable);
         }
 
         return game;
@@ -769,6 +844,42 @@ public class DatabaseSave extends Save {
 
     ///        End game
     @Override
+    public void save(final byte order, final short score) {
+        if (this.fail) {
+            this.backup.save(order, score);
+            return;
+        }
+
+        try {
+            this.dbc.executeUpdate(String.format("""
+                                    UPDATE players_games
+                                    SET score = %d
+                                    WHERE game_id = %d
+                                      AND player_id = %d;
+                                    -- & drop save
+                                    DELETE
+                                    FROM saved_players_games spg
+                                    WHERE spg.pg_save_id = %d;
+                                    """,
+                            score,
+                            this.gameID,
+                            this.playerID[order],
+                            this.playerSaveID[order]
+                    )
+            );
+            // Respective parts of SAVED_BOARDS are deleted automatically with SAVED_PLAYERS_GAMES
+            this.playerID[order] = -1;
+            this.playerSaveID[order] = -1;
+
+        } catch (final SQLException _e) {
+            System.out.println("Final player save has failed");
+            System.out.println(_e.getMessage());
+            this.fail = true;
+            this.backup.save(order, score);
+        }
+    }
+
+    @Override
     public void dropSave() {
         if (this.fail) {
             this.backup.dropSave();
@@ -776,17 +887,18 @@ public class DatabaseSave extends Save {
         }
 
         try {
-            this.dbc.executeUpdate(
-                    String.format("""
-                            DELETE FROM saved_games WHERE save_id=%d;
-                            DELETE FROM saved_players_games WHERE save_id IN
-                            (SELECT save_id FROM players_games WHERE game_id=%d);
-                            """, this.gameID, this.gameID)
+            this.dbc.executeUpdate(String.format("""
+                                    DELETE
+                                    FROM saved_games sg
+                                    WHERE sg.g_save_id = %d;
+                                    """,
+                            this.gameID
+                    )
             );
-            // Respective parts of SAVED_BOARDS are deleted automatically with SAVED_PLAYERS_GAMES
+
         } catch (final SQLException _e) {
-            System.out.println("Dropping the save has failed");
-            System.out.println(_e.getMessage());
+            System.err.println("Dropping the game save has failed");
+            System.err.println(_e.getMessage());
             this.fail = true;
             this.backup.dropSave();
         }
@@ -799,7 +911,132 @@ public class DatabaseSave extends Save {
         return "'" + str + "'";
     }
 
+    private static String unformatStr(final String str) {
+        // TODO: do something about problematic symbols in the name
+        return str;
+    }
+
     private static String formatBool(final boolean bool) {
         return bool ? "TRUE" : "FALSE";
+    }
+
+
+    private static void setProperIntervalStandard(final DatabaseConnection dbc) throws SQLException {
+        dbc.executeUpdate("SET intervalstyle = sql_standard;");
+    }
+
+    /**
+     * Helping function of converting SQL's type INTERVAL to Java's type Duration.
+     * <br>
+     * Use
+     * ```
+     * SET intervalstyle = sql_standard;
+     * ```
+     * to make sure the proper INTERVAL standard is used !!!
+     *
+     * @param interval The DB's INTERVAL in text format according to `sql_standard`
+     * @return java.time.Duration
+     */
+    private static Duration interval2duration(final String interval) {
+        final long years, mons, days, hours, mins, secs, nanos;
+        final String[] hoursMinsSecs;
+
+        final String[] parsed = interval.split(" ", 3);
+        switch (parsed.length) {
+            case 3 -> {
+                final String[] yearsMons = parsed[0].split("(?<=\\d)-(?=\\d)", 2);
+                years = Long.parseLong(yearsMons[0]);
+                mons = Long.parseLong(yearsMons[1]);
+
+                days = Long.parseLong(parsed[1]);
+
+                hoursMinsSecs = parsed[2].split(":", 3);
+            }
+            case 2 -> {
+                years = 0;
+                mons = 0;
+
+                days = Long.parseLong(parsed[0]);
+
+                hoursMinsSecs = parsed[1].split(":", 3);
+            }
+            case 1 -> {
+                years = 0;
+                mons = 0;
+
+                days = 0;
+
+                hoursMinsSecs = parsed[0].split(":", 3);
+            }
+            default -> {
+                years = 0;
+                mons = 0;
+
+                days = 0;
+
+                hoursMinsSecs = new String[]{"0", "0", "0"};
+            }
+        }
+
+        final String[] secsNanos;
+        switch (hoursMinsSecs.length) {
+            case 3 -> {
+                hours = Long.parseLong(hoursMinsSecs[0]);
+                mins = Long.parseLong(hoursMinsSecs[1]);
+                secsNanos = hoursMinsSecs[2].split("\\.", 2);
+            }
+            case 2 -> {
+                hours = 0;
+                mins = Long.parseLong(hoursMinsSecs[0]);
+                secsNanos = hoursMinsSecs[1].split("\\.", 2);
+            }
+            case 1 -> {
+                hours = 0;
+                mins = 0;
+                secsNanos = hoursMinsSecs[0].split("\\.", 2);
+            }
+            default -> {
+                hours = 0;
+                mins = 0;
+                secsNanos = new String[]{"0"};
+            }
+        }
+
+        secs = Long.parseLong(secsNanos[0]);
+        if (secsNanos.length == 2) {
+            if (secsNanos[1].length() > 9) {
+                nanos = Long.parseLong(secsNanos[1].substring(0, 9));
+            } else {
+                nanos = Long.parseLong(secsNanos[1] + "0".repeat(9 - secsNanos[1].length()));
+            }
+        } else {
+            nanos = 0;
+        }
+
+        return Duration.ZERO
+                .plusDays(years * 365)
+                .plusDays(mons * 30)
+                .plusDays(days)
+                .plusHours(hours)
+                .plusMinutes(mins)
+                .plusSeconds(secs)
+                .plusNanos(nanos);
+    }
+
+    /**
+     * Helping function of converting Java's type Duration to SQL's type INTERVAL.
+     * The word 'INTERVAL' not included.
+     * <br>
+     * Use
+     * ```
+     * SET intervalstyle = sql_standard;
+     * ```
+     * to make sure the proper INTERVAL standard is used !!!
+     *
+     * @param duration java.time.Duration
+     * @return The DB's INTERVAL in text format according to `sql_standard`
+     */
+    private static String duration2interval(final Duration duration) {
+        return String.format("%d.%09d", duration.getSeconds(), duration.getNano());
     }
 }

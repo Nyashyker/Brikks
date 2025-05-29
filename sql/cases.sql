@@ -136,14 +136,15 @@ UPDATE players_games
 SET score = 10
 WHERE game_id = 2
   AND player_id = 2;
+-- & drop save
+DELETE
+FROM saved_players_games spg
+WHERE spg.pg_save_id = 10;
 -- drop save
 DELETE
 FROM saved_games sg
 WHERE sg.g_save_id = 2;
-DELETE
-FROM saved_players_games spg
-WHERE spg.pg_save_id IN
-      (SELECT pg.pg_save_id FROM players_games pg WHERE pg.game_id = 2);
+
 
 ---
 

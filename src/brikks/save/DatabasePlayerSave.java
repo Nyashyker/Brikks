@@ -108,18 +108,7 @@ public class DatabasePlayerSave extends PlayerSave {
         }
 
         try {
-            this.saveID = DatabaseSave.getGeneratedID(this.dbc,
-                    String.format("""
-                                    INSERT INTO saved_players_games (plays, bombs, energy, energy_left, bonus_score, player_order)
-                                    VALUES (%s, %d, %d, %d, %d, %d)
-                                    """,
-                            player.isPlays() ? "TRUE" : "FALSE",
-                            player.getBombs().get(),
-                            player.getEnergy().getPosition(),
-                            player.getEnergy().getAvailable(),
-                            player.getBonusScore().getScale(),
-                            playerOrder
-                    ), "save_id");
+            this.saveID = -1;
 
             this.dbc.executeUpdate(String.format(
                     "UPDATE players_games SET save_id = %d WHERE game_id = %d AND player_id = %d;",
