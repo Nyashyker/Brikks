@@ -28,11 +28,15 @@ import java.util.List;
 public class DatabaseSave extends Save {
     private final DatabaseConnection dbc;
     private int gameID;
+    private int playerID[];
+    private int playerSaveID[];
 
 
     public DatabaseSave(final DatabaseConnection dbc, final Save backup) {
         super(backup);
         this.dbc = dbc;
+        this.playerID = null;
+        this.playerSaveID = null;
     }
 
 
@@ -212,122 +216,274 @@ public class DatabaseSave extends Save {
         }
 
         try {
-            // TODO: do something about problematic symbols in the name
-            final ResultSet player = this.dbc.executeQuery(String.format("SELECT * FROM players WHERE name='%s';",
-                    name));
+            final ResultSet player = this.dbc.executeQuery(String.format("""
+                                    SELECT *
+                                    FROM players p
+                                    WHERE p.name = %s
+                                    LIMIT 1;
+                                    """,
+                            formatStr(name)
+                    )
+            );
             return player.next();
+
         } catch (final SQLException _e) {
-            System.out.println("Cant check on Players existance");
+            System.out.println("Checking player existence has failed");
             System.out.println(_e.getMessage());
             this.fail = true;
             return this.backup.playerExists(name);
         }
     }
 
-    static int getGeneratedID(final DatabaseConnection dbc, final String sql, final String idColumn) throws SQLException {
-        final ResultSet getID = dbc.executeQuery(sql + " RETURNING " + idColumn + ";");
-        if (getID.next()) {
-            return getID.getInt(1);
-        } else {
-            throw new SQLException("ID did not generate");
-        }
-    }
-
     @Override
-    public PlayerSave[] save(final String[] names, final Level difficulty, final boolean duel) {
-        final PlayerSave[] backupPlayerSaves = this.backup.save(names, difficulty, duel);
+    public void save(final String[] names, final Level difficulty, final boolean duel) {
         if (this.fail) {
-            return backupPlayerSaves;
+            this.backup.save(names, difficulty, duel);
+            return;
         }
 
-        final PlayerSave[] saves = new PlayerSave[names.length];
         try {
-            this.gameID = DatabaseSave.getGeneratedID(this.dbc, String.format("""
-                    INSERT INTO games (start_dt, end_dt, difficulty, duel, save_id)
-                    VALUES (NOW(), NULL, %d, %s, NULL)
-                    """, difficulty.ordinal(), duel ? "TRUE" : "FALSE"), "game_id");
-
-            for (byte i = 0; i < saves.length; i++) {
-                final int playerID;
-                if (this.playerExists(names[i])) {
-                    // TODO: do something about problematic symbols in the name
-                    final ResultSet getID = this.dbc.executeQuery(
-                            String.format("SELECT player_id FROM players WHERE name='%s';", names[i])
-                    );
-                    if (getID.next()) {
-                        playerID = getID.getInt(1);
-                    } else {
-                        throw new SQLException("No ID found for existing player");
-                    }
+            {
+                final ResultSet getGameID = this.dbc.executeQuery(String.format("""
+                                        INSERT INTO games (start_dt, end_dt, difficulty, duel)
+                                        VALUES (NOW(), NULL, %d, %s)
+                                        RETURNING game_id AS "game_id";
+                                        """,
+                                difficulty.ordinal(), formatBool(duel)
+                        )
+                );
+                if (getGameID.next()) {
+                    this.gameID = getGameID.getInt("game_id");
                 } else {
-                    // TODO: do something about problematic symbols in the name
-                    playerID = DatabaseSave.getGeneratedID(
-                            this.dbc,
-                            String.format("INSERT INTO players (name) VALUES ('%s')", names[i]),
-                            "player_id"
+                    throw new SQLException("No ID for the game");
+                }
+            }
+
+            this.playerID = new int[names.length];
+            this.playerSaveID = null;
+            for (byte order = 0; order < names.length; order++) {
+                {
+                    final String formatedName = formatStr(names[order]);
+                    final ResultSet getPlayerID = this.dbc.executeQuery(
+                            String.format("""
+                                            WITH new_player_id AS (INSERT INTO players (name) VALUES (%s)
+                                                ON CONFLICT (name) DO NOTHING RETURNING player_id AS "player_id")
+                                            SELECT player_id AS "player_id"
+                                            FROM new_player_id
+                                            UNION ALL
+                                            SELECT p.player_id AS "player_id"
+                                            FROM players p
+                                            WHERE p.name = %s
+                                            LIMIT 1;
+                                            """,
+                                    formatedName,
+                                    formatedName
+                            )
                     );
+                    if (getPlayerID.next()) {
+                        this.playerID[order] = getPlayerID.getInt("player_id");
+                    } else {
+                        throw new SQLException("No ID for player");
+                    }
                 }
 
                 this.dbc.executeUpdate(String.format("""
-                        INSERT INTO players_games (game_id, player_id, save_id, duration, score)
-                        VALUES (%d, %d, NULL, INTERVAL '0 seconds', 0)
-                        """, this.gameID, playerID));
-
-                System.out.println("Assigned players ID = " + playerID + " --- gameID=" + this.gameID);
-                saves[i] = new DatabasePlayerSave(this.dbc, this.gameID, playerID, backupPlayerSaves[i]);
+                                        INSERT INTO players_games (game_id, player_id, pg_save_id, duration, score)
+                                        VALUES (%d, %d, NULL, interval '0.0', NULL);
+                                        """,
+                                this.gameID, this.playerID[order]
+                        )
+                );
+                System.out.println("Assigned players ID = " + this.playerID[order] + " --- gameID=" + this.gameID);
             }
 
         } catch (final SQLException _e) {
             System.out.println("Global forced save has failed");
             System.out.println(_e.getMessage());
             this.fail = true;
-            return backupPlayerSaves;
         }
-
-        return saves;
     }
 
     @Override
-    public void save(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+    public void save(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
-            this.backup.save(turn, turnRotation, choice, matrixDie);
+            this.backup.save(blocksTable, players, turn, turnRotation, choice, matrixDie);
             return;
         }
 
         try {
             this.dbc.executeUpdate(String.format("""
-                    INSERT INTO saved_games (save_id, turn, turn_rotation, roll_column, roll_row, die_column, die_row)
-                    VALUES (%d, %d, %d, %d, %d, %d, %d);
-                    UPDATE games SET save_id=%d WHERE game_id=%d;
-                    """, this.gameID, turn, turnRotation, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID, this.gameID));
+                            INSERT INTO saved_games (g_save_id, turn, turn_rotation, roll_column, roll_row, die_column, die_row)
+                            VALUES (%d, %d, %d, %d, %d, %d, %d);
+                            """,
+                    this.gameID,
+                    turn,
+                    turnRotation,
+                    choice.getX(),
+                    choice.getY(),
+                    matrixDie.getX(),
+                    matrixDie.getY()
+            ));
+
+            this.playerSaveID = new int[players.length];
+            for (int order = 0; order < players.length; order++) {
+                final ResultSet getPlayerSaveID = this.dbc.executeQuery(String.format("""
+                                        INSERT INTO saved_players_games (plays, bombs, energy, energy_left, bonus_score, player_order)
+                                        VALUES (%s, %d, %d, %d, %d, %d)
+                                        RETURNING pg_save_id AS "pg_save_id";
+                                        """,
+                                formatBool(players[order].isPlays()),
+                                players[order].getBombs().get(),
+                                players[order].getEnergy().getPosition(),
+                                players[order].getEnergy().getAvailable(),
+                                players[order].getBonusScore().getScale(),
+                                order
+                        )
+                );
+                if (getPlayerSaveID.next()) {
+                    this.playerSaveID[order] = getPlayerSaveID.getInt("pg_save_id");
+                } else {
+                    throw new SQLException("No save ID for player");
+                }
+
+                this.dbc.executeUpdate(String.format("""
+                                        UPDATE players_games
+                                        SET pg_save_id = %d
+                                        WHERE game_id = %d
+                                          AND player_id = %d;
+                                        """,
+                                this.playerSaveID[order],
+                                this.gameID,
+                                this.playerID[order]
+                        )
+                );
+
+                this.resaveBoard(blocksTable, players[order].getBoard(), this.playerSaveID[order]);
+            }
+
         } catch (final SQLException _e) {
             System.out.println("Global first save has failed");
             System.out.println(_e.getMessage());
             this.fail = true;
-            this.backup.save(turn, turnRotation, choice, matrixDie);
+            this.backup.save(blocksTable, players, turn, turnRotation, choice, matrixDie);
         }
     }
 
 
     ///        Update
     @Override
-    public void update(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+    public void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
-            this.backup.update(turn, turnRotation, choice, matrixDie);
+            this.backup.update(blocksTable, players, turn, turnRotation, choice, matrixDie);
             return;
         }
 
         try {
             this.dbc.executeUpdate(String.format("""
-                    UPDATE saved_games
-                    SET turn=%d, turn_rotation=%d, roll_column=%d, roll_row=%d, die_column=%d, die_row=%d
-                    WHERE save_id=%d;
-                    """, turn, turnRotation, choice.getX(), choice.getY(), matrixDie.getX(), matrixDie.getY(), this.gameID));
+                            UPDATE saved_games
+                            SET turn          = %d,
+                                turn_rotation = %d,
+                                roll_column   = %d,
+                                roll_row      = %d,
+                                die_column    = %d,
+                                die_row       = %d
+                            WHERE g_save_id = %d;
+                            """,
+                    turn,
+                    turnRotation,
+                    choice.getX(),
+                    choice.getY(),
+                    matrixDie.getX(),
+                    matrixDie.getY(),
+                    this.gameID
+            ));
+
+            this.playerSaveID = new int[players.length];
+            for (int order = 0; order < players.length; order++) {
+                this.dbc.executeUpdate(String.format("""
+                                        UPDATE saved_players_games
+                                        SET plays       = %s,
+                                            bombs       = %d,
+                                            energy      = %d,
+                                            energy_left = %d,
+                                            bonus_score = %d
+                                        WHERE pg_save_id = %d;
+                                        """,
+                                formatBool(players[order].isPlays()),
+                                players[order].getBombs().get(),
+                                players[order].getEnergy().getPosition(),
+                                players[order].getEnergy().getAvailable(),
+                                players[order].getBonusScore().getScale(),
+                                order
+                        )
+                );
+
+                this.dbc.executeUpdate(String.format("""
+                                        UPDATE players_games
+                                        SET duration = duration + interval %s
+                                        WHERE game_id = %d
+                                          AND player_id = %d;
+                                        """,
+                                // TODO: get here the duration AND format it!
+                                "0.0",
+                                this.gameID,
+                                this.playerID[order]
+                        )
+                );
+
+                this.resaveBoard(blocksTable, players[order].getBoard(), this.playerSaveID[order]);
+            }
+
+
         } catch (final SQLException _e) {
             System.out.println("Global save has failed");
             System.out.println(_e.getMessage());
             this.fail = true;
-            this.backup.update(turn, turnRotation, choice, matrixDie);
+            this.backup.update(blocksTable, players, turn, turnRotation, choice, matrixDie);
+        }
+    }
+
+    private void resaveBoard(final BlocksTable blocksTable, final Board board, final int playerSaveID) throws SQLException {
+        // Clearing up old save of the board
+        this.dbc.executeUpdate(String.format("""
+                                DELETE
+                                FROM saved_boards sb
+                                WHERE sb.pg_save_id = %d;
+                                """,
+                        playerSaveID
+                )
+        );
+
+        for (final PlacedBlock block : board.getBoard()) {
+            this.dbc.executeUpdate(String.format("""
+                                    INSERT INTO saved_boards (pg_save_id, x, y, color, block)
+                                    VALUES (%d, %d, %d, %d, %d);
+                                    """,
+                            playerSaveID,
+                            block.getPlace().getX(),
+                            block.getPlace().getY(),
+                            block.getColor().ordinal(),
+                            blocksTable.findOrigin(block)
+                    )
+            );
+        }
+
+        final Color[][] energyBonus = board.getEnergyBonus();
+        for (byte y = 0; y < energyBonus.length; y++) {
+            for (byte x = 0; x < energyBonus[y].length; x++) {
+                if (energyBonus[y][x] != null) {
+                    this.dbc.executeUpdate(String.format("""
+                                            INSERT INTO saved_boards (pg_save_id, x, y, color, block)
+                                            VALUES (%d, %d, %d, %d, NULL);
+                                            """,
+                                    playerSaveID,
+                                    x,
+                                    y,
+                                    energyBonus[y][x].ordinal()
+                            )
+                    );
+                }
+            }
         }
     }
 
@@ -634,5 +790,16 @@ public class DatabaseSave extends Save {
             this.fail = true;
             this.backup.dropSave();
         }
+    }
+
+
+    /// Support functions
+    private static String formatStr(final String str) {
+        // TODO: do something about problematic symbols in the name
+        return "'" + str + "'";
+    }
+
+    private static String formatBool(final boolean bool) {
+        return bool ? "TRUE" : "FALSE";
     }
 }

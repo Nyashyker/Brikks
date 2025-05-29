@@ -25,22 +25,16 @@ public class EmptySave extends Save {
     }
 
     @Override
-    public PlayerSave[] save(final String[] names, final Level difficulty, final boolean duel) {
-        final PlayerSave[] saves = new PlayerSave[names.length];
-        for (byte i = 0; i < saves.length; i++) {
-            saves[i] = new EmptyPlayerSave();
-        }
-
-        return saves;
+    public void save(final String[] names, final Level difficulty, final boolean duel) {
     }
 
     @Override
-    public void save(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+    public void save(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
     ///        Update
     @Override
-    public void update(final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+    public void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
     ///        Load

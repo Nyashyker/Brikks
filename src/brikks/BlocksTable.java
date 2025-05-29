@@ -138,20 +138,20 @@ public class BlocksTable {
     }
 
 
-    public Position findOrigin(final Block block) {
+    public byte findOrigin(final Block block) {
         if (block.equals(BlocksTable.duelBlock)) {
-            return null;
+            return BlocksTable.WIDTH * BlocksTable.HEIGHT;
         }
 
         for (byte row = 0; row < BlocksTable.HEIGHT; row++) {
             for (byte column = 0; column < BlocksTable.WIDTH; column++) {
                 if (this.blocks[row][column].equals(block)) {
-                    return new Position(column, row);
+                    return (byte) (row * BlocksTable.WIDTH + column);
                 }
             }
         }
 
         // Should not be reached
-        return null;
+        throw new IllegalArgumentException("Unregistered block: " + block.toString());
     }
 }

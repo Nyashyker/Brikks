@@ -11,11 +11,11 @@ VALUES (NOW(), NULL, 0, FALSE)
 RETURNING game_id AS "game_id";
 -- get player id
 WITH new_player_id AS (INSERT INTO players (name) VALUES ('Alice')
-    ON CONFLICT (name) DO NOTHING RETURNING player_id)
-SELECT player_id
+    ON CONFLICT (name) DO NOTHING RETURNING player_id AS "player_id")
+SELECT player_id AS "player_id"
 FROM new_player_id
 UNION ALL
-SELECT p.player_id
+SELECT p.player_id AS "player_id"
 FROM players p
 WHERE p.name = 'Alice'
 LIMIT 1;
@@ -29,10 +29,9 @@ VALUES (0, 0, 0, 1, 2, 1, 2);
 -- per player
 INSERT INTO saved_players_games (plays, bombs, energy, energy_left, bonus_score, player_order)
 VALUES (TRUE, 2, 7, 3, 2, 0)
-RETURNING pg_save_id;
+RETURNING pg_save_id AS "pg_save_id";
 UPDATE players_games
-SET pg_save_id = 2,
-    duration= interval '0.0'
+SET pg_save_id = 2
 WHERE game_id = 2
   AND player_id = 2;
 -- board
@@ -42,32 +41,29 @@ VALUES (1, 0, 0, 0, NULL);
 --- UPDATE
 -- update game
 UPDATE saved_games
-SET turn=0,
-    turn_rotation=0,
-    roll_column=0,
-    roll_row=0,
-    die_column=0,
-    die_row=0
+SET turn          = 0,
+    turn_rotation = 0,
+    roll_column   = 0,
+    roll_row      = 0,
+    die_column    = 0,
+    die_row       = 0
 WHERE g_save_id = 1;
 -- per player
+UPDATE saved_players_games
+SET plays       = TRUE,
+    bombs       = 0,
+    energy      = 0,
+    energy_left = 0,
+    bonus_score = 0
+WHERE pg_save_id = 0;
 UPDATE players_games
 SET duration = duration + interval '0.0'
 WHERE game_id = 2
   AND player_id = 2;
-UPDATE saved_players_games
-SET plays= TRUE,
-    bombs=0,
-    energy=0,
-    energy_left=0,
-    bonus_score=0
-WHERE pg_save_id = 0;
 -- board
-UPDATE saved_boards
-SET x=1,
-    y=1,
-    color=1,
-    block=1
-WHERE pg_save_id = 1;
+DELETE
+FROM saved_boards sb
+WHERE sb.pg_save_id = 1;
 
 --- LOAD
 -- leaderboard

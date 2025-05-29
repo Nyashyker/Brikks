@@ -52,7 +52,6 @@ public class DatabasePlayerSave extends PlayerSave {
         for (final PlacedBlock placedBlock : board.getBoard()) {
             final int blockID;
             {
-                final Position blockOrigin = blocksTable.findOrigin(placedBlock);
                 if (blockOrigin == null) {
                     blockID = BlocksTable.HEIGHT * BlocksTable.WIDTH + 1;
                 } else {
