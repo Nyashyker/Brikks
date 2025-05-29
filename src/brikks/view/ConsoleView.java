@@ -74,14 +74,20 @@ public class ConsoleView extends View {
 
         final DateTimeFormatter start = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         final DateTimeFormatter end = DateTimeFormatter.ofPattern("dd-MM HH:mm");
-        final DateTimeFormatter duration = DateTimeFormatter.ofPattern("D HH:mm:ss");
         for (final PlayerLeaderboard player : players) {
-            System.out.printf("%s - (%s - %s) %s - %d\n",
+            final long secs = player.duration().getSeconds();
+            System.out.printf("%s - (%s - %s) %s%02d:%02d.%09d - %d\n",
                     player.name(),
                     player.startDateTime().format(start),
                     player.endDateTime() == null ? this.text.none() : player.endDateTime().format(end),
-                    player.duration().format(duration),
-                    player.score());
+                    // Duration
+                    secs / 3600 > 0 ? String.format("%d:", secs / 3600) : "",
+                    (secs % 3600) / 60,
+                    secs % 60,
+                    player.duration().getNano(),
+                    // End Duration
+                    player.score()
+            );
         }
         System.out.println();
 

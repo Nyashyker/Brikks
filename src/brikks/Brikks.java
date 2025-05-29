@@ -5,7 +5,6 @@ import brikks.essentials.Loop;
 import brikks.essentials.MatrixDice;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
-import brikks.save.PlayerSave;
 import brikks.save.Save;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.SavedGame;
@@ -29,7 +28,6 @@ public class Brikks implements GameSave {
     private Player[] players;
     private byte turn;
     private byte turnRotation;
-    private boolean firstSave;
 
 
     public Brikks(final View view, final Save saver) {
@@ -63,7 +61,7 @@ public class Brikks implements GameSave {
     }
 
     public void leaderboard() {
-        this.view.leaderboard(this.saver.leaderboard());
+        this.view.leaderboard(this.saver.leaderboard(View.LEADERBOARD_COUNT));
         // TODO: there should be search by name (player), game mode (solo, duel, or standard) ect
     }
 
@@ -110,9 +108,9 @@ public class Brikks implements GameSave {
             }
 
             this.players = new Player[playerCount];
-            final PlayerSave[] playerSaves = this.saver.save(names, difficulty, duelMode);
+            this.saver.save(names, difficulty, duelMode);
             for (byte i = 0; i < playerCount; i++) {
-                this.players[i] = new Player(playerSaves[i], names[i], (byte) names.length, difficulty);
+                this.players[i] = new Player(names[i], (byte) names.length, difficulty);
             }
         }
 
@@ -144,7 +142,6 @@ public class Brikks implements GameSave {
             }
         }
 
-        this.firstSave = true;
         this.turn = (byte) (playerCount - 1);
         this.turnRotation = 0;
 
@@ -174,7 +171,6 @@ public class Brikks implements GameSave {
             this.turnRotation = loaded.turnRotation();
             turnChoice = loaded.choice();
         }
-        this.firstSave = false;
 
         // Perform the turn on which was saved
         if (this.rawTurn(this.turn, turnChoice, duelMode)) {
@@ -234,7 +230,7 @@ public class Brikks implements GameSave {
          */
         this.view.draw(player);
 
-        player.begin();
+        this.saver.setDuration();
         final TurnsResults results;
         if (this.players.length == 1) {
             results = player.turn(this.view, this, this.blocksTable, this.matrixDie.roll());
@@ -244,7 +240,7 @@ public class Brikks implements GameSave {
         } else {
             results = player.turn(this.view, this, this.blocksTable, roll);
         }
-        player.end();
+        this.saver.updateDuration(this.turn);
 
         if (results.exit()) {
             return true;
@@ -252,16 +248,16 @@ public class Brikks implements GameSave {
 
         if (opponent != null) {
             if (results.giveUp()) {
-                player.saveFinal(false);
-                opponent.saveFinal(true);
+                player.gameOver(false);
+                opponent.gameOver(true);
 
             } else if (results.duelBonus() > 0 && player.duelTurn(this.view, opponent, results.duelBonus())) {
-                player.saveFinal(true);
-                opponent.saveFinal(false);
+                player.gameOver(true);
+                opponent.gameOver(false);
             }
 
         } else if (results.giveUp()) {
-            player.saveFinal();
+            player.gameOver();
         }
 
         return false;
@@ -289,19 +285,13 @@ public class Brikks implements GameSave {
 
     @Override
     public void save(final Position choice) {
-        if (this.firstSave) {
-            this.firstSave = false;
-
-            this.saver.save(this.turn, this.turnRotation, choice, this.matrixDie.get());
-            for (byte i = 0; i < this.players.length; i++) {
-                this.players[i].save(this.blocksTable, i);
-            }
-
-        } else {
-            this.saver.update(this.turn, this.turnRotation, choice, this.matrixDie.get());
-            for (final Player player : this.players) {
-                player.update(this.blocksTable);
-            }
-        }
+        this.saver.save(
+                this.blocksTable,
+                this.players,
+                this.turn,
+                this.turnRotation,
+                choice,
+                this.matrixDie.get()
+        );
     }
 }

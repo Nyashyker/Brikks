@@ -10,12 +10,10 @@ import brikks.logic.Bombs;
 import brikks.logic.BonusScore;
 import brikks.logic.Energy;
 import brikks.logic.board.Board;
-import brikks.save.PlayerSave;
 import brikks.view.DuelAsk;
 import brikks.view.PlayerAsk;
 
 import java.time.LocalTime;
-import java.util.function.Supplier;
 
 
 public class Player implements Comparable<Player> {
@@ -27,7 +25,6 @@ public class Player implements Comparable<Player> {
     public final String name;
     private boolean plays;
 
-    private final PlayerSave saver;
     private final BonusScore bonusScore;
     private final Energy energy;
     private final Bombs bombs;
@@ -36,10 +33,7 @@ public class Player implements Comparable<Player> {
     private ShortSupplier finalCalculator;
 
 
-    public Player(final PlayerSave saver, final String name, final byte playerCount, final Level difficulty) {
-        if (saver == null) {
-            throw new IllegalArgumentException("Saver cannot be null");
-        }
+    public Player(final String name, final byte playerCount, final Level difficulty) {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
@@ -50,7 +44,6 @@ public class Player implements Comparable<Player> {
             throw new IllegalArgumentException("Difficulty cannot be null");
         }
 
-        this.saver = saver;
         this.name = name;
         this.plays = true;
         this.bonusScore = new BonusScore();
@@ -115,10 +108,6 @@ public class Player implements Comparable<Player> {
         return this.board;
     }
 
-    public PlayerSave getSaver() {
-        return this.saver;
-    }
-
 
     public void firstChoice(final Block block) {
         if (block == null) {
@@ -126,6 +115,9 @@ public class Player implements Comparable<Player> {
         }
 
         final Position[] variants = this.board.canBePlaced(block);
+        // Mom, I want random!
+        // We have random at home.
+        // Random at home:
         final byte index = (byte) (LocalTime.now().getNano() % variants.length);
         final PlacedBlock placed = new PlacedBlock(block, variants[index]);
 
@@ -245,42 +237,23 @@ public class Player implements Comparable<Player> {
     }
 
 
-    public void save(final BlocksTable blocksTable, final byte order) {
-        this.saver.save(blocksTable, this, order);
-    }
-
-    public void update(final BlocksTable blocksTable) {
-        this.saver.update(this, blocksTable);
-    }
-
-
     public short calculateFinal() {
         return this.finalCalculator.calculate();
     }
 
-    public void saveFinal() {
+    public void gameOver() {
         this.plays = false;
-        this.saver.save(this.calculateFinal());
     }
 
     // Duel final
-    public void saveFinal(final boolean hasWon) {
+    public void gameOver(final boolean hasWon) {
         if (hasWon) {
             this.finalCalculator = () -> Short.MAX_VALUE;
         } else {
             this.finalCalculator = () -> (short) 0;
         }
 
-        this.saveFinal();
-    }
-
-
-    public void begin() {
-        this.saver.setDuration();
-    }
-
-    public void end() {
-        this.saver.updateDuration();
+        this.gameOver();
     }
 
 

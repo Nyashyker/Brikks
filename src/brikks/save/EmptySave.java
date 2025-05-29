@@ -28,21 +28,17 @@ public class EmptySave extends Save {
     public void save(final String[] names, final Level difficulty, final boolean duel) {
     }
 
+    ///        Update
     @Override
     public void save(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
-    ///        Update
     @Override
     public void setDuration() {
     }
 
     @Override
     public void updateDuration(final byte turn) {
-    }
-
-    @Override
-    public void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
     }
 
     ///        Load
@@ -60,7 +56,7 @@ public class EmptySave extends Save {
     public LoadedGame load(final int ID, final BlocksTable blocksTable) {
         final Player[] players = new Player[Brikks.MAX_PLAYERS];
         for (byte i = 0; i < players.length; i++) {
-            players[i] = new Player(new EmptyPlayerSave(), "EMPTY-" + (i + 1), Brikks.MAX_PLAYERS, Level.TWO);
+            players[i] = new Player("-EMPTY-" + (i + 1), Brikks.MAX_PLAYERS, Level.TWO);
         }
         return new LoadedGame(players, new Position(), (byte) 0, (byte) 0, new Position(), Level.TWO, false);
     }

@@ -31,9 +31,11 @@ public class DatabaseSave extends Save {
     // Per game
     private int gameID;
     private LocalTime lastDurationUpdate;
+    private boolean firstSave;
     // Per player
     private int[] playerID;
     private int[] playerSaveID;
+
 
 
     public DatabaseSave(final DatabaseConnection dbc, final Save backup) {
@@ -42,6 +44,7 @@ public class DatabaseSave extends Save {
 
         this.gameID = -1;
         this.lastDurationUpdate = null;
+        this.firstSave = true;
 
         this.playerID = null;
         this.playerSaveID = null;
@@ -312,8 +315,7 @@ public class DatabaseSave extends Save {
         }
     }
 
-    @Override
-    public void save(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+    private void firstSave(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
             this.backup.save(blocksTable, players, turn, turnRotation, choice, matrixDie);
             return;
@@ -380,6 +382,16 @@ public class DatabaseSave extends Save {
 
     ///        Update
     @Override
+    public void save(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+        if (this.firstSave) {
+            this.firstSave(blocksTable, players, turn, turnRotation, choice, matrixDie);
+            this.firstSave = false;
+        } else {
+            this.update(blocksTable, players, turn, turnRotation, choice, matrixDie);
+        }
+    }
+
+    @Override
     public void setDuration() {
         if (this.fail) {
             this.backup.setDuration();
@@ -424,10 +436,9 @@ public class DatabaseSave extends Save {
         this.lastDurationUpdate = null;
     }
 
-    @Override
-    public void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
+    private void update(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
         if (this.fail) {
-            this.backup.update(blocksTable, players, turn, turnRotation, choice, matrixDie);
+            this.backup.save(blocksTable, players, turn, turnRotation, choice, matrixDie);
             return;
         }
 
@@ -482,7 +493,7 @@ public class DatabaseSave extends Save {
             System.err.println("Global save has failed");
             System.err.println(_e.getMessage());
             this.fail = true;
-            this.backup.update(blocksTable, players, turn, turnRotation, choice, matrixDie);
+            this.backup.save(blocksTable, players, turn, turnRotation, choice, matrixDie);
         }
     }
 
@@ -838,6 +849,8 @@ public class DatabaseSave extends Save {
             return this.backup.load(ID, blocksTable);
         }
 
+        this.firstSave = false;
+
         return game;
     }
 
@@ -902,6 +915,8 @@ public class DatabaseSave extends Save {
             this.fail = true;
             this.backup.dropSave();
         }
+
+        this.firstSave = true;
     }
 
 
