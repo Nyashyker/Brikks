@@ -4,12 +4,5 @@
 .idea/shelf/
 
 /out/
-build/
-target/
+tmp_out/
 
-*.log
-*.tmp
-
-*.key
-*.pem
-.env
