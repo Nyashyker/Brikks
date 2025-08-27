@@ -152,7 +152,7 @@ public class DatabaseSave extends Save {
                                         CONSTRAINT nn_plays NOT NULL,
                                     bombs        SMALLINT
                                         CONSTRAINT nn_bombs NOT NULL
-                                        CONSTRAINT ch_bombs CHECK ( bombs >= 0 AND bombs < %d ),
+                                        CONSTRAINT ch_bombs CHECK ( bombs >= 0 AND bombs <= %d ),
                                     energy       SMALLINT
                                         CONSTRAINT nn_energy NOT NULL
                                         CONSTRAINT ch_energy CHECK ( energy >= 0 AND energy < %d ),
@@ -1052,6 +1052,6 @@ public class DatabaseSave extends Save {
      * @return The DB's INTERVAL in text format according to `sql_standard`
      */
     private static String duration2interval(final Duration duration) {
-        return String.format("%d.%09d", duration.getSeconds(), duration.getNano());
+        return String.format("'%d.%09d'", duration.getSeconds(), duration.getNano());
     }
 }

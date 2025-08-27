@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS saved_players_games
         CONSTRAINT nn_plays NOT NULL,
     bombs        SMALLINT
         CONSTRAINT nn_bombs NOT NULL
-        CONSTRAINT ch_bombs CHECK ( bombs >= 0 AND bombs < 4 ),
+        CONSTRAINT ch_bombs CHECK ( bombs >= 0 AND bombs <= 3 ),
     energy       SMALLINT
         CONSTRAINT nn_energy NOT NULL
         CONSTRAINT ch_energy CHECK ( energy >= 0 AND energy < 28 ),
