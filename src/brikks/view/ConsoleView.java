@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.NoSuchElementException;
+
 
 public class ConsoleView extends View {
     public static final Scanner keyboard = new Scanner(System.in);
@@ -477,7 +479,11 @@ public class ConsoleView extends View {
 
     private void goToMainMenuOnTap() {
         System.out.println(this.text.goToMainMenuOnTap());
-        keyboard.nextLine();
+        try {
+            keyboard.nextLine();
+        } catch (final NoSuchElementException _e) {
+            System.exit(0);
+        }
     }
 
     private String[] listPlaceVariants(final Position[] variants) {
@@ -669,20 +675,25 @@ public class ConsoleView extends View {
         System.out.println(description);
 
         byte choice = -1;
-        while (choice == -1) {
-            System.out.printf(this.text.choiceInRange(), minimumChoice, maximumChoice);
-            if (!keyboard.hasNextByte()) {
-                keyboard.nextLine();
-                continue;
-            }
-            choice = keyboard.nextByte();
+        try {
+            while (choice == -1) {
+                System.out.printf(this.text.choiceInRange(), minimumChoice, maximumChoice);
+                if (!keyboard.hasNextByte()) {
+                    keyboard.nextLine();
+                    continue;
+                }
+                choice = keyboard.nextByte();
 
-            if (choice < minimumChoice || choice > maximumChoice) {
-                System.out.println(this.text.inputValidChoice());
-                choice = -1;
+                if (choice < minimumChoice || choice > maximumChoice) {
+                    System.out.println(this.text.inputValidChoice());
+                    choice = -1;
+                }
             }
+            keyboard.nextLine();
+        } catch (final NoSuchElementException _e) {
+            System.out.println();
+            System.exit(0);
         }
-        keyboard.nextLine();
 
         return choice;
     }
@@ -700,10 +711,15 @@ public class ConsoleView extends View {
     }
 
     private String askUserString(final String message, final boolean emptyAllowed) {
-        String input;
+        String input = "";
         do {
             System.out.print(message);
-            input = keyboard.nextLine();
+            try {
+                input = keyboard.nextLine();
+            } catch (final NoSuchElementException _e) {
+                System.out.println();
+                System.exit(0);
+            }
         } while (!emptyAllowed && input.isEmpty());
 
         return input;

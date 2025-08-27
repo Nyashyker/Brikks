@@ -279,12 +279,19 @@ public class Main {
                         "postgres"
                 )
         ) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                                    System.out.printf("\n%s\n", text.exit());
+                                    try { connection.close(); } catch (final SQLException _e) {}
+                            }
+                    )
+            );
+
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
             recreateDB(save);
 
             final Brikks game = new Brikks(new ConsoleView(text, logo), save);
             game.menu();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             System.out.println(e.getMessage());
         }
     }
