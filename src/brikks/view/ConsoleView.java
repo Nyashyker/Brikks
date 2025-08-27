@@ -358,7 +358,7 @@ public class ConsoleView extends View {
 
     @Override
     public void exit() {
-        System.out.println(this.text.exit());
+        System.out.printf("\n%s\n", this.text.exit());
     }
 
 

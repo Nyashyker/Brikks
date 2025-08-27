@@ -56,8 +56,6 @@ public class Brikks implements GameSave {
                 case EXIT -> exit = true;
             }
         }
-
-        this.view.exit();
     }
 
     public void leaderboard() {

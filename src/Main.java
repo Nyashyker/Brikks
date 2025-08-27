@@ -279,9 +279,11 @@ public class Main {
                         "postgres"
                 )
         ) {
+            final View view = new ConsoleView(text, logo);
+
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                                    System.out.printf("\n%s\n", text.exit());
                                     try { connection.close(); } catch (final SQLException _e) {}
+                                    view.exit();
                             }
                     )
             );
@@ -289,7 +291,7 @@ public class Main {
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
             recreateDB(save);
 
-            final Brikks game = new Brikks(new ConsoleView(text, logo), save);
+            final Brikks game = new Brikks(view, save);
             game.menu();
         } catch (final SQLException e) {
             System.out.println(e.getMessage());
