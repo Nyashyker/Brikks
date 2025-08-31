@@ -3,7 +3,6 @@ package brikks.save;
 import brikks.BlocksTable;
 import brikks.Brikks;
 import brikks.Player;
-import brikks.essentials.Block;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
@@ -35,7 +34,6 @@ public class DatabaseSave extends Save {
     // Per player
     private int[] playerID;
     private int[] playerSaveID;
-
 
 
     public DatabaseSave(final DatabaseConnection dbc, final Save backup) {
@@ -189,7 +187,7 @@ public class DatabaseSave extends Save {
                                     CONSTRAINT pk_save_cell PRIMARY KEY (pg_save_id, x, y)
                                 );
                                 """,
-                        boardWidth, boardHeight, colors, tableWidth * tableHeight
+                        boardWidth, boardHeight, colors, tableWidth * tableHeight + 1
                 )
         );
 
@@ -305,7 +303,6 @@ public class DatabaseSave extends Save {
                                 this.gameID, this.playerID[order]
                         )
                 );
-                System.out.println("Assigned players ID = " + this.playerID[order] + " --- gameID=" + this.gameID);
             }
 
         } catch (final SQLException _e) {
@@ -517,7 +514,7 @@ public class DatabaseSave extends Save {
                             block.getPlace().getX(),
                             block.getPlace().getY(),
                             block.getColor().ordinal(),
-                            blocksTable.findOrigin(block)
+                            blocksTable.findOrigin(block) + 1
                     )
             );
         }
@@ -578,7 +575,11 @@ public class DatabaseSave extends Save {
                     }
                 }
 
-                final Duration duration = interval2duration(board.getString("duration"));
+                final String interval = board.getString("duration");
+                if (interval == null) {
+                    continue;
+                }
+                final Duration duration = interval2duration(interval);
 
                 final short score = board.getShort("score");
 
@@ -712,6 +713,8 @@ public class DatabaseSave extends Save {
                 );
             }
 
+            final List<Integer> playersID = new ArrayList<>(Brikks.MAX_PLAYERS);
+            final List<Integer> playersSaveID = new ArrayList<>(Brikks.MAX_PLAYERS);
 
             Level difficulty = Level.TWO;
             boolean duelMode = false;
@@ -722,38 +725,38 @@ public class DatabaseSave extends Save {
             byte rollX = 0;
             byte rollY = 0;
             {
-                int playerSaveID = -1;
                 int playerID = -1;
                 String name = null;
                 boolean plays = false;
 
                 BonusScore bonusScore = null;
-                byte energyPosition = -1;
-                byte energyAvailable = -1;
                 Energy energy = null;
                 Bombs bombs = null;
 
                 List<PlacedBlock> placedBlocks = new ArrayList<>();
                 Color[][] energyBonus = new Color[Board.HEIGHT][Board.WIDTH];
 
+                if (!gameSaved.next()) {
+                    throw new SQLException(String.format("Nothing to load for gameID=%d", this.gameID));
+                }
+                int playerSaveID = gameSaved.getInt("pg_save_id");
+
+                difficulty = Level.values()[gameSaved.getByte("difficulty")];
+                duelMode = gameSaved.getBoolean("duel_mode");
+
+                turn = gameSaved.getByte("turn");
+                turnRotation = gameSaved.getByte("turn_rotation");
+                dieColumn = gameSaved.getByte("die_column");
+                dieRow = gameSaved.getByte("die_row");
+                rollX = gameSaved.getByte("choice_column");
+                rollY = gameSaved.getByte("choice_row");
+
+
                 byte order = 0;
-                while (gameSaved.next()) {
+                do {
                     final int checkID = gameSaved.getInt("pg_save_id");
 
-                    if (playerSaveID == -1) {
-                        playerSaveID = checkID;
-
-                        difficulty = Level.values()[gameSaved.getByte("difficulty")];
-                        duelMode = gameSaved.getBoolean("duel_mode");
-
-                        turn = gameSaved.getByte("turn");
-                        turnRotation = gameSaved.getByte("turn_rotation");
-                        dieColumn = gameSaved.getByte("die_column");
-                        dieRow = gameSaved.getByte("die_row");
-                        rollX = gameSaved.getByte("roll_column");
-                        rollY = gameSaved.getByte("roll_row");
-
-                    } else if (checkID != playerSaveID) {
+                    if (checkID != playerSaveID) {
                         playerSaveID = checkID;
 
                         players.add(
@@ -766,8 +769,8 @@ public class DatabaseSave extends Save {
                                         bonusScore
                                 )
                         );
-                        this.playerID[order] = playerID;
-                        this.playerSaveID[order] = playerSaveID;
+                        playersID.add(playerID);
+                        playersSaveID.add(playerSaveID);
 
                         order++;
                         placedBlocks = new ArrayList<>();
@@ -784,9 +787,7 @@ public class DatabaseSave extends Save {
 
                     // Player status
                     bonusScore = new BonusScore(gameSaved.getByte("bonus_score"));
-                    energyPosition = gameSaved.getByte("energy");
-                    energyAvailable = gameSaved.getByte("energy_left");
-                    energy = new Energy(bonusScore, energyPosition, energyAvailable);
+                    energy = new Energy(bonusScore, gameSaved.getByte("energy"), gameSaved.getByte("energy_left"));
                     bombs = new Bombs(gameSaved.getByte("bombs"));
 
 
@@ -794,41 +795,47 @@ public class DatabaseSave extends Save {
                     {
                         final byte x = gameSaved.getByte("x");
                         final byte y = gameSaved.getByte("y");
+                        final byte color = gameSaved.getByte("color");
 
                         final byte blockID = gameSaved.getByte("block");
-                        if (blockID == 0) {
-                            final byte color = gameSaved.getByte("energy_bonus");
-                            energyBonus[y][x] = Color.values()[color - 1];
+                        if (blockID == 0 /* == null */) {
+                            energyBonus[y][x] = Color.values()[color];
                         } else {
-                            final Block block;
-                            if (blockID == BlocksTable.WIDTH * BlocksTable.HEIGHT + 1) {
-                                block = BlocksTable.duelBlock;
-                            } else {
-                                final byte blockRow = gameSaved.getByte("table_row");
-                                final byte blockColumn = gameSaved.getByte("table_column");
-
-                                block = blocksTable.getBlock(new Position(blockColumn, blockRow));
-                            }
-
-                            placedBlocks.add(new PlacedBlock(block, new Position(x, y)));
+                            placedBlocks.add(new PlacedBlock(
+                                            color == Color.DUELER.ordinal() ?
+                                                    BlocksTable.duelBlock
+                                                    :
+                                                    blocksTable.getBlock(new Position(
+                                                                    (byte) ((blockID - 1) % BlocksTable.WIDTH),
+                                                                    (byte) ((blockID - 1) / BlocksTable.WIDTH)
+                                                            )
+                                                    ),
+                                            new Position(x, y)
+                                    )
+                            );
                         }
                     }
-                }
+                } while (gameSaved.next());
 
-                if (playerSaveID != -1) {
-                    players.add(
-                            new Player(
-                                    name,
-                                    plays,
-                                    new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus),
-                                    energy,
-                                    bombs,
-                                    bonusScore
-                            )
-                    );
-                    this.playerID[order] = playerID;
-                    this.playerSaveID[order] = playerSaveID;
+                players.add(
+                        new Player(
+                                name,
+                                plays,
+                                new Board(bonusScore, energy, difficulty, placedBlocks, energyBonus),
+                                energy,
+                                bombs,
+                                bonusScore
+                        )
+                );
+                final byte count = (byte) players.size();
+                this.playerID = new int[count];
+                this.playerSaveID = new int[count];
+                for (byte i = 0; i < count - 1; i++) {
+                    this.playerID[i] = playersID.get(i);
+                    this.playerSaveID[i] = playersSaveID.get(i);
                 }
+                this.playerID[count - 1] = playerID;
+                this.playerSaveID[count - 1] = playerSaveID;
             }
 
 
@@ -923,6 +930,7 @@ public class DatabaseSave extends Save {
     /// Support functions
     private static String formatStr(final String str) {
         // TODO: do something about problematic symbols in the name
+        // �123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
         return "'" + str + "'";
     }
 

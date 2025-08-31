@@ -127,7 +127,7 @@ FROM saved_games sg
          INNER JOIN players p ON p.player_id = pg.player_id
          INNER JOIN saved_players_games spg ON spg.pg_save_id = pg.pg_save_id
          INNER JOIN saved_boards sb ON sb.pg_save_id = spg.pg_save_id
-WHERE sg.g_save_id = 2
+WHERE sg.g_save_id = 1
 ORDER BY spg.player_order ASC;
 
 -- END
@@ -158,5 +158,17 @@ SELECT *
 FROM saved_games;
 SELECT *
 FROM saved_players_games;
-SELECT *
+SELECT pg_save_id,
+       x,
+       y,
+       CASE color
+           WHEN 0 THEN 'WHITE'
+           WHEN 1 THEN 'YELLOW'
+           WHEN 2 THEN 'GREEN'
+           WHEN 3 THEN 'RED'
+           WHEN 4 THEN 'BLUE'
+           WHEN 5 THEN 'BLACK'
+           WHEN 6 THEN 'DUELER'
+           ELSE 'UNKNOWN' END AS color,
+       block
 FROM saved_boards;

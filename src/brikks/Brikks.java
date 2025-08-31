@@ -196,13 +196,14 @@ public class Brikks implements GameSave {
             this.turnRotation = loopLoopPlayers.goForward();
             loopPlayers.setPosition(this.turnRotation);
             do {
-                if (this.players[loopPlayers.current()].isPlays()) {
+                this.turn = loopPlayers.current();
+                if (this.players[this.turn].isPlays()) {
                     plays = true;
                 } else {
                     continue;
                 }
 
-                final boolean turn = this.rawTurn(loopPlayers.current(), roll, duelMode);
+                final boolean turn = this.rawTurn(this.turn, roll, duelMode);
                 if (roll == null) {
                     roll = this.matrixDie.get();
                 }
