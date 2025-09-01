@@ -1,9 +1,8 @@
 #!/bin/bash
 
 CODE=src
-LIBRALARY_PSTG=lib/postgresql-42.5.0.jar
-RESULT=tmp_out
+LIBRARY_PG=lib/postgresql-42.5.0.jar
+RESULT=out/production/Brikks
 
 mkdir -p "$RESULT"
-javac -cp "$LIBRALARY_PSTG" -d "$RESULT" $(find "$CODE" -name '*.java')
-
+javac -cp "$LIBRARY_PG" -d "$RESULT" $(find "$CODE" -name '*.java')
