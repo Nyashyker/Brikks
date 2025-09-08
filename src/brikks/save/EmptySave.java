@@ -3,6 +3,7 @@ package brikks.save;
 import brikks.BlocksTable;
 import brikks.Brikks;
 import brikks.Player;
+import brikks.container.LeaderboardOptions;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
 import brikks.save.container.LoadedGame;
@@ -43,7 +44,7 @@ public class EmptySave extends Save {
 
     ///        Load
     @Override
-    public List<PlayerLeaderboard> leaderboard(final int count) {
+    public List<PlayerLeaderboard> leaderboard(final LeaderboardOptions configurations) {
         return new ArrayList<>(0);
     }
 

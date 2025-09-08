@@ -2,6 +2,7 @@ package brikks.view;
 
 import brikks.BlocksTable;
 import brikks.Player;
+import brikks.container.LeaderboardOptions;
 import brikks.essentials.Block;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
@@ -18,11 +19,7 @@ import brikks.view.enums.Deed;
 import brikks.view.enums.Menu;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 public class ConsoleView extends View {
@@ -67,6 +64,55 @@ public class ConsoleView extends View {
             case 4 -> Menu.EXIT;
             default -> throw new InputMismatchException("Unexpected choice variant");
         };
+    }
+
+    @Override
+    public LeaderboardOptions configureLeaderboard() {
+        int count = 12;
+        String name = null;
+        Level difficulty = null;
+        byte players = 0;
+        boolean duel = false;
+        boolean reverse = false;
+
+        for (final String configure : this.askUserString(this.text.configureLeaderboard(), true).split("(?<!\\\\) ")) {
+            if (configure.isEmpty()) {
+                continue;
+            }
+            switch (configure.charAt(0)) {
+                case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> {
+                    count = Integer.parseInt(configure);
+                }
+                case 'i' -> {
+                    if (configure.startsWith("imja=")) {
+                        name = configure.substring(5).replace("\\ ", " ");
+                    }
+                }
+                case 's' -> {
+                    if (configure.startsWith("skladnistq=")) {
+                        difficulty = Level.values()[Integer.parseInt(configure.substring(11)) - 1];
+                    }
+                }
+                case 'g' -> {
+                    if (configure.startsWith("gravci=")) {
+                        players = Byte.parseByte(configure.substring(7));
+                    }
+                }
+                case 'd' -> {
+                    if (configure.equals("duelq")) {
+                        duel = true;
+                        players = 2;
+                    }
+                }
+                case 'r' -> {
+                    if (configure.equals("rozvorot")) {
+                        reverse = true;
+                    }
+                }
+            }
+        }
+
+        return new LeaderboardOptions(count, name, difficulty, players, duel, reverse);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package brikks;
 
+import brikks.container.LeaderboardOptions;
 import brikks.container.TurnsResults;
 import brikks.essentials.Loop;
 import brikks.essentials.MatrixDice;
@@ -59,8 +60,7 @@ public class Brikks implements GameSave {
     }
 
     public void leaderboard() {
-        this.view.leaderboard(this.saver.leaderboard(View.LEADERBOARD_COUNT));
-        // TODO: there should be search by name (player), game mode (solo, duel, or standard) ect
+        this.view.leaderboard(this.saver.leaderboard(this.view.configureLeaderboard()));
     }
 
     public void start() {

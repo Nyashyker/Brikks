@@ -3,6 +3,7 @@ package brikks.save;
 import brikks.BlocksTable;
 import brikks.Brikks;
 import brikks.Player;
+import brikks.container.LeaderboardOptions;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
@@ -541,24 +542,51 @@ public class DatabaseSave extends Save {
 
     ///        Load
     @Override
-    public List<PlayerLeaderboard> leaderboard(final int count) {
+    public List<PlayerLeaderboard> leaderboard(final LeaderboardOptions configurations) {
         if (this.fail) {
-            return this.backup.leaderboard(count);
+            return this.backup.leaderboard(configurations);
         }
 
-        final List<PlayerLeaderboard> leaderboard = new ArrayList<>(count);
+        final List<PlayerLeaderboard> leaderboard = new ArrayList<>(configurations.count());
         try {
             setProperIntervalStandard(this.dbc);
+            final String nameCheck = configurations.name() == null ? "" : String.format("AND UPPER(p.name)=%s", formatStr(configurations.name().toUpperCase()));
+            final String difficultyCheck = configurations.difficulty() == null ? "" : String.format("AND g.difficulty=%d", configurations.difficulty().ordinal());
             final ResultSet board = this.dbc.executeQuery(String.format("""
                                     SELECT p.name AS "username", g.start_dt AS "start", g.end_dt AS "end", pg.duration AS "duration", pg.score AS "score"
                                     FROM players_games pg
                                              INNER JOIN games g on g.game_id = pg.game_id
                                              INNER JOIN players p on p.player_id = pg.player_id
-                                    WHERE g.duel IS FALSE
-                                    ORDER BY pg.score DESC
+                                    WHERE pg.score IS NOT NULL
+                                      AND g.duel IS %s
+                                      %s
+                                      %s
+                                      %s
+                                    ORDER BY pg.score %s
                                     LIMIT %d;
                                     """,
-                            count
+                            formatBool(configurations.duel()),
+                            nameCheck,
+                            difficultyCheck,
+                            configurations.players() == 0 ? "" : String.format("""
+                                    AND pg.game_id IN (SELECT pg2.game_id
+                                                       FROM players_games pg2
+                                                                INNER JOIN games g2 ON g2.game_id = pg2.game_id
+                                                                INNER JOIN players p2 on p2.player_id = pg2.player_id
+                                                       WHERE pg2.score IS NOT NULL
+                                                         AND g2.duel IS %s
+                                                         %s
+                                                         %s
+                                                       GROUP BY pg2.game_id
+                                                       HAVING COUNT(pg2.player_id) = %d)
+                                    """,
+                                    formatBool(configurations.duel()),
+                                    nameCheck,
+                                    difficultyCheck,
+                                    configurations.players()
+                                    ),
+                            configurations.reverse() ? "ASC" : "DESC",
+                            configurations.count()
                     )
             );
 
@@ -590,7 +618,7 @@ public class DatabaseSave extends Save {
             System.err.println("Load leaderboard has failed");
             System.err.println(_e.getMessage());
             this.fail = true;
-            return this.backup.leaderboard(count);
+            return this.backup.leaderboard(configurations);
         }
 
         return leaderboard;

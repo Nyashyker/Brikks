@@ -71,9 +71,22 @@ SELECT p.name AS "username", g.start_dt AS "start", g.end_dt AS "end", pg.durati
 FROM players_games pg
          INNER JOIN games g on g.game_id = pg.game_id
          INNER JOIN players p on p.player_id = pg.player_id
-WHERE g.duel IS FALSE
-ORDER BY pg.score DESC
-LIMIT 7;
+WHERE pg.score IS NOT NULL
+  AND g.duel IS FALSE
+  AND UPPER(p.name)='DIANA'
+  AND g.difficulty=2
+  AND pg.game_id IN (SELECT pg2.game_id
+                     FROM players_games pg2
+                              INNER JOIN games g2 ON g2.game_id = pg2.game_id
+                              INNER JOIN players p2 on p2.player_id = pg2.player_id
+                     WHERE pg2.score IS NOT NULL
+                       AND g2.duel IS FALSE
+                       AND UPPER(p2.name) = 'DIANA'
+                       AND g2.difficulty = 2
+                     GROUP BY pg2.game_id
+                     HAVING COUNT(pg2.player_id) = 1)
+ORDER BY pg.score ASC
+LIMIT 12;
 
 -- variants to load
 SELECT g.game_id AS "game_id", p.name AS "username", g.start_dt AS "start"

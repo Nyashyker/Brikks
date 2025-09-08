@@ -9,6 +9,7 @@ public record GameText(
         String menu,
         String[] menuVariants,
 
+        String configureLeaderboard,
         String leaderboard,
         String none,
 

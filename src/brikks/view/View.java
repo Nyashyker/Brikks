@@ -1,6 +1,7 @@
 package brikks.view;
 
 import brikks.Player;
+import brikks.container.LeaderboardOptions;
 import brikks.essentials.enums.Level;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
@@ -12,7 +13,6 @@ import java.util.List;
 
 public abstract class View implements PlayerAsk, DuelAsk {
     public final static byte MAX_NAME_LEN = 37;
-    public final static byte LEADERBOARD_COUNT = 12;
 
     protected final GameText text;
 
@@ -23,6 +23,8 @@ public abstract class View implements PlayerAsk, DuelAsk {
 
 
     abstract public Menu menu();
+
+    abstract public LeaderboardOptions configureLeaderboard();
 
     abstract public void leaderboard(final List<PlayerLeaderboard> players);
 

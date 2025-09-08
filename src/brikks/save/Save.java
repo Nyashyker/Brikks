@@ -2,6 +2,7 @@ package brikks.save;
 
 import brikks.BlocksTable;
 import brikks.Player;
+import brikks.container.LeaderboardOptions;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
 import brikks.save.container.LoadedGame;
@@ -32,7 +33,7 @@ public abstract class Save {
     abstract public void updateDuration(final byte turn);
 
     ///        Load
-    abstract public List<PlayerLeaderboard> leaderboard(final int count);
+    abstract public List<PlayerLeaderboard> leaderboard(final LeaderboardOptions configurations);
     abstract public List<SavedGame> load();
     abstract public LoadedGame load(final int ID, final BlocksTable blocksTable);
 

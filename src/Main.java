@@ -35,6 +35,17 @@ public class Main {
                             "Таблиця лідерів",
                             "Вийти"
                     },
+                    """
+                            Можливі параметри (записувати через пробіл у довільному порядку; будь-які пункти можуть бути пропущенні):
+                            - <число>: обмеження на кількість рядків виводу
+                            - imja=<ім'я гравця>: вибрати гравця (ставте \\ перед кожним пробілом у імені)
+                            - skladnistq=<1-4>: вибрати складність
+                            - gravci=<1-4>: вибрати кількість гравців
+                            - duelq: вибрати режим дуелі (ігнорує вказану кількість гравців)
+                            - rozvorot: вибрати результати з кінця
+                            УВАГА! Це просунутий функціонал, неправильне поводження може призвести до неочікуваних наслідків, як зламу програми.
+                            Уведіть запит: \
+                            """,
                     "ТАБЛИЦЯ ЛІДЕРІВ",
                     "НІЦ",
                     "Гравець із таким ім'ям уже існує. Бажаєте використати його? ",
@@ -110,6 +121,17 @@ public class Main {
                             "Leaderboard",
                             "Exit"
                     },
+                    """
+                            Possible options (divide by space; any can be skipped):
+                            - <number>: the limit of outputted lines
+                            - imja=<the name of the player>: chose the player (add \\ before each space in the name)
+                            - skladnistq=<1-4>: chose the difficulty
+                            - gravci=<1-4>: chose player count
+                            - duelq: see the duel mode (ignores the `gravci`)
+                            - rozvorot: get results from the bottom
+                            WARNING! It is an advanced feature, incorrect handling may cause unexpected results, such as the crush of the program.
+                            Enter your input: \
+                            """,
                     "LEADERBOARD",
                     "NONE",
                     "A player with this name already exists. Do you want to use it? ",
@@ -173,7 +195,7 @@ public class Main {
         }
         final GameText textBg;
         // Defining Bulgarian text
-        {
+       {
             textBg = new GameText(
                     "Назад",
                     "Натиснете клавиш, за да влезнете в главното меню.",
@@ -186,6 +208,18 @@ public class Main {
                             "Класация",
                             "Изход"
                     },
+                    """
+                            (Unfortunately, translation is not available)
+                            Possible options (divide by space; any can be skipped):
+                            - <number>: the limit of outputted lines
+                            - imja=<the name of the player>: chose the player (add \\ before each space in the name)
+                            - skladnistq=<1-4>: chose the difficulty
+                            - gravci=<1-4>: chose player count
+                            - duelq: see the duel mode (ignores the `gravci`)
+                            - rozvorot: get results from the bottom
+                            WARNING! It is an advanced feature, incorrect handling may cause unexpected results, such as the crush of the program.
+                            Enter your input: \
+                            """,
                     "КЛАСАЦИЯ",
                     "Нищо",
                     "Играч с такова име вече съществува. Искате ли да го използвате?",
