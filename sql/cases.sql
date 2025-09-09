@@ -89,7 +89,7 @@ ORDER BY pg.score ASC
 LIMIT 12;
 
 -- variants to load
-SELECT g.game_id AS "game_id", p.name AS "username", g.start_dt AS "start"
+SELECT sg.g_save_id AS "game_save_id", p.name AS "username", g.start_dt AS "start"
 FROM saved_games sg
          INNER JOIN games g ON g.game_id = sg.g_save_id
          INNER JOIN players_games pg ON pg.game_id = g.game_id
@@ -140,7 +140,7 @@ FROM saved_games sg
          INNER JOIN players p ON p.player_id = pg.player_id
          INNER JOIN saved_players_games spg ON spg.pg_save_id = pg.pg_save_id
          INNER JOIN saved_boards sb ON sb.pg_save_id = spg.pg_save_id
-WHERE sg.g_save_id = 1
+WHERE sg.g_save_id = 2
 ORDER BY spg.player_order ASC;
 
 -- END

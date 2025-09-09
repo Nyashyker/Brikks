@@ -84,9 +84,9 @@ CREATE TABLE IF NOT EXISTS saved_boards
         CONSTRAINT fk_player_game_save_id REFERENCES saved_players_games (pg_save_id)
             ON DELETE CASCADE,
     x          SMALLINT
-        CONSTRAINT ch_x CHECK ( x >= 0 AND x < 4 ),
+        CONSTRAINT ch_x CHECK ( x >= 0 AND x < 10 ),
     y          SMALLINT
-        CONSTRAINT ch_y CHECK ( y >= 0 AND y < 6 ),
+        CONSTRAINT ch_y CHECK ( y >= 0 AND y < 11 ),
     color      SMALLINT
         CONSTRAINT nn_color NOT NULL
         CONSTRAINT ch_color CHECK ( color >= 0 AND color < 7 ),

@@ -323,7 +323,7 @@ public class Main {
             );
 
             final DatabaseSave save = new DatabaseSave(connection, backupSave);
-            //recreateDB(save);
+            recreateDB(save);
 
             final Brikks game = new Brikks(view, save);
             game.menu();

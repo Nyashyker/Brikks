@@ -311,6 +311,8 @@ public class DatabaseSave extends Save {
             System.err.println(_e.getMessage());
             this.fail = true;
         }
+
+        this.firstSave = true;
     }
 
     private void firstSave(final BlocksTable blocksTable, final Player[] players, final byte turn, final byte turnRotation, final Position choice, final Position matrixDie) {
@@ -569,22 +571,22 @@ public class DatabaseSave extends Save {
                             nameCheck,
                             difficultyCheck,
                             configurations.players() == 0 ? "" : String.format("""
-                                    AND pg.game_id IN (SELECT pg2.game_id
-                                                       FROM players_games pg2
-                                                                INNER JOIN games g2 ON g2.game_id = pg2.game_id
-                                                                INNER JOIN players p2 on p2.player_id = pg2.player_id
-                                                       WHERE pg2.score IS NOT NULL
-                                                         AND g2.duel IS %s
-                                                         %s
-                                                         %s
-                                                       GROUP BY pg2.game_id
-                                                       HAVING COUNT(pg2.player_id) = %d)
-                                    """,
+                                            AND pg.game_id IN (SELECT pg2.game_id
+                                                               FROM players_games pg2
+                                                                        INNER JOIN games g2 ON g2.game_id = pg2.game_id
+                                                                        INNER JOIN players p2 on p2.player_id = pg2.player_id
+                                                               WHERE pg2.score IS NOT NULL
+                                                                 AND g2.duel IS %s
+                                                                 %s
+                                                                 %s
+                                                               GROUP BY pg2.game_id
+                                                               HAVING COUNT(pg2.player_id) = %d)
+                                            """,
                                     formatBool(configurations.duel()),
                                     nameCheck,
                                     difficultyCheck,
                                     configurations.players()
-                                    ),
+                            ),
                             configurations.reverse() ? "ASC" : "DESC",
                             configurations.count()
                     )
@@ -632,12 +634,12 @@ public class DatabaseSave extends Save {
 
         final List<SavedGame> saved = new ArrayList<>();
         try {
-            int gameID = -1;
+            int gameSaveID = -1;
             List<String> names = new ArrayList<>(Brikks.MAX_PLAYERS);
             LocalDateTime start = null;
 
             final ResultSet variants = this.dbc.executeQuery("""
-                    SELECT g.game_id AS "game_id", p.name AS "username", g.start_dt AS "start"
+                    SELECT sg.g_save_id AS "game_save_id", p.name AS "username", g.start_dt AS "start"
                     FROM saved_games sg
                              INNER JOIN games g ON g.game_id = sg.g_save_id
                              INNER JOIN players_games pg ON pg.game_id = g.game_id
@@ -648,14 +650,14 @@ public class DatabaseSave extends Save {
             );
 
             while (variants.next()) {
-                final int checkID = variants.getInt("game_id");
+                final int checkID = variants.getInt("game_save_id");
 
-                if (gameID == -1) {
-                    gameID = checkID;
-                } else if (checkID != gameID) {
-                    gameID = checkID;
-                    saved.add(new SavedGame(gameID, names, start));
+                if (gameSaveID == -1) {
+                    gameSaveID = checkID;
+                } else if (checkID != gameSaveID) {
+                    saved.add(new SavedGame(gameSaveID, names, start));
                     names = new ArrayList<>(Brikks.MAX_PLAYERS);
+                    gameSaveID = checkID;
                 }
 
                 start = variants.getTimestamp("start").toLocalDateTime();
@@ -664,7 +666,7 @@ public class DatabaseSave extends Save {
             }
 
             if (start != null) {
-                saved.add(new SavedGame(gameID, names, start));
+                saved.add(new SavedGame(gameSaveID, names, start));
             }
 
         } catch (final SQLException _e) {
