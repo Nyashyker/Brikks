@@ -1,6 +1,6 @@
 package brikks.essentials;
 
-public class Position {
+public class Position implements Comparable<Position> {
     protected byte x;
     protected byte y;
 
@@ -42,6 +42,11 @@ public class Position {
         return new Position((byte) (this.getX() + other.getX()), (byte) (this.getY() + other.getY()));
     }
 
+
+    @Override
+    public int compareTo(final Position other) {
+        return this.y == other.y ? this.x - other.x : other.y - this.y;
+    }
 
     @Override
     public String toString() {

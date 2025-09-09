@@ -6,6 +6,7 @@ import brikks.essentials.Position;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 class UsedBoard {
     private final byte width;
@@ -37,47 +38,27 @@ class UsedBoard {
 
 
     List<Position> canBePlaced(final Block block) {
-        List<Position> variants = new ArrayList<>();
+        final TreeSet<Position> variants = new TreeSet<>();
 
         for (byte x = 0; x < this.width; x++) {
-            Position lastValid = null;
-
-            boolean noMoreOptions = false;
             for (byte y = 0; y < this.height; y++) {
-                boolean guessValid = true;
-
-                for (final Position shape : block.getBlock()) {
-                    final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
-                    if (shapePos.getY() >= this.height) {
-                        throw new IllegalArgumentException("Blocks shape should be started from the bottom");
-                    }
-
-                    if (shapePos.getY() < 0) {
-                        guessValid = false;
-                        break;
-                    }
-                    if (shapePos.getX() < 0 || shapePos.getX() >= this.width || this.used[shapePos.getY()][shapePos.getX()]) {
-                        guessValid = false;
-                        noMoreOptions = true;
-                        break;
+                for (byte leftX = x; leftX >= 0; leftX--) {
+                    if (this.canBePlaced(block, leftX, y)) {
+                        variants.add(new Position(leftX, y));
                     }
                 }
-
-                if (noMoreOptions) {
-                    break;
-                } else if (guessValid) {
-                    lastValid = new Position(x, y);
+                for (byte rightX = x; rightX < this.width; rightX++) {
+                    if (this.canBePlaced(block, rightX, y)) {
+                        variants.add(new Position(rightX, y));
+                    }
                 }
-            }
-
-            if (lastValid != null) {
-                variants.add(lastValid);
+                if (this.canBePlaced(block, x, y)) {
+                    variants.add(new Position(x, y));
+                }
             }
         }
 
-        // TODO: support placing block under other blocks if there is space for them to fall this way
-
-        return variants;
+        return variants.stream().toList();
     }
 
     void place(final PlacedBlock block) {
@@ -120,6 +101,21 @@ class UsedBoard {
         return gaps;
     }
 
+
+    private boolean canBePlaced(final Block block, final byte x, final byte y) {
+        boolean canBePlaced = false;
+        for (final Position shape : block.getBlock()) {
+            final Position shapePos = new Position((byte) (x + shape.getX()), (byte) (y + shape.getY()));
+            // if (shapePos.getY() >= this.height) { throw new IllegalArgumentException("Blocks shape should be started from the bottom"); }
+
+            if (shapePos.getY() < 0 || shapePos.getX() < 0 || shapePos.getX() >= this.width || this.used[shapePos.getY()][shapePos.getX()]) {
+                return false;
+            } else if (shapePos.getY() == this.height - 1 || this.used[shapePos.getY() + 1][shapePos.getX()]) {
+                canBePlaced = true;
+            }
+        }
+        return canBePlaced;
+    }
 
     private boolean isRowFilled(final byte y) {
         for (byte x = 0; x < this.width; x++) {
