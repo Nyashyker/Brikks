@@ -209,16 +209,15 @@ public class Main {
                             "Изход"
                     },
                     """
-                            (Unfortunately, translation is not available)
-                            Possible options (divide by space; any can be skipped):
-                            - <number>: the limit of outputted lines
-                            - imja=<the name of the player>: chose the player (add \\ before each space in the name)
-                            - skladnistq=<1-4>: chose the difficulty
-                            - gravci=<1-4>: chose player count
-                            - duelq: see the duel mode (ignores the `gravci`)
-                            - rozvorot: get results from the bottom
-                            WARNING! It is an advanced feature, incorrect handling may cause unexpected results, such as the crush of the program.
-                            Enter your input: \
+                            Възможни параметри (записвайте с интервал в произволен ред; някои точки може да бъдат пропуснати):
+                            - <число>: ограничение на брое родове в исхода
+                            - imja=<име на играча>: избор на играч (поставяйте \\ пред всеки интервал в името)
+                            - skladnistq=<1-4>: избор на трудност
+                            - gravci=<1-4>: избор на брой играчи
+                            - duelq: избор на режим дуел(игнорира посочения брой играчи)
+                            - rozvorot: избор на резултатите от края
+                            ВНИМАНИЕ! Това е розширена функционалност, неправилната употреба може да доведе до неочиквани последици, като срив на програмата.
+                            Въведете заявка: \
                             """,
                     "КЛАСАЦИЯ",
                     "Нищо",
