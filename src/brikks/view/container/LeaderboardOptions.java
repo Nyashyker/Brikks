@@ -1,4 +1,4 @@
-package brikks.container;
+package brikks.view.container;
 
 import brikks.essentials.enums.Level;
 

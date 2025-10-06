@@ -12,7 +12,7 @@ public class PlacedBlock extends Block {
 
     @Override
     public Position[] getBlock() {
-        Position[] block = new Position[this.shape.length];
+        final Position[] block = new Position[this.shape.length];
 
         for (int i = 0; i < this.shape.length; i++) {
             block[i] = this.shape[i].add(this.position);

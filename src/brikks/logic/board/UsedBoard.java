@@ -4,7 +4,6 @@ import brikks.essentials.Block;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 

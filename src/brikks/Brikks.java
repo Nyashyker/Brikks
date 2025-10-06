@@ -1,6 +1,5 @@
 package brikks;
 
-import brikks.container.LeaderboardOptions;
 import brikks.container.TurnsResults;
 import brikks.essentials.Loop;
 import brikks.essentials.MatrixDice;

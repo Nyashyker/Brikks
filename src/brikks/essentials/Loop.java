@@ -55,7 +55,6 @@ public class Loop {
         this.POINT = position;
     }
 
-
     public void setStep(final byte step) {
         if (step == 0) {
             throw new IllegalArgumentException("The step cannot be zero!");

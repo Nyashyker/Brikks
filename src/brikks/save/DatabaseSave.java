@@ -3,7 +3,6 @@ package brikks.save;
 import brikks.BlocksTable;
 import brikks.Brikks;
 import brikks.Player;
-import brikks.container.LeaderboardOptions;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Color;
@@ -15,6 +14,7 @@ import brikks.logic.board.Board;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
+import brikks.view.container.LeaderboardOptions;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

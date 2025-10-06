@@ -2,7 +2,6 @@ package brikks.view;
 
 import brikks.BlocksTable;
 import brikks.Player;
-import brikks.container.LeaderboardOptions;
 import brikks.essentials.Block;
 import brikks.essentials.PlacedBlock;
 import brikks.essentials.Position;
@@ -15,6 +14,7 @@ import brikks.logic.board.Board;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
 import brikks.view.container.GameText;
+import brikks.view.container.LeaderboardOptions;
 import brikks.view.enums.Deed;
 import brikks.view.enums.Menu;
 

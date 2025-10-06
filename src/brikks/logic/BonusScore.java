@@ -2,6 +2,7 @@ package brikks.logic;
 
 public class BonusScore {
     public static final byte MAX_SCALE = 15;
+
     private final byte[] scalingRate;
     private byte scale;
 

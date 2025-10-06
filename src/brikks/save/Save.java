@@ -2,12 +2,12 @@ package brikks.save;
 
 import brikks.BlocksTable;
 import brikks.Player;
-import brikks.container.LeaderboardOptions;
 import brikks.essentials.Position;
 import brikks.essentials.enums.Level;
 import brikks.save.container.LoadedGame;
 import brikks.save.container.PlayerLeaderboard;
 import brikks.save.container.SavedGame;
+import brikks.view.container.LeaderboardOptions;
 
 import java.util.List;
 
